@@ -7,14 +7,14 @@ import 'package:styled_widget/styled_widget.dart';
 
 import 'CategoryButtonWidget.dart';
 
-class AssessmentServeyPage extends StatefulWidget {
-  const AssessmentServeyPage({super.key});
+class AssessmentSurveyPage extends StatefulWidget {
+  const AssessmentSurveyPage({super.key});
 
   @override
-  State<AssessmentServeyPage> createState() => _AssessmentServeyPageState();
+  State<AssessmentSurveyPage> createState() => _AssessmentSurveyPageState();
 }
 
-class _AssessmentServeyPageState extends State<AssessmentServeyPage> {
+class _AssessmentSurveyPageState extends State<AssessmentSurveyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -11,7 +11,7 @@ class CategoryButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Get.to(AssessmentServeyPage());
+        Get.to(AssessmentSurveyPage());
         },
       child: Container(
         width: 250.w,
