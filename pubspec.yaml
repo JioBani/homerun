@@ -45,6 +45,8 @@ dependencies:
   firebase_storage:
   cached_network_image:
   kakao_flutter_sdk_user: ^1.5.0
+  card_loading:
+  styled_widget:
 
 dev_dependencies:
   flutter_test:

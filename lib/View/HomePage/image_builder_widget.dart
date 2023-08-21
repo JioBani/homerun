@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 
 class ImageBuilder extends StatefulWidget {
@@ -24,14 +25,8 @@ class _ImageBuilderState extends State<ImageBuilder> {
         } else if (snapshot.hasData) {
           return CachedNetworkImage(
               imageUrl: snapshot.data!,
-              progressIndicatorBuilder: (_,url,download){
-                if(download.progress != null){
-                  final percent = download.progress! * 100;
-                  return Text("$percent %");
-                }
-                else{
-                  return const Text("DownLoaded");
-                }
+              placeholder: (context , url){
+                return CardLoading(height: double.infinity);
               },
               errorWidget: (context, url, error) => const Icon(Icons.error),
               fit: BoxFit.cover

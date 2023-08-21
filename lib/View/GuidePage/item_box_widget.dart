@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -36,32 +37,38 @@ class ItemBoxWidget extends StatelessWidget {
             children: [
               Expanded(
                 flex: 2,
-                child: Container(
-                  width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white10,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10.w) , topRight: Radius.circular(10.w))
-                    ),
-                  child: FutureBuilder<String>(
-                      future: controller.getImageUrl(productData),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else if (snapshot.hasData) {
-                          return CachedNetworkImage(
-                            imageUrl: snapshot.data!,
-                            placeholder: (context, url) => const CircularProgressIndicator(),
-                            errorWidget: (context, url, error) => const Icon(Icons.error),
-                            fit: BoxFit.fill,
-                          );
-                        } else {
-                          return Text('No Image URL');
-                        }
-                      },
-                )
-              ),
+                child: FutureBuilder(
+                  future: controller.getImageUrl(productData),
+                  builder: (context, snapshot) {
+                    return Container(
+                      width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white10,
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(10.w) , topRight: Radius.circular(10.w))
+                        ),
+                      child: Builder(
+                          builder: (context) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CardLoading(height: double.infinity);
+                            }
+                            else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+                            else if (snapshot.hasData) {
+                              return CachedNetworkImage(
+                                imageUrl: snapshot.data!,
+                                placeholder: (context, url) => const CardLoading(height: double.infinity),
+                                errorWidget: (context, url, error) => const Icon(Icons.error),
+                                fit: BoxFit.fill,
+                              );
+                            } else {
+                              return Text('No Image URL');
+                            }
+                          },
+                    )
+              );
+                  }
+                ),
               ),
               Expanded(
                   child: Container(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homerun/View/GuideImagePage/ad_widget.dart';
+import 'package:homerun/View/ad_widget.dart';
 import 'package:homerun/View/buttom_nav.dart';
 
 class GuideImagePage extends StatelessWidget {
