@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Model/SurveyData.dart';
 
 class SurveyDataSaveService{
 
@@ -14,7 +19,7 @@ class SurveyDataSaveService{
     return _instance!;
   }
 
-  Future<void> saveData(String key, String value) async {
+  Future<void> _saveData(String key, String value) async {
     try{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString(key, value);
@@ -25,13 +30,13 @@ class SurveyDataSaveService{
     }
   }
 
-  Future<String> loadData(String key) async {
+  Future<String?> _loadData(String key) async {
     try{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? result = prefs.getString(key);
       if(result == null){
         _logger.log(Level.warning, "키가 없음 : ${key}");
-        return "";
+        return null;
       }
       else{
         _logger.log(Level.info, "데이터 불러오기 성공 : {${key} : ${result}}");
@@ -40,9 +45,27 @@ class SurveyDataSaveService{
     }
     catch(e){
       _logger.e(e);
-      return "";
+      return null;
     }
 
 
   }
+
+  Future<SurveyData?> loadSurveyData()async{
+    String? jsonString = await _loadData("survey_data");
+    if(jsonString != null){
+      return SurveyData.stringToData(jsonString);
+    }
+    else{
+      StaticLogger.logger.e("survey_data 가 null 임");
+      return null;
+    }
+  }
+
+  Future<void> saveSurveyData(SurveyData surveyData)async{
+    String jsonString = surveyData.toJsonString();
+    await _saveData("survey_data", jsonString);
+    return;
+  }
+
 }
