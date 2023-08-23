@@ -48,6 +48,7 @@ dependencies:
   card_loading:
   styled_widget:
   shared_preferences:
+  getwidget:
 
 dev_dependencies:
   flutter_test:
