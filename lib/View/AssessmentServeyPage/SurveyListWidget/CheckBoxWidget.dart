@@ -6,10 +6,11 @@ import 'package:homerun/Controller/AssessmentSurveyPageController.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
 
 class CheckBoxWidget extends StatefulWidget {
-  CheckBoxWidget({super.key , required this.description , required this.index});
+  CheckBoxWidget({super.key , required this.description , required this.index , required this.surveyIndex});
 
   final String description;
   final int index;
+  final int surveyIndex;
 
   @override
   State<CheckBoxWidget> createState() => _CheckBoxWidgetState();
@@ -17,7 +18,6 @@ class CheckBoxWidget extends StatefulWidget {
 
 class _CheckBoxWidgetState extends State<CheckBoxWidget> {
 
-  //AssessmentSurveyPageController controller = Get.find<AssessmentSurveyPageController>();
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +50,12 @@ class _CheckBoxWidgetState extends State<CheckBoxWidget> {
                 child: Transform.scale(
                   scale: 1.2,
                   child: Checkbox(
-                    value: controller.selectedValue.value == widget.index,
+                    value: controller.getBool(widget.surveyIndex, widget.index),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7.w)
                     ),
                     onChanged: (bool? value) {
-                      controller.select(widget.index);
+                      controller.select(widget.surveyIndex , widget.index);
                     },
                   ),
                 ),
@@ -66,4 +66,5 @@ class _CheckBoxWidgetState extends State<CheckBoxWidget> {
       ),
     );
   }
+
 }

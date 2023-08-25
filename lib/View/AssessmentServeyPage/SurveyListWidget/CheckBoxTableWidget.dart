@@ -3,13 +3,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:homerun/Controller/AssessmentSurveyPageController.dart';
+import 'package:homerun/Model/SurveyQuestionData.dart';
 import 'package:homerun/Service/SurveyDataSaveService.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
 
 import 'CheckBoxWidget.dart';
 
 class CheckBoxTableWidget extends StatefulWidget {
-  const CheckBoxTableWidget({super.key});
+  const CheckBoxTableWidget({
+    super.key ,
+    required this.surveyIndex,
+    required this.questionData});
+  final int surveyIndex;
+  final SurveyQuestionData questionData;
 
   @override
   State<CheckBoxTableWidget> createState() => _CheckBoxTableWidgetState();
@@ -37,7 +43,7 @@ class _CheckBoxTableWidgetState extends State<CheckBoxTableWidget> {
           Padding(
             padding: EdgeInsets.only(left: 10.w),
             child: Text(
-                "청약 저축 기간은?",
+                widget.questionData.title,
                 style: TextStyle(
                     fontSize: 35.w,
                     fontWeight: FontWeight.w600,
@@ -45,26 +51,23 @@ class _CheckBoxTableWidgetState extends State<CheckBoxTableWidget> {
                 )
             ),
           ),
-          CheckBoxWidget(
-            description: "1) 입주 저축 가입자",
-            index: 0,
-          ),
-          CheckBoxWidget(
-            description: "2) 6개월 이하",
-            index: 1,
-          ),
-          CheckBoxWidget(
-              description: "3) 6개월 이상",
-            index: 2,
-          ),
-          CheckBoxWidget(
-              description: "4) 12개월 이상",
-            index: 3,
-          ),
-          CheckBoxWidget(
-              description: "5) 24개월 이상",
-            index: 4,
-          ),
+          Builder(
+            builder: (context) {
+              List<CheckBoxWidget> checkBoxList = [];
+
+              for(int i =0; i< widget.questionData.questions.length; i++){
+                checkBoxList.add(CheckBoxWidget(
+                  description: widget.questionData.questions[i],
+                  index: i,
+                  surveyIndex: 0,
+                ));
+              }
+
+              return Column(
+                children: checkBoxList,
+              );
+            }
+          )
         ],
       ),
     );
