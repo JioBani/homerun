@@ -6,8 +6,6 @@ import 'package:homerun/Model/SurveyData.dart';
 import 'package:homerun/Model/SurveyQuestionData.dart';
 import 'package:homerun/Service/SurveyDataSaveService.dart';
 
-import '../View/AssessmentServeyPage/SurveyQuestionWidget.dart';
-
 class AssessmentSurveyPageController extends GetxController{
 
   RxInt selectedValue = RxInt(-1);
