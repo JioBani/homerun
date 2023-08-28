@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/SurveyData.dart';
 import 'package:homerun/Model/SurveyQuestionData.dart';
 import 'package:homerun/Service/SurveyDataSaveService.dart';
+
+import '../View/AssessmentServeyPage/SurveyQuestionWidget.dart';
 
 class AssessmentSurveyPageController extends GetxController{
 
@@ -13,6 +16,44 @@ class AssessmentSurveyPageController extends GetxController{
   List<bool> values = List.generate(5, (index) => false);
   List<bool> isExpanded = List.generate(5, (index) => false).obs;
   List<String> subTitle = List.generate(5, (index) => "선택없음").obs;
+  var selectTile = -1.obs;
+
+  late final ScrollController scrollController;
+  late final ListView listView;
+  late final GlobalKey listViewKey;
+
+  void setScrollController(ScrollController scrollController){
+    this.scrollController = scrollController;
+  }
+
+  void setListView(ListView listView){
+    this.listView = listView;
+  }
+
+  void setListViewKey(GlobalKey listViewKey){
+    this.listViewKey = listViewKey;
+  }
+
+  double getWidgetHeight(GlobalKey key, BuildContext context) {
+    // GlobalKey를 사용하여 위젯을 찾습니다.
+    final RenderBox renderBox = key.currentContext!.findRenderObject() as RenderBox;
+
+
+    // 위젯의 높이를 가져옵니다.
+    final widgetHeight = renderBox.size.height;
+
+    return widgetHeight;
+  }
+
+  double getWidgetPositionY(GlobalKey key, BuildContext context) {
+    // GlobalKey를 사용하여 위젯을 찾습니다.
+    final RenderBox renderBox = key.currentContext!.findRenderObject() as RenderBox;
+
+    // 위젯의 위치를 가져옵니다.
+    final position = renderBox.localToGlobal(Offset.zero, ancestor: listViewKey.currentContext!.findRenderObject());
+
+    return position.dy;
+  }
 
 
   Future<void> loadData() async {
@@ -42,15 +83,21 @@ class AssessmentSurveyPageController extends GetxController{
   }
 
   void select(int surveyIndex , int value) {
-    selectedValue.value = value;
-    StaticLogger.logger.i("select $surveyIndex : $value");
-    switch(surveyIndex){
-      case 0 : updatePeriod(value);
-      case 1 : updateHouseHold(value);
-      case 2 : updateNumOfChild(value);
-      case 3 : updateChildrenRegistered(value);
+    if(value == selectedValue.value){
+      selectedValue.value = -1;
     }
-    changeData(value);
+    else{
+      selectedValue.value = value;
+    }
+
+    switch(surveyIndex){
+      case 0 : updatePeriod(selectedValue.value);
+      case 1 : updateHouseHold(selectedValue.value);
+      case 2 : updateNumOfChild(selectedValue.value);
+      case 3 : updateChildrenRegistered(selectedValue.value);
+    }
+
+    changeData(selectedValue.value);
   }
 
   void updatePeriod(int value){
@@ -118,6 +165,15 @@ class AssessmentSurveyPageController extends GetxController{
     for(int i =0; i<isExpanded.length; i++ ){
       isExpanded[i] = false;
     }
+  }
+
+  List<SurveyQuestionData> getQuestionData(){
+    return [
+      SurveyQuestionData.period(),
+      SurveyQuestionData.houseHold(),
+      SurveyQuestionData.numOfChildren(),
+      SurveyQuestionData.register(),
+    ];
   }
 
 }
