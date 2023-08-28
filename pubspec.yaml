@@ -49,6 +49,8 @@ dependencies:
   styled_widget:
   shared_preferences:
   getwidget:
+  expansion_tile_group: #BSD 라이센스
+  animate_icons:
 
 dev_dependencies:
   flutter_test:
