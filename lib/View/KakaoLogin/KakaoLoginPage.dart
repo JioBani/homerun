@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Controller/KakaoLoginPageController.dart';
 import 'package:homerun/Service/LoginService.dart';
+import 'package:homerun/View/buttom_nav.dart';
 
 
 class KakaoLoginPage extends StatefulWidget {
@@ -23,7 +24,8 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Center(child: Text(widget.title)),
+        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: Center(
@@ -79,6 +81,7 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
           )
         ),
       ),
+      bottomNavigationBar: CustomBottomNavigationBar(),
     );
   }
 }

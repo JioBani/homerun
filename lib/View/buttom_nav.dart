@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:homerun/View/AssessmentPage/AssessmentPage.dart';
+import 'package:homerun/View/HomePage/home_page.dart';
 import 'package:homerun/View/KakaoLogin/KakaoLoginPage.dart';
+
+import 'MyPage/MyPage.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   @override
@@ -31,8 +34,18 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     });
 
     switch(index){
-      case 3 : Get.to(AssessmentPage());
-      case 4 : Get.to(KakaoLoginPage(title: "카카오 로그인"));
+      case 0 : Get.off(
+        HomePage(),
+        transition: Transition.noTransition,
+      );
+      case 3 : Get.off(
+        AssessmentPage(),
+        transition: Transition.noTransition,
+      );
+      case 4 : Get.off(
+        MyPage(),
+        transition: Transition.noTransition,
+      );
     }
   }
 

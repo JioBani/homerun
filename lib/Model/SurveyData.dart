@@ -36,7 +36,12 @@ class SurveyData{
   static SurveyData? stringToData(String jsonString){
     try {
       Map<String, dynamic> loadedJson = json.decode(jsonString);
-      return SurveyData(loadedJson['period'] , loadedJson['isHouseholdMember'], loadedJson['numOfChild'], loadedJson['isChildrenRegistered']);
+      return SurveyData(
+          loadedJson['period'] ,
+          loadedJson['isHouseholdMember'],
+          loadedJson['numOfChild'],
+          loadedJson['isChildrenRegistered']
+      );
     } catch (e) {
       // JSON 형식이 아닌 데이터를 처리하는 예외처리
       StaticLogger.logger.e(e);
