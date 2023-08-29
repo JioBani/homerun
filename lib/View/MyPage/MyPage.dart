@@ -4,6 +4,7 @@ import 'package:homerun/Palette.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
 import 'package:homerun/View/MyPage/ExtraActionWidget.dart';
 import 'package:homerun/View/MyPage/ProfileActionButtonWidget.dart';
+import 'package:homerun/View/MyPage/QuestionPage/QuestionPage.dart';
 import 'package:homerun/View/MyPage/ScrapPage/ScrapPage.dart';
 import 'package:homerun/View/buttom_nav.dart';
 
@@ -89,9 +90,9 @@ class MyPage extends StatelessWidget {
               page: NotificationPage(),
             ),
             ExtraActionWidget(
-              iconData: Icons.campaign,
-              content: "공지사항",
-              page: NotificationPage(),
+              iconData: Icons.help_outline,
+              content: "자주묻는 질문",
+              page: QuestionPage(),
             ),
             ExtraActionWidget(
               iconData: Icons.campaign,
