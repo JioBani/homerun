@@ -30,6 +30,9 @@ class MyApp extends StatelessWidget {
          theme: ThemeData(
            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
            useMaterial3: true,
+           appBarTheme: AppBarTheme(
+             color: Colors.white
+           ),
            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
              backgroundColor: Colors.transparent,
            ),
