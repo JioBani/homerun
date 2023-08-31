@@ -51,6 +51,7 @@ dependencies:
   getwidget:
   expansion_tile_group: #BSD 라이센스
   animate_icons:
+  dropdown_button2:
 
 dev_dependencies:
   flutter_test:
