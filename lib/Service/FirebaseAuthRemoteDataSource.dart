@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class FirebaseAuthRemoteDataSource {
-  final String url = "http://10.0.2.2:5000";
+  String url = "http://10.0.2.2:5000";
 
   Future<String> createCustomToken(Map<String, dynamic> user) async {
     final customTokenResponse = await http
@@ -25,5 +26,10 @@ class FirebaseAuthRemoteDataSource {
       Logger().e(e);
       return "false";
     }
+  }
+
+  void setUrl(String url){
+    this.url = url;
+    StaticLogger.logger.i("변경완료 : https://06e0-1-230-31-62.ngrok-free.app");
   }
 }
