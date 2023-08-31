@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:homerun/Controller/LoginController.dart';
 import 'package:homerun/Palette.dart';
+import 'package:homerun/Service/LoginService.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
 import 'package:homerun/View/MyPage/ExtraActionWidget.dart';
 import 'package:homerun/View/MyPage/ProfileActionButtonWidget.dart';
 import 'package:homerun/View/MyPage/QuestionPage/QuestionPage.dart';
+import 'package:homerun/View/MyPage/LoginViewWidget.dart';
 import 'package:homerun/View/MyPage/ScrapPage/ScrapPage.dart';
 import 'package:homerun/View/MyPage/inquiryPage/inquiryPage.dart';
 import 'package:homerun/View/buttom_nav.dart';
 
+import 'BeforeLoginViewWidget.dart';
 import 'NotificationPage/NotificationPage.dart';
 
-class MyPage extends StatelessWidget {
+class MyPage extends StatefulWidget {
   MyPage({super.key});
+
+  @override
+  State<MyPage> createState() => _MyPageState();
+}
+
+class _MyPageState extends State<MyPage> {
+  final LoginController loginController = Get.put(LoginController());
 
   final double iconSize = 96.w;
 
@@ -23,63 +35,7 @@ class MyPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 100.h,),
-            Padding(
-              padding: EdgeInsets.only(left: 30.w),
-              child: Row(
-                children: [
-                  ClipOval(
-                    child: Image.asset(
-                      "assets/images/Ahri_15.jpg",
-                      width: 200.w,
-                      height: 200.w,
-                    ),
-                  ),
-                  SizedBox(width: 20.w,),
-                  Text(
-                    "닉네임",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 50.w
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: 50.h,),
-            Padding(
-              padding: EdgeInsets.fromLTRB(50.w,  0, 50.w, 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ProfileActionButtonWidget(
-                    icon: Icons.notifications_none,
-                    title: "알림설정",
-                    page: ScrapPage(),
-                  ),
-                  ProfileActionButtonWidget(
-                    icon: Icons.bookmark_border,
-                    title: "스크랩 ? 북마크",
-                    page: ScrapPage(),
-                  ),
-                  ProfileActionButtonWidget(
-                    icon: Icons.notifications_none,
-                    title: "알림설정",
-                    page: ScrapPage(),
-                  ),
-                  ProfileActionButtonWidget(
-                    icon: Icons.notifications_none,
-                    title: "알림설정",
-                    page: ScrapPage(),
-                  ),
-                  ProfileActionButtonWidget(
-                    icon: Icons.notifications_none,
-                    title: "알림설정",
-                    page: ScrapPage(),
-                  ),
-                ],
-              ),
-            ),
+            LoginViewWidget(),
             Divider(
               thickness: 3,
               color: Colors.black,
@@ -105,11 +61,40 @@ class MyPage extends StatelessWidget {
               content: "회원탈퇴",
               page: NotificationPage(),
             ),
-            ExtraActionWidget(
-              iconData: Icons.campaign,
-              content: "로그아웃",
-              page: NotificationPage(),
-            ),
+            Container(
+              padding: EdgeInsets.only(left: 30.w , right: 30.w),
+              margin: EdgeInsets.only(left: 30.w, right: 30.w),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 2
+                ),
+                borderRadius: BorderRadius.circular(10.r)
+              ),
+              child: TextFormField(
+                decoration: new InputDecoration(
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    suffixIcon: Icon(Icons.search), //검색 아이콘 추가
+                    contentPadding: EdgeInsets.only(left: 5, bottom: 5, top: 5, right: 5),
+                    hintText: '서버 주소'
+                ),
+                onFieldSubmitted: (value){
+                  LoginService.instance.firebaseAuthDataSource.setUrl(value);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    //SnackBar 구현하는법 context는 위에 BuildContext에 있는 객체를 그대로 가져오면 됨.
+                      SnackBar(
+                        content: Text('주소 변경 완료 : ${value}'), //snack bar의 내용. icon, button같은것도 가능하다.
+                        duration: Duration(milliseconds: 2000), //올라와있는 시간
+                        action: SnackBarAction( //추가로 작업을 넣기. 버튼넣기라 생각하면 편하다.
+                          label: 'Undo', //버튼이름
+                          onPressed: (){}, //버튼 눌렀을때.
+                        ),
+                      )
+                  );
+                },
+              ),
+            )
           ],
         ),
       ),
