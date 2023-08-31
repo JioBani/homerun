@@ -44,7 +44,7 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
                     }
                     else{
                       return FutureBuilder(
-                        future: LoginService.instance.checkToken(),
+                        future: LoginService.instance.checkKakaoToken(),
                           builder: (context , snapshot){
                             if(snapshot.hasData){
                               if(snapshot.data! == true && FirebaseAuth.instance.currentUser != null){
