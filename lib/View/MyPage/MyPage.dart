@@ -6,6 +6,7 @@ import 'package:homerun/View/MyPage/ExtraActionWidget.dart';
 import 'package:homerun/View/MyPage/ProfileActionButtonWidget.dart';
 import 'package:homerun/View/MyPage/QuestionPage/QuestionPage.dart';
 import 'package:homerun/View/MyPage/ScrapPage/ScrapPage.dart';
+import 'package:homerun/View/MyPage/inquiryPage/inquiryPage.dart';
 import 'package:homerun/View/buttom_nav.dart';
 
 import 'NotificationPage/NotificationPage.dart';
@@ -95,21 +96,20 @@ class MyPage extends StatelessWidget {
               page: QuestionPage(),
             ),
             ExtraActionWidget(
-              iconData: Icons.campaign,
-              content: "공지사항",
+              iconData: Icons.question_answer,
+              content: "문의하기",
+              page: InquiryPage(),
+            ),
+            ExtraActionWidget(
+              iconData: Icons.exit_to_app,
+              content: "회원탈퇴",
               page: NotificationPage(),
             ),
             ExtraActionWidget(
               iconData: Icons.campaign,
-              content: "공지사항",
+              content: "로그아웃",
               page: NotificationPage(),
             ),
-            ExtraActionWidget(
-              iconData: Icons.campaign,
-              content: "공지사항",
-              page: NotificationPage(),
-            ),
-
           ],
         ),
       ),
