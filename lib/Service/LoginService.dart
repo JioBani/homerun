@@ -156,6 +156,8 @@ class LoginService {
   Future<LoginState> checkLogin()async{
     if(await checkKakaoToken()){
       if(FirebaseAuth.instance.currentUser != null){
+        // User 가져오기 임시
+        user ??= await Kakao.UserApi.instance.me();
         return LoginState.login;
       }
       else{
