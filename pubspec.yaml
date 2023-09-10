@@ -52,6 +52,9 @@ dependencies:
   expansion_tile_group: #BSD 라이센스
   animate_icons:
   dropdown_button2:
+  fluttertoast:
+  pull_to_refresh:
+  intl:
 
 dev_dependencies:
   flutter_test:

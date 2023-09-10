@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Controller/main_page_controller.dart';
 import 'package:homerun/View/HomePage/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        designSize: const Size(900, 2000),
+      designSize: const Size(900, 2000),
        builder: (BuildContext context,child) => GetMaterialApp(
          title: 'Flutter Demo',
          theme: ThemeData(

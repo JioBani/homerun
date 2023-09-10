@@ -5,6 +5,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:homerun/View/AssessmentPage/AssessmentPage.dart';
 import 'package:homerun/View/HomePage/home_page.dart';
 import 'package:homerun/View/KakaoLogin/KakaoLoginPage.dart';
+import 'package:homerun/View/SaleInfomation/SaleInfomationPage.dart';
+import 'package:homerun/NotUsed/test.dart';
 
 import 'MyPage/MyPage.dart';
 
@@ -38,8 +40,16 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         HomePage(),
         transition: Transition.noTransition,
       );
-      case 3 : Get.off(
+      case 1 : Get.off(
+        Test(),
+        transition: Transition.noTransition,
+      );
+      case 2 : Get.off(
         AssessmentPage(),
+        transition: Transition.noTransition,
+      );
+      case 3 : Get.off(
+        SaleInformationPage(),
         transition: Transition.noTransition,
       );
       case 4 : Get.off(
@@ -60,23 +70,23 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home , color:iconColor,size: 60.w,),
-            label: 'Home',
+            label: '홈',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search, color:iconColor,size: 60.w),
-            label: 'Search',
+            label: '청약기본자격',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications, color:iconColor,size: 60.w),
-            label: 'Notifications',
+            label: '청약자격진단',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite, color: iconColor,size: 60.w),
-            label: 'Favorites',
+            label: '분양정보',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person, color: iconColor,size: 60.w),
-            label: 'Profile',
+            label: '마이페이지',
           ),
         ]
       ),

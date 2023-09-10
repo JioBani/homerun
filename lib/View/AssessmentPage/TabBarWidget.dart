@@ -14,7 +14,7 @@ class TapBarWidget extends StatefulWidget {
 class _TapBarWidgetState extends State<TapBarWidget> {
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       margin: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.w),
       decoration: BoxDecoration(
           color: Colors.white, // 배경색을 하얀색으로 설정
