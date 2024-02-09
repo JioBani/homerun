@@ -43,7 +43,7 @@ dependencies:
   firebase_auth:
   logger:
   firebase_storage:
-  cached_network_image:
+  cached_network_image:  ^3.3.1
   kakao_flutter_sdk_user: ^1.5.0
   card_loading:
   styled_widget:
@@ -55,6 +55,9 @@ dependencies:
   fluttertoast:
   pull_to_refresh:
   intl:
+  percent_indicator:
+  group_button: ^5.3.4
+  path_provider:
 
 dev_dependencies:
   flutter_test:

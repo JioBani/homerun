@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Model/TestData.dart';
 import 'package:logger/logger.dart';
 
-class GuidePageController extends GetxController{
+class   GuidePageController extends GetxController{
   RxList<ProductData> productDatas = <ProductData>[].obs;
   var productsCount = 0;
   final CollectionReference _collectionReference = FirebaseFirestore.instance.collection('items');

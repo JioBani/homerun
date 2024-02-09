@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:homerun/View/AssessmentPage/AssessmentPage.dart';
 import 'package:homerun/View/HomePage/home_page.dart';
-import 'package:homerun/View/KakaoLogin/KakaoLoginPage.dart';
 import 'package:homerun/View/SaleInfomation/SaleInfomationPage.dart';
 import 'package:homerun/NotUsed/test.dart';
 
+import 'AssessmentPage/AssessmentPage.dart';
 import 'MyPage/MyPage.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
@@ -69,23 +68,23 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         backgroundColor: backgroundColor,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home , color:iconColor,size: 60.w,),
+            icon: Icon(Icons.home , color:iconColor,size: 30.sp,),
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search, color:iconColor,size: 60.w),
+            icon: Icon(Icons.search, color:iconColor,size:  30.sp),
             label: '청약기본자격',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, color:iconColor,size: 60.w),
+            icon: Icon(Icons.notifications, color:iconColor,size: 30.sp),
             label: '청약자격진단',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: iconColor,size: 60.w),
+            icon: Icon(Icons.favorite, color: iconColor,size: 30.sp),
             label: '분양정보',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: iconColor,size: 60.w),
+            icon: Icon(Icons.person, color: iconColor,size: 30.sp),
             label: '마이페이지',
           ),
         ]

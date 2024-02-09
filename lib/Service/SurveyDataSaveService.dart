@@ -2,7 +2,7 @@
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Service/SharedPreferencesService.dart';
 
-import '../Model/SurveyData.dart';
+import '../Model/Question.dart';
 
 class SurveyDataSaveService{
 
@@ -17,10 +17,10 @@ class SurveyDataSaveService{
   }
 
 
-  Future<SurveyData?> loadSurveyData()async{
+  Future<QuestionData?> loadSurveyData()async{
     String? jsonString = await SharedPreferencesService.instance.loadData("survey_data");
     if(jsonString != null){
-      return SurveyData.stringToData(jsonString);
+      return QuestionData.stringToData(jsonString);
     }
     else{
       StaticLogger.logger.e("survey_data 가 null 임");
@@ -28,7 +28,7 @@ class SurveyDataSaveService{
     }
   }
 
-  Future<void> saveSurveyData(SurveyData surveyData)async{
+  Future<void> saveSurveyData(QuestionData surveyData)async{
     String jsonString = surveyData.toJsonString();
     await SharedPreferencesService.instance.saveData("survey_data", jsonString);
     return;

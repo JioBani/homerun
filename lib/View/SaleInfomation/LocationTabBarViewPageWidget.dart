@@ -6,7 +6,7 @@ import 'package:homerun/Model/PreSaleData.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 
 import 'PresaleListViewWidget.dart';
-import '../../Controller/SaleInformationPageController.dart';
+import '../../Controller/PresaleInfomationPage/SaleInformationPageController.dart';
 
 class LocationTabBarViewPageWidget extends StatelessWidget {
 

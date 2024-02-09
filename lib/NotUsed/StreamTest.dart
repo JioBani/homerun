@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Controller/SaleInformationPageController.dart';
+import 'package:homerun/Controller/PresaleInfomationPage/SaleInformationPageController.dart';
 
 class StreamTest extends StatefulWidget {
   const StreamTest({super.key});

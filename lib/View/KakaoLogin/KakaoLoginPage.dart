@@ -64,7 +64,7 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
                                   },
                                   child: Text("로그인"),
                                 );
-                              }
+                               }
                             }
                             else if(snapshot.hasError){
                               return Text(snapshot.error.toString());

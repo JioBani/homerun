@@ -23,8 +23,6 @@ class FirebaseFirestoreService{
     return _instance!;
   }
 
-
-
   Future<List<NotificationData>> getNotificationData() async {
     try{
       final snapshot = await _notificationCollection.get();
@@ -177,6 +175,76 @@ class FirebaseFirestoreService{
         'region': region,
         'category' : category,
         'announcement_date': announcementDate,
+        'survey_list' : [
+          {
+            'question' : "성별은 무엇입니까?",
+            'answers' : [
+              {
+                'answer' : '남자',
+                'result' : 10
+              },
+              {
+                'answer' : '여자',
+                'result' : 20
+              },
+            ]
+          },
+          {
+            'question' : "나이는 몇살입니까??",
+            'answers' : [
+              {
+                'answer' : '18-40',
+                'result' : 10
+              },
+              {
+                'answer' : '40 이상',
+                'result' : 20
+              },
+            ]
+          },
+          {
+            'question' : "좋아하는 색깔은 무엇입니까?",
+            'answers' : [
+              {
+                'answer' : '빨강',
+                'result' : 10
+              },
+              {
+                'answer' : '파랑',
+                'result' : 20
+              },
+              {
+                'answer' : '노랑',
+                'result' : 20
+              },
+              {
+                'answer' : '초록',
+                'result' : 20
+              },
+            ]
+          },
+          {
+            'question' : "현재 직업은 무엇입니까?",
+            'answers' : [
+              {
+                'answer' : '학생',
+                'result' : 10
+              },
+              {
+                'answer' : '직장인',
+                'result' : 20
+              },
+              {
+                'answer' : '자영업',
+                'result' : 20
+              },
+              {
+                'answer' : '무직',
+                'result' : 20
+              },
+            ]
+          },
+        ]
       };
       testData.add(data);
 
@@ -218,6 +286,10 @@ class FirebaseFirestoreService{
 
 
   Stream<QuerySnapshot> getDataStream() {
+    return preSaleCollection.orderBy('announcement_date').snapshots();
+  }
+
+  Stream<QuerySnapshot> getSurveyData() {
     return preSaleCollection.orderBy('announcement_date').snapshots();
   }
 

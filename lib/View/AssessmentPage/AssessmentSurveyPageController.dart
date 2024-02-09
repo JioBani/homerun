@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Model/SurveyData.dart';
+import 'package:homerun/Model/Question.dart';
 import 'package:homerun/Model/SurveyQuestionData.dart';
 import 'package:homerun/Service/SurveyDataSaveService.dart';
 
@@ -10,7 +10,7 @@ class AssessmentSurveyPageController extends GetxController{
 
   RxInt selectedValue = RxInt(-1);
 
-  Rx<SurveyData> surveyData = SurveyData(-1 , -1 , -1, -1).obs;
+  Rx<QuestionData> surveyData = QuestionData(-1 , -1 , -1, -1).obs;
   List<bool> values = List.generate(5, (index) => false);
   List<bool> isExpanded = List.generate(5, (index) => false).obs;
   List<String> subTitle = List.generate(5, (index) => "선택없음").obs;

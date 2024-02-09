@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:homerun/Controller/AssessmentSurveyPageController.dart';
+import 'package:homerun/View/AssessmentPage/AssessmentSurveyPageController.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
 import 'package:homerun/View/AssessmentServeyPage/ProgressBoxWidget.dart';
 import 'package:homerun/View/AssessmentServeyPage/SurveyWidget/SurveyWidget.dart';

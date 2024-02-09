@@ -1,7 +1,11 @@
 
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:intl/intl.dart';
+
+import 'SurveyData.dart';
 
 class PreSaleData{
   final String name;
@@ -10,6 +14,7 @@ class PreSaleData{
   final String category;
   final Timestamp? announcementDateTimeStamp;
   late final DateTime? announcementDateDateTime;
+  final SurveyData? surveyData;
 
   PreSaleData({
     required this.name,
@@ -17,6 +22,7 @@ class PreSaleData{
     required this.category,
     required this.region,
     required this.imageUrl,
+    required this.surveyData
   }
   ){
 
@@ -47,31 +53,37 @@ class PreSaleData{
     Timestamp? announcementDate;
     String? region;
     String? category;
+    SurveyData? surveyData;
 
     try{
       name = documentSnapshot['name'];
       announcementDate = documentSnapshot['announcement_date'];
       region = documentSnapshot['region'];
       category = documentSnapshot['category'];
+      //surveyData = SurveyData.fromMap(List<Map<String ,dynamic>>.from(jsonDecode(documentSnapshot['survey_list'])));
+      surveyData = SurveyData.fromMap(documentSnapshot['survey_list']);
+
 
       return PreSaleData(
-          name : name ?? "없음",
-          announcementDateTimeStamp : announcementDate,
-          category : category ?? "없음",
-          region : region ?? "없음",
-          imageUrl : "assets/images/Ahri_15.jpg"
+        name : name ?? "없음",
+        announcementDateTimeStamp : announcementDate,
+        category : category ?? "없음",
+        region : region ?? "없음",
+        imageUrl : "assets/images/Ahri_15.jpg",
+        surveyData: surveyData
       );
     }
     catch(e){
+      StaticLogger.logger.e(e);
       return PreSaleData(
           name : name ?? "없음",
           announcementDateTimeStamp : announcementDate,
           category : category ?? "없음",
           region : region ?? "없음",
-          imageUrl : "assets/images/Ahri_15.jpg"
+          imageUrl : "assets/images/Ahri_15.jpg",
+          surveyData: surveyData
       );
     }
-
   }
 
  /* static List<PreSaleData> getTestDataList(){

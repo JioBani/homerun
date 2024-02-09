@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Widget/FoldableWidget.dart';
-import 'package:homerun/Controller/AssessmentSurveyPageController.dart';
+import 'package:homerun/View/AssessmentPage/AssessmentSurveyPageController.dart';
 import 'package:homerun/Model/SurveyQuestionData.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
 import 'package:homerun/View/AssessmentServeyPage/CheckBoxWidget/CheckBoxWidget.dart';
