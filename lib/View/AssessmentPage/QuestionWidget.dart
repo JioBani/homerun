@@ -6,7 +6,7 @@ import 'package:group_button/group_button.dart';
 import 'package:homerun/Controller/AssessmentController.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
 
-import 'AssessmentQuestion.dart';
+import '../../Model/AssessmentQuestion.dart';
 
 class QuestionWidget extends StatefulWidget {
   const QuestionWidget({
@@ -34,7 +34,7 @@ class _QuestionWidgetState extends State<QuestionWidget>  with AutomaticKeepAliv
   void initState() {
     // TODO: implement initState
     _checkboxesController = GroupButtonController();
-    assessment = widget.assessmentController.questions[widget.index];
+    assessment = widget.assessmentController.assessmentDto!.assessmentList[widget.index];
     super.initState();
   }
 
@@ -59,7 +59,7 @@ class _QuestionWidgetState extends State<QuestionWidget>  with AutomaticKeepAliv
         widget.assessmentController.setAnswer(assessment, assessment.answers[_checkboxesController.selectedIndex!]);
 
         for(int i = widget.index + 1; i<goto; i++){
-          widget.assessmentController.setAnswer(widget.assessmentController.questions[i], null);
+          widget.assessmentController.setAnswer(widget.assessmentController.assessmentDto!.assessmentList[i], null);
         }
         widget.assessmentController.setNextQuestion(goto);
         widget.assessmentController.pushPageStack(widget.tabController.index);

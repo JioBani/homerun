@@ -6,9 +6,10 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Controller/AssessmentController.dart';
 import 'package:homerun/Service/AssessmentDataService.dart';
+import 'package:homerun/Service/FirebaseFirestoreService.dart';
 
 import '../buttom_nav.dart';
-import 'AssessmentQuestion.dart';
+import '../../Model/AssessmentQuestion.dart';
 import 'QuestionWidget.dart';
 
 class AssessmentPage extends StatefulWidget{
@@ -19,19 +20,20 @@ class AssessmentPage extends StatefulWidget{
 }
 
 class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStateMixin{
-  late TabController _tabController;
+
   late AssessmentController assessmentController;
 
   @override
   void initState() {
     // TODO: implement initState
-    _tabController = TabController(length: Assessment.questions.length + 1, vsync: this);
-    assessmentController = AssessmentController(questions: Assessment.questions);
+
+    assessmentController = AssessmentController();
     Get.put(assessmentController);
+    assessmentController.fetchAssessmentData();
     super.initState();
   }
 
-  void loadAnswers(){
+  void loadAnswers(TabController tabController){
     showDialog(
       context: context,
       barrierDismissible: true, //바깥 영역 터치시 닫을지 여부 결정
@@ -57,7 +59,7 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
                 int? result = await assessmentController.loadAnswers();
 
                 if(result != null){
-                  _tabController.animateTo(assessmentController.nextQuestion);
+                  tabController.animateTo(assessmentController.nextQuestion);
                 }
                 else{
                   Fluttertoast.showToast(msg: "진행상황을 불러 올 수 없습니다.");
@@ -108,94 +110,157 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                    onPressed: (){
-                      saveAnswers();
-                    },
-                    icon: Icon(Icons.upload)
-                ),
-                IconButton(
-                    onPressed: (){
-                      loadAnswers();
-                    },
-                    icon: Icon(Icons.cloud_download_rounded)
-                ),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: List.generate(
-                    Assessment.questions.length + 1,
-                      (index){
-                        if(index == Assessment.questions.length ){
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                    onPressed: (){
-                                      StaticLogger.logger.i("[AssessmentPage] ${assessmentController.print()}");
-                                    },
-                                    child: Text("결과 출력")
-                                ),
-                                ElevatedButton(
-                                    onPressed: (){
-                                      AssessmentDataService.saveAnswer(
-                                          assessmentController.getProgress()
-                                      );
-                                    },
-                                    child: Text("결과 저장하기")
-                                ),
-                                ElevatedButton(
-                                    onPressed: () async {
-                                      Get.find<AssessmentController>().loadAnswers();
-                                    },
-                                    child: Text("결과 불러오기")
-                                ),
-                                ElevatedButton(
-                                    onPressed: (){
-                                      StaticLogger.logger.i("[AssessmentPage] ${assessmentController.print()}");
-                                    },
-                                    child: Text("결과 삭제하기")
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        else{
-                          return Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 10.w , right: 10.w),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GetBuilder<AssessmentController>(
-                                    builder: (controller) {
-                                      return QuestionWidget(
-                                        tabController: _tabController,
-                                        assessmentController: assessmentController,
-                                        index: index,
-                                        selected: controller.findSelected(index),
-                                      );
-                                    }
+        child: FutureBuilder(
+          future: assessmentController.fetchAssessmentData(),
+          builder: (context , snapshot) {
+            if(snapshot.hasData){
+              if(snapshot.data!){
+                TabController _tabController =
+                TabController(length: assessmentController.assessmentDto!.assessmentList.length + 1, vsync: this);
+
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                            onPressed: (){
+                              saveAnswers();
+                            },
+                            icon: Icon(Icons.upload)
+                        ),
+                        IconButton(
+                            onPressed: (){
+                              loadAnswers(_tabController);
+                            },
+                            icon: Icon(Icons.cloud_download_rounded)
+                        ),
+                        IconButton(
+                            onPressed: (){
+                              FirebaseFirestoreService.instance.uploadAssessment();
+                            },
+                            icon: Icon(Icons.add)
+                        ),
+                        IconButton(
+                            onPressed: () async {
+                              AssessmentDto? assessmentDto = await FirebaseFirestoreService.instance.getAssessmentDto();
+                              if(assessmentDto != null){
+                                StaticLogger.logger.i(assessmentDto.toJson());
+                              }
+                            },
+                            icon: Icon(Icons.download_done)
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: List.generate(
+                            assessmentController.assessmentDto!.assessmentList.length + 1,
+                                (index){
+                              if(index == assessmentController.assessmentDto!.assessmentList.length ){
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: (){
+                                            StaticLogger.logger.i("[AssessmentPage] ${assessmentController.print()}");
+                                          },
+                                          child: Text("결과 출력")
+                                      ),
+                                      ElevatedButton(
+                                          onPressed: (){
+                                            AssessmentDataService.saveAnswer(
+                                                assessmentController.getProgress()
+                                            );
+                                          },
+                                          child: Text("결과 저장하기")
+                                      ),
+                                      ElevatedButton(
+                                          onPressed: () async {
+                                            Get.find<AssessmentController>().loadAnswers();
+                                          },
+                                          child: Text("결과 불러오기")
+                                      ),
+                                      ElevatedButton(
+                                          onPressed: (){
+                                            StaticLogger.logger.i("[AssessmentPage] ${assessmentController.print()}");
+                                          },
+                                          child: Text("결과 삭제하기")
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 10.w,),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                      }
+                                );
+                              }
+                              else{
+                                return Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 10.w , right: 10.w),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        GetBuilder<AssessmentController>(
+                                            builder: (controller) {
+                                              return QuestionWidget(
+                                                tabController: _tabController,
+                                                assessmentController: assessmentController,
+                                                index: index,
+                                                selected: controller.findSelected(index),
+                                              );
+                                            }
+                                        ),
+                                        SizedBox(height: 10.w,),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              }
+              else{
+                return Center(
+                  child: Column(
+                    children: [
+                      IconButton(
+                          onPressed: (){
+                            FirebaseFirestoreService.instance.uploadAssessment();
+                          },
+                          icon: Icon(Icons.add)
+                      ),
+                      Text("데이터를 불러오지 못했습니다."),
+                    ],
                   ),
-              ),
-            )
-          ],
+                );
+              }
+            }
+            else if(snapshot.hasError){
+              return Center(
+                child: Column(
+                  children: [
+                    IconButton(
+                        onPressed: (){
+                          FirebaseFirestoreService.instance.uploadAssessment();
+                        },
+                        icon: Icon(Icons.add)
+                    ),
+                    Text(snapshot.error.toString()),
+                  ],
+                ),
+              );
+            }
+            else{
+              return Center(
+                child: Text("로딩중"),
+              );
+            }
+
+          }
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(),
@@ -263,12 +328,6 @@ class CheckBoxTile extends StatelessWidget {
           },
         ),
       ),
-      /*leading: Checkbox(
-        value: selected,
-        onChanged: (val) {
-          onTap();
-        },
-      ),*/
     );
   }
 }
