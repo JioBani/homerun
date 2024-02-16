@@ -1,27 +1,26 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-
 import 'FileDataService.dart';
 
 class FirebaseStorageCacheService{
   static final storageRef = FirebaseStorage.instance.ref();
 
   static final Map<String, Uint8List> _assetCache = {};
-  static final Map<String , ImageProvider> _imageCache = {};
   static int _maxAssetCacheSize = 100 * 1024 * 1024; // 최대 100MB
-  static int _maxImageCacheCount = 30; // 최대 100MB
   static int _currentAssetCacheSize = 0;
+  static Duration _cacheLifeTime = const Duration(days: 30);
 
   static void setOption({
     int maxAssetCacheSize = 100 * 1024 * 1024 ,
-    int maxImageCacheCount = 30,
+    Duration? cacheLifeTime
   }){
     _maxAssetCacheSize = maxAssetCacheSize;
-    _maxImageCacheCount = _maxImageCacheCount;
+    if(cacheLifeTime != null){
+      _cacheLifeTime = cacheLifeTime;
+    }
   }
 
   static Future<Uint8List?> getAsset(String path) async {
@@ -40,7 +39,7 @@ class FirebaseStorageCacheService{
       FullMetadata metadata = await spaceRef.getMetadata();
 
       //#.3 캐쉬 확인
-      CacheState cacheState = await _checkCache(cachePath , metadata.updated! , const Duration(days: 14));
+      CacheState cacheState = await _checkCache(cachePath , metadata.updated!);
       //CacheState cacheState = await checkCache(path , metadata.updated! , Duration(seconds: 10));
 
       //#.4-1 캐쉬가 최신이면
@@ -160,7 +159,7 @@ class FirebaseStorageCacheService{
   }
 
   //#. 캐쉬 메타데이터 확인하기
-  static Future<CacheState> _checkCache(String path , DateTime updateDate , Duration lifeTime) async {
+  static Future<CacheState> _checkCache(String path , DateTime updateDate) async {
     String cachePath = "firebase_storage/$path";
 
     final (content , metaSaveE , metaSaveS)  = await FileDataService.readAsString("$cachePath.dat");
@@ -174,14 +173,14 @@ class FirebaseStorageCacheService{
         if(cacheSaveTime < updateDate.millisecondsSinceEpoch){
           return CacheState.old;
         }
-        else if((DateTime.now().millisecondsSinceEpoch - cacheSaveTime) > lifeTime.inMilliseconds){
+        else if((DateTime.now().millisecondsSinceEpoch - cacheSaveTime) > _cacheLifeTime.inMilliseconds){
           return CacheState.old;
         }
         else{
           return CacheState.recent;
         }
       }catch(e){
-        StaticLogger.logger.i("[FirebaseStorageCacheService._checkAssetCache()] ${content}");
+        StaticLogger.logger.i("[FirebaseStorageCacheService._checkAssetCache()] $content");
         return CacheState.error;
       }
     }
