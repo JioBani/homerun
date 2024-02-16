@@ -1,13 +1,10 @@
-
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:homerun/Controller/guide_page_controller.dart';
 import 'package:homerun/View/GuidePage/item_box_widget.dart';
-import 'package:logger/logger.dart';
+import 'package:homerun/View/buttom_nav.dart';
 
 import '../../Palette.dart';
 
@@ -30,20 +27,20 @@ class _GuidePageState extends State<GuidePage> {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.only(top: 50.w),
-                height: 100.w,
+                margin: EdgeInsets.only(top: 20.w),
+                height: 50.w,
                 width: double.infinity,
                 child: Center(
                   child: Text(
                     "청약길잡이",
                     style: TextStyle(
-                      fontSize: 40.w,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.bold
                     ),
                   ),
                 ),
               ),
-              const DefaultTabController(
+              DefaultTabController(
                   length: 3,
                   child: TabBar(
                     tabs: [
@@ -62,7 +59,7 @@ class _GuidePageState extends State<GuidePage> {
                   } else {
                     return Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(8.w),
                           child: GridView.builder(
                             itemCount: controller.productDatas.length,
                               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -77,21 +74,6 @@ class _GuidePageState extends State<GuidePage> {
                           ),
                         ),
                     );
-                    /*return Expanded(
-                      child: RefreshIndicator(
-                        onRefresh: controller.getData,
-                        child: ListView.builder(
-                          itemCount: controller.productDatas.length,
-                          itemBuilder: (context, index) {
-                            var userData = controller.productDatas[index];
-                            return ListTile(
-                              title: Text(userData.name),
-                              subtitle: Text(userData.price.toString()),
-                            );
-                          },
-                        ),
-                      ),
-                    );*/
                   }
                 },
               )
@@ -99,73 +81,7 @@ class _GuidePageState extends State<GuidePage> {
           )
       ),
       extendBodyBehindAppBar: true,
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        child: Container(
-          margin: EdgeInsets.fromLTRB(10.w, 0, 10.w, 20.w),
-          height: 100.w,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 5,
-                offset: const Offset(0, 2), // changes position of shadow
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(onPressed: ()=>{}, icon: Icon(Icons.home , size:iconSize)),
-              IconButton(onPressed: ()=>{}, icon: Icon(Icons.telegram, size:iconSize)),
-              IconButton(onPressed: ()=>{}, icon: Icon(Icons.sd_card, size:iconSize)),
-              IconButton(onPressed: ()=>{}, icon: Icon(Icons.file_copy, size:iconSize)),
-              IconButton(onPressed: ()=>{}, icon: Icon(Icons.people, size:iconSize)),
-
-            ],
-          ),
-          /*child: const DefaultTabController(
-            length: 4,
-            child: TabBar(
-              indicatorSize: TabBarIndicatorSize.label,
-              indicatorColor: Colors.red,
-              indicatorWeight: 2,
-              labelColor: Colors.red,
-              unselectedLabelColor: Colors.black38,
-                labelStyle: TextStyle(
-                  fontSize: 13,
-                ),
-              tabs: [
-                Tab(
-                  icon: Icon(
-                    Icons.home_outlined,
-                  ),
-                  text: 'Home',
-                ),
-                Tab(
-                  icon: Icon(Icons.music_note),
-                  text: 'Music',
-                ),
-                Tab(
-                  icon: Icon(
-                    Icons.apps,
-                  ),
-                  text: 'Apps',
-                ),
-                Tab(
-                  icon: Icon(
-                    Icons.settings,
-                  ),
-                  text: 'Settings',
-                )
-              ],
-            ),
-          ),*/
-        ),
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar()
     );
   }
 }

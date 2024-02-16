@@ -15,7 +15,7 @@ class LocationTabBarWidget extends StatelessWidget {
               child: Text(
                 location,
                 style: TextStyle(
-                    fontSize: 30.0.w,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87
                 ),

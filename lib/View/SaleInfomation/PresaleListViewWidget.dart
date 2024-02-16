@@ -160,12 +160,12 @@ class _ListViewFooterState extends State<ListViewFooter> {
       }
       else{
         return SizedBox(
-          height: 55.0,
+          height: 50.h,
           child: Center(
               child:Text(
                 str,
                 style: TextStyle(
-                    fontSize: 30.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w500
                 ),
               )

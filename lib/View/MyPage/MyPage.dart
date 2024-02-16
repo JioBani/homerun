@@ -28,7 +28,7 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   final LoginController loginController = Get.put(LoginController());
 
-  final double iconSize = 96.w;
+  final double iconSize = 14.w;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class _MyPageState extends State<MyPage> {
                 thickness: 3,
                 color: Colors.black,
               ),
-              SizedBox(height: 30.h,),
+              SizedBox(height: 10.h,),
               ExtraActionWidget(
                 iconData: Icons.campaign,
                 content: "공지사항",
@@ -65,8 +65,8 @@ class _MyPageState extends State<MyPage> {
                 page: DataDevPage(),
               ),
               Container(
-                padding: EdgeInsets.only(left: 30.w , right: 30.w),
-                margin: EdgeInsets.only(left: 30.w, right: 30.w),
+                padding: EdgeInsets.only(left: 10.w , right: 10.w),
+                margin: EdgeInsets.only(left: 10.w, right: 10.w),
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: Colors.black,

@@ -42,7 +42,7 @@ class _LoginViewWidgetState extends State<LoginViewWidget> {
         else{
           return SizedBox(
             width: double.infinity,
-            height: 600.h,
+            height: 200.h,
             child: CircularProgressIndicator()
           );
         }

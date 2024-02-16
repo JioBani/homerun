@@ -16,7 +16,7 @@ class _BeforeLoginViewWidgetState extends State<BeforeLoginViewWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 600.h,
+      height: 200.h,
       width: double.infinity,
       child: Column(
         children: [

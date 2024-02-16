@@ -4,14 +4,10 @@ import 'LocationTabBarViewPageWidget.dart';
 import 'LocationTabBarWidget.dart';
 
 class CategoryTabBarViewPageWidget extends StatelessWidget {
-  CategoryTabBarViewPageWidget({super.key, required this.category}){
-    pages = PresaleDataReferenceData.locations.map((location) =>
-        Center(child: LocationTabBarViewPageWidget(category: category, region: location,)),
-    ).toList();
-  }
+
+  const CategoryTabBarViewPageWidget({super.key, required this.category});
 
   final String category;
-  late final List<Widget> pages;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +18,9 @@ class CategoryTabBarViewPageWidget extends StatelessWidget {
           const LocationTabBarWidget(),
           Expanded(
             child: TabBarView(
-              children: pages
+              children: PresaleDataReferenceData.locations.map((location) =>
+                  Center(child: LocationTabBarViewPageWidget(category: category, region: location,)),
+              ).toList()
             ),
           ),
         ],

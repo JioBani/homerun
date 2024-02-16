@@ -9,16 +9,16 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      padding: EdgeInsets.fromLTRB(10.w, 10.w, 10.w, 10.w),
       child: SizedBox(
-        height: 80.w,
+        height: 35.w,
         child: TextFormField(
           textAlignVertical: TextAlignVertical.bottom,
           decoration: InputDecoration(
             hintText: hintText,
             border: OutlineInputBorder(
               //borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: BorderRadius.circular(5.r),
             ),
             filled: true,
             fillColor: Colors.grey[200],

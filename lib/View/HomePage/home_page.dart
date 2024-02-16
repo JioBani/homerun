@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:homerun/Controller/main_page_controller.dart';
+import 'package:homerun/Style/Images.dart';
 import 'package:homerun/View/HomePage/basic_guide_widge.dart';
 import 'package:homerun/View/HomePage/extra_guide_widget.dart';
 import 'package:homerun/View/HomePage/search_bar_widget.dart';
@@ -29,7 +30,7 @@ class HomePage extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text("청약홈런",
                     style: TextStyle(
-                      fontSize: 40.w,
+                      fontSize: 20.w,
                       fontWeight: FontWeight.bold
                     ),
                   ),
@@ -73,28 +74,28 @@ class HomePage extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text("청약길잡이",
                     style: TextStyle(
-                        fontSize: 30.w,
+                        fontSize: 15.w,
                         fontWeight: FontWeight.bold
                     ),
                   ),
                 ),
               ),// #. image
               SizedBox(height: 15.w,),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   BasicGuideWidget(
-                    imageUrl: 'assets/images/Ahri_15.jpg' ,
+                    imageUrl: Images.homeTemp ,
                     overlayText : "국민주택" ,
                     description: "국민주택입니다.",
                   ),
                   BasicGuideWidget(
-                    imageUrl: 'assets/images/Ahri_15.jpg' ,
+                    imageUrl: Images.homeTemp ,
                     overlayText : "민영주택" ,
                     description: "민영주택입니다.",
                   ),
                   BasicGuideWidget(
-                    imageUrl: 'assets/images/Ahri_15.jpg' ,
+                    imageUrl: Images.homeTemp ,
                     overlayText : "신혼홈타운" ,
                     description: "신혼홈타운입니다.",
                   ),

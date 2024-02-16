@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:homerun/Style/Images.dart';
 import 'package:homerun/View/KakaoLogin/KakaoLoginPage.dart';
 
 class ExtraGuideWidget extends StatelessWidget {
@@ -14,46 +15,46 @@ class ExtraGuideWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 30.w , left: 20.w),
+      padding: EdgeInsets.only(top: 15.w , left: 10.w),
       child: SizedBox(
-        height: 250.w,
+        height: 120.w,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(name,
               style: TextStyle(
-                fontSize: 30.w,
+                fontSize: 15.sp,
                 fontWeight: FontWeight.bold
               ),
             ),
-            SizedBox(height: 10.w,),
+            SizedBox(height: 5.w,),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   InkWell(
                     child: SizedBox(
-                      height: 175.w,
-                      width: 175.w,
+                      height: 70.w,
+                      width: 70.w,
                       child: ClipRRect(
-                        child: Image.asset('assets/images/Ahri_15.jpg'),
-                        borderRadius: BorderRadius.circular(20.0.w),
+                        borderRadius: BorderRadius.circular(7.0.w),
+                        child: Image.asset(Images.homeTemp),
                       ),
                     ),
                     onTap: ()=>{Get.to(KakaoLoginPage(title: "gd"))},
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 35.w),
+                    padding: EdgeInsets.only(left: 10.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(top: 20.w),
+                          padding: EdgeInsets.only(top: 10.w),
                           child: Text(
                             description,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 30.w
+                                fontSize: 14.sp
                             ),
                           ),
                         ),
@@ -63,7 +64,7 @@ class ExtraGuideWidget extends StatelessWidget {
                             description,
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                fontSize: 25.w
+                                fontSize: 12.sp
                             ),
                           ),
                         )

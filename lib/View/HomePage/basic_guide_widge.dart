@@ -24,23 +24,23 @@ class BasicGuideWidget extends StatelessWidget {
           onTap: ()=>Get.to(GuidePage()),
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(10.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 3,
-                  blurRadius: 10,
-                  offset: const Offset(0, 2), // 세로 및 가로 오프셋
+                  spreadRadius: 3.r,
+                  blurRadius: 10.r,
+                  offset: Offset(0, 2.sp), // 세로 및 가로 오프셋
                 ),
               ],
             ),
-            width: 280.w,
-            height: 280.w,
+            width: 100.w,
+            height: 100.w,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(10.r),
                   child: Image.asset(imageUrl),
                 ),
                 Positioned(
@@ -52,7 +52,7 @@ class BasicGuideWidget extends StatelessWidget {
                       overlayText,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 30.w,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.bold
                       ),
                     ),
@@ -67,8 +67,9 @@ class BasicGuideWidget extends StatelessWidget {
           child: Text(
             description,
             style: TextStyle(
-                fontSize: 25.w,
-                fontWeight: FontWeight.bold
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              overflow: TextOverflow.ellipsis
             ),
           ),
         )

@@ -22,7 +22,7 @@ class ItemBoxWidget extends StatelessWidget {
       onTap: ()=>{Get.to(GuideImagePage())},
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.w),
+            borderRadius: BorderRadius.circular(10.r),
             boxShadow: const [
               BoxShadow(
                 color: Color.fromARGB(64, 0, 0, 0),
@@ -31,7 +31,7 @@ class ItemBoxWidget extends StatelessWidget {
               )
             ]
         ),
-        margin: EdgeInsets.only(top: 50.w),
+        margin: EdgeInsets.only(top: 20.w),
         height: 200.w,
         child: Column(
             children: [
@@ -44,7 +44,7 @@ class ItemBoxWidget extends StatelessWidget {
                       width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.white10,
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(10.w) , topRight: Radius.circular(10.w))
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(10.r) , topRight: Radius.circular(10.r))
                         ),
                       child: Builder(
                           builder: (context) {
@@ -77,7 +77,7 @@ class ItemBoxWidget extends StatelessWidget {
                       child: Text(
                         productData.name,
                         style: TextStyle(
-                          fontSize: 35.w,
+                          fontSize: 15.sp,
                           fontWeight: FontWeight.w500
                         ),
                       ),

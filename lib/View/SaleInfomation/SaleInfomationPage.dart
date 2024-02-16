@@ -45,7 +45,7 @@ class _SaleInformationPageState extends State<SaleInformationPage> with TickerPr
     return DoubleTapExitWidget(
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 20.h,
+          toolbarHeight: 8.h,
           bottom: TabBar(
             controller: _tabController,
             tabs: [
@@ -53,7 +53,7 @@ class _SaleInformationPageState extends State<SaleInformationPage> with TickerPr
                 child: Text(
                   '분양중',
                   style: TextStyle(
-                      fontSize: 35.sp,
+                      fontSize: 14.sp,
                       color: Colors.black,
                       fontWeight: FontWeight.w600
                   ),
@@ -63,7 +63,7 @@ class _SaleInformationPageState extends State<SaleInformationPage> with TickerPr
                 child: Text(
                   '분양예졍',
                   style: TextStyle(
-                      fontSize: 35.sp,
+                      fontSize: 14.sp,
                       color: Colors.black,
                       fontWeight: FontWeight.w600
                   ),
@@ -73,7 +73,7 @@ class _SaleInformationPageState extends State<SaleInformationPage> with TickerPr
                 child: Text(
                   '분양완료',
                   style: TextStyle(
-                      fontSize: 35.sp,
+                      fontSize: 14.sp,
                       color: Colors.black,
                       fontWeight: FontWeight.w600
                   ),

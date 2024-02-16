@@ -17,19 +17,19 @@ class ExtraActionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(50.w, 10.h, 20.w, 10.h),
+      padding: EdgeInsets.fromLTRB(15.w, 5.h, 10.w, 5.h),
       child: Row(
         children: [
           Icon(
             iconData,
-            size: 96.w,
+            size: 24.sp,
             color: const Color.fromARGB(255, 153, 153, 153),
           ),
           SizedBox(width: 30.w,),
           Text(
             content,
             style: TextStyle(
-              fontSize: 40.sp,
+              fontSize: 20.sp,
               fontWeight: FontWeight.normal
             ),
           ),
@@ -40,7 +40,7 @@ class ExtraActionWidget extends StatelessWidget {
             },
             icon: Icon(
               Icons.arrow_forward_ios_rounded,
-              size: 50.w,
+              size: 20.w,
               color: Colors.black,
             )
           )

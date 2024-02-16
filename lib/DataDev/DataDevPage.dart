@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:homerun/Model/PreSaleData.dart';
+import 'package:get/get.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/View/DubleTapExitWidget.dart';
-import 'package:homerun/NotUsed/InformationListViewWidget.dart';
+import 'package:homerun/View/Test/CacheTest.dart';
+import 'package:homerun/View/Test/PdfTest2.dart';
 import 'package:homerun/View/buttom_nav.dart';
-import 'package:intl/intl.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import '../View/Test/PdfTest.dart';
 
 class DataDevPage extends StatefulWidget {
   const DataDevPage({super.key});
@@ -47,6 +48,24 @@ class _DataDevPageState extends State<DataDevPage> {
                       });
                     },
                     child: Text("데이터 가져오기")
+                ),
+                TextButton(
+                    onPressed: () async {
+                      Get.to(PdfImage());
+                    },
+                    child: Text("pdf 테스트")
+                ),
+                TextButton(
+                    onPressed: () async {
+                      Get.to(PdfTest2());
+                    },
+                    child: Text("pdf 테스트2")
+                ),
+                TextButton(
+                    onPressed: () async {
+                      Get.to(CacheTest());
+                    },
+                    child: Text("캐쉬 테스트")
                 ),
                 /*StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestoreService.instance.getDataStream(),

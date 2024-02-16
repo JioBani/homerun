@@ -31,7 +31,7 @@ class LocationTabBarViewPageWidget extends StatelessWidget {
               '데이터를 불러올 수 없습니다.',
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                fontSize: 35.sp
+                fontSize: 14.sp
               ),
             ),
           );

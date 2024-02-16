@@ -69,7 +69,7 @@ class PreSaleData{
         announcementDateTimeStamp : announcementDate,
         category : category ?? "없음",
         region : region ?? "없음",
-        imageUrl : "assets/images/Ahri_15.jpg",
+        imageUrl : "https://firebasestorage.googleapis.com/v0/b/homerun-3e122.appspot.com/o/images%2Fhome_temp.jpg?alt=media&token=d5d48d69-8bc5-45d3-ada3-9ad685d95705",
         surveyData: surveyData
       );
     }
@@ -80,32 +80,9 @@ class PreSaleData{
           announcementDateTimeStamp : announcementDate,
           category : category ?? "없음",
           region : region ?? "없음",
-          imageUrl : "assets/images/Ahri_15.jpg",
+          imageUrl : "assets/images/home_temp.jpg",
           surveyData: surveyData
       );
     }
   }
-
- /* static List<PreSaleData> getTestDataList(){
-    return [
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-      PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg"),
-    ];
-  }*/
-
-  /*static PreSaleData getTestData(){
-    return PreSaleData(DateTime.now() , DateTime.now() , "assets/images/Ahri_15.jpg");
-  }*/
 }
