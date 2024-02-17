@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Controller/main_page_controller.dart';
 import 'package:homerun/View/HomePage/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'firebase_options.dart';
 
-import 'View/GuidePage/guide_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

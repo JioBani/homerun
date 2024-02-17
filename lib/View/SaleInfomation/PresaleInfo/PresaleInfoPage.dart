@@ -4,14 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Model/PreSaleData.dart';
-import 'package:homerun/Model/SurveyData.dart';
 import 'package:homerun/Service/FirebaseStorageCacheService.dart';
-import 'package:homerun/Style/PDFs.dart';
-import 'package:homerun/View/DubleTapExitWidget.dart';
 import 'package:homerun/View/SaleInfomation/PresaleInfo/SurveyWidget.dart';
 import 'package:homerun/View/buttom_nav.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class PresaleInfoPage extends StatelessWidget {
   PresaleInfoPage({super.key, required this.preSaleData});
