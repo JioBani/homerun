@@ -31,8 +31,16 @@ class FileDataService{
 
   static Future<(Object? , StackTrace?)> saveAsString(String path , String content) async{
     try{
-      final file = await _getFile(path);
-      await file.writeAsString(content);
+
+      final targetFile = await _getFile(path);
+
+      bool exist = await targetFile.exists();
+
+      if(!exist){
+        await targetFile.create(recursive: true);
+      }
+
+      await targetFile.writeAsString(content);
       _logger.i("[DataStoreService.saveAsString()] 저장 완료");
       return (null , null);
     }catch(e , s){
