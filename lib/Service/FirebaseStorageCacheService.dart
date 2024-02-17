@@ -12,6 +12,8 @@ class FirebaseStorageCacheService{
   static int _maxAssetCacheSize = 100 * 1024 * 1024; // 최대 100MB
   static int _currentAssetCacheSize = 0;
   static Duration _cacheLifeTime = const Duration(days: 30);
+  static int _requestCount = 0;
+  static int get requestCount => _requestCount;
 
   static void setOption({
     int maxAssetCacheSize = 100 * 1024 * 1024 ,
@@ -59,10 +61,12 @@ class FirebaseStorageCacheService{
       else if(cacheState == CacheState.old || cacheState == CacheState.error){
         StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 없음 또는 오래됨 : $cachePath");
         final fileData = await spaceRef.getData();
+        _requestCount++;
         if(fileData == null){
           StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] storage 파일에 접근 할 수 없음 없음 : $cachePath");
           return null;
         }
+
         bool success = await _saveCache(cachePath , fileData);
 
         if(success){
@@ -80,6 +84,7 @@ class FirebaseStorageCacheService{
         StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] 메타데이터가 없음 : $cachePath");
 
         final fileData = await spaceRef.getData();
+        _requestCount++;
         if(fileData == null){
           StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] storage 파일에 접근 할 수 없음 없음 : $cachePath");
           return null;
@@ -148,7 +153,7 @@ class FirebaseStorageCacheService{
       return false;
     }
 
-    final (metaSaveE , metaSaveS)  = await FileDataService.saveAsString("$path.dat", DateTime.now().millisecondsSinceEpoch.toString());
+    final (metaSaveE , metaSaveS)  = await FileDataService.saveAsString("$cachePath.dat", DateTime.now().millisecondsSinceEpoch.toString());
 
     if(metaSaveE != null){
       StaticLogger.logger.e("[FirebaseStorageCacheService.saveTempFile()] $metaSaveE\n$metaSaveS");
@@ -208,7 +213,6 @@ class FirebaseStorageCacheService{
   static void _removeAllCache(){
     FileDataService.removeRecursive("firebase_storage");
   }
-
 }
 
 enum CacheState{
