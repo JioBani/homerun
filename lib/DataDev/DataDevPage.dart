@@ -8,8 +8,6 @@ import 'package:homerun/View/Test/CacheTest.dart';
 import 'package:homerun/View/Test/PdfTest2.dart';
 import 'package:homerun/View/buttom_nav.dart';
 
-import '../View/Test/PdfTest.dart';
-
 class DataDevPage extends StatefulWidget {
   const DataDevPage({super.key});
 
@@ -51,7 +49,7 @@ class _DataDevPageState extends State<DataDevPage> {
                 ),
                 TextButton(
                     onPressed: () async {
-                      Get.to(PdfImage());
+                      //Get.to(PdfImage());
                     },
                     child: Text("pdf 테스트")
                 ),

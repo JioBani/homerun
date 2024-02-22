@@ -2,8 +2,11 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'FileDataService.dart';
+import 'package:http/http.dart' as http;
+
 
 class FirebaseStorageCacheService{
   static final storageRef = FirebaseStorage.instance.ref();
@@ -23,6 +26,30 @@ class FirebaseStorageCacheService{
     if(cacheLifeTime != null){
       _cacheLifeTime = cacheLifeTime;
     }
+  }
+
+  static Future<Uint8List?> _downloadAsset(Reference spaceRef) async {
+    _requestCount++;
+    try{
+      if(kIsWeb){
+        String url = await spaceRef.getDownloadURL();
+        final response = await http.get(Uri.parse(url));
+
+        if (response.statusCode == 200) {
+          return response.bodyBytes;
+        } else {
+          StaticLogger.logger.e('[FirebaseStorageCacheService._downloadAsset()] Failed to download asset. HTTP status code: ${response.statusCode}');
+          return null;
+        }
+      }
+      else{
+        return await spaceRef.getData();
+      }
+    }catch(e , s){
+      StaticLogger.logger.e("[FirebaseStorageCacheService._downloadAsset()] $e\n$s");
+      return null;
+    }
+
   }
 
   static Future<Uint8List?> getAsset(String path) async {
@@ -60,8 +87,9 @@ class FirebaseStorageCacheService{
       //#.4-2 캐쉬가 없거나 오래되었으면
       else if(cacheState == CacheState.old || cacheState == CacheState.error){
         StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 없음 또는 오래됨 : $cachePath");
-        final fileData = await spaceRef.getData();
-        _requestCount++;
+
+        final fileData = await _downloadAsset(spaceRef);
+
         if(fileData == null){
           StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] storage 파일에 접근 할 수 없음 없음 : $cachePath");
           return null;
@@ -83,8 +111,7 @@ class FirebaseStorageCacheService{
       try{
         StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] 메타데이터가 없음 : $cachePath");
 
-        final fileData = await spaceRef.getData();
-        _requestCount++;
+        final fileData = await _downloadAsset(spaceRef);
         if(fileData == null){
           StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] storage 파일에 접근 할 수 없음 없음 : $cachePath");
           return null;

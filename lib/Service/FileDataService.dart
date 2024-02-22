@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
 
 class FileDataService{
 
@@ -10,17 +10,26 @@ class FileDataService{
 
 
   static Future<String> _getFilePath(String filePath)async{
-    final directory = await getApplicationDocumentsDirectory();
-    // 파일 경로와 파일 이름을 합쳐서 전체 파일 경로를 만듬
-    return '${directory.path}/$filePath';
+    if (!kIsWeb) {
+      final directory = await getApplicationDocumentsDirectory();
+      // 파일 경로와 파일 이름을 합쳐서 전체 파일 경로를 만듬
+      return '${directory.path}/$filePath';
+    }
+    else{
+      return filePath;
+    }
   }
 
   // 파일 경로를 생성하는 함수
   static Future<File> _getFile(String fileName) async {
-    // 앱의 디렉토리 경로를 가져옴
-    final directory = await getApplicationDocumentsDirectory();
-    // 파일 경로와 파일 이름을 합쳐서 전체 파일 경로를 만듬
-    return File('${directory.path}/$fileName');
+    if (!kIsWeb) {
+      final directory = await getApplicationDocumentsDirectory();
+      // 파일 경로와 파일 이름을 합쳐서 전체 파일 경로를 만듬
+      return File('${directory.path}/$fileName');
+    }
+    else{
+      return File(fileName);
+    }
   }
 
   static Future<bool> _isPathExist(String filePath)async{

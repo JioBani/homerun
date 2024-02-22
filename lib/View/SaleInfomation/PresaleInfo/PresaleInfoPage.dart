@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,9 +8,8 @@ import 'package:homerun/View/buttom_nav.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
 
 class PresaleInfoPage extends StatelessWidget {
-  PresaleInfoPage({super.key, required this.preSaleData});
+  const PresaleInfoPage({super.key, required this.preSaleData});
   final PreSaleData preSaleData;
-  String pathPDF = "";
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +17,7 @@ class PresaleInfoPage extends StatelessWidget {
       appBar: AppBar(),
       body: SafeArea(
         child: FutureBuilder(
-          future: FirebaseStorageCacheService.getAsset("pdfs/test2.pdf"),
+          future: FirebaseStorageCacheService.getAsset("pdfs/test3.pdf"),
           builder: (context , snapshot) {
             if(snapshot.hasData){
               return PdfDocumentLoader.openData(

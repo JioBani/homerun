@@ -22,8 +22,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize;
+
+    if(GetPlatform.isMobile){
+      screenSize =  const Size(360, 800);
+    }
+    else{
+      screenSize =  const Size(1920, 1080);
+    }
+
     return ScreenUtilInit(
-      designSize: const Size(360, 800),
+      designSize: screenSize,
        builder: (BuildContext context,child) => GetMaterialApp(
          title: 'Flutter Demo',
          theme: ThemeData(
@@ -32,6 +41,7 @@ class MyApp extends StatelessWidget {
            appBarTheme: AppBarTheme(
              color: Colors.white
            ),
+           fontFamily: 'Pretendard',
            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
              backgroundColor: Colors.transparent,
            ),

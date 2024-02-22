@@ -38,13 +38,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   get:
   flutter_screenutil :
-  firebase_core : ^2.15.0
+  firebase_core :
   cloud_firestore:
   firebase_auth:
   logger:
   firebase_storage:
-  cached_network_image:  ^3.3.1
-  kakao_flutter_sdk_user: ^1.5.0
+  cached_network_image:
+  kakao_flutter_sdk_user:
   card_loading:
   styled_widget:
   shared_preferences:
@@ -56,11 +56,10 @@ dependencies:
   pull_to_refresh:
   intl:
   percent_indicator:
-  group_button: ^5.3.4
+  group_button:
   path_provider:
-  pdfx: ^2.6.0
-  pdf_render: ^1.4.5
-  flutter_cache_manager: ^3.3.1
+  pdf_render:
+  flutter_cache_manager:
 
 dev_dependencies:
   flutter_test:
@@ -116,5 +115,26 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard/Pretendard-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Pretendard/Pretendard-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Pretendard/Pretendard-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Pretendard/Pretendard-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Pretendard/Pretendard-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Pretendard/Pretendard-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Pretendard/Pretendard-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Pretendard/Pretendard-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Pretendard/Pretendard-Black.ttf
+          weight: 900
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

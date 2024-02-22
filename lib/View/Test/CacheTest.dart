@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -137,6 +138,12 @@ class _CacheTestState extends State<CacheTest> {
                 },
                 child: Text("이미지 가져오기")
             ),
+            TextButton(
+                onPressed: () {
+                  StaticLogger.logger.i("stroage 접근 횟수 : ${FirebaseStorageCacheService.requestCount}");
+                },
+                child: Text("스토리지 접근 횟수")
+            ),
             Expanded(
               child: ListView(
                 children: [
@@ -175,21 +182,46 @@ class ImageWidget extends StatefulWidget {
 class _ImageWidgetState extends State<ImageWidget> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: FirebaseStorageCacheService.getImage("images/아파트01.png"),
-        builder: (context , snapshot){
-          if(snapshot.hasData){
-            return Image(
-              image: snapshot.data!,
-            );
-          }
-          else if(snapshot.hasError){
-            return Text("Error");
-          }
-          else{
-            return CircularProgressIndicator();
-          }
+    return Builder(
+      builder: (context) {
+        if(!kIsWeb){
+          return FutureBuilder(
+              future: FirebaseStorageCacheService.getImage("images/아파트01.png"),
+              builder: (context , snapshot){
+                if(snapshot.hasData){
+                  return Image(
+                    image: snapshot.data!,
+                  );
+                }
+                else if(snapshot.hasError){
+                  return Text("Error");
+                }
+                else{
+                  return CircularProgressIndicator();
+                }
+              }
+          );
         }
+        else{
+          return FutureBuilder(
+              future: FirebaseStorage.instance.ref().child("images/아파트01.png").getDownloadURL(),
+              builder: (context , snapshot){
+                if(snapshot.hasData){
+                  return CachedNetworkImage(
+                    imageUrl: snapshot.data!,
+                  );
+                }
+                else if(snapshot.hasError){
+                  return Text("Error");
+                }
+                else{
+                  return CircularProgressIndicator();
+                }
+              }
+          );
+        }
+
+      }
     );
   }
 }
