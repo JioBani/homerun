@@ -6,7 +6,7 @@ import 'package:homerun/Controller/guide_page_controller.dart';
 import 'package:homerun/View/GuidePage/item_box_widget.dart';
 import 'package:homerun/View/buttom_nav.dart';
 
-import '../../Palette.dart';
+import '../../Style/Palette.dart';
 
 class GuidePage extends StatefulWidget {
   GuidePage({super.key});

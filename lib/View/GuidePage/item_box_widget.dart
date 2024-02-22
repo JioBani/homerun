@@ -8,7 +8,7 @@ import 'package:homerun/Controller/guide_page_controller.dart';
 import 'package:homerun/Model/TestData.dart';
 import 'package:homerun/View/GuideImagePage/guide_image_page.dart';
 
-import '../../Palette.dart';
+import '../../Style/Palette.dart';
 
 class ItemBoxWidget extends StatelessWidget {
   const ItemBoxWidget({super.key , required this.productData , required this.controller});

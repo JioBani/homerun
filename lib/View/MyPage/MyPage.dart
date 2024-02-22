@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Controller/LoginController.dart';
 import 'package:homerun/DataDev/DataDevPage.dart';
-import 'package:homerun/Palette.dart';
+import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Service/LoginService.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
 import 'package:homerun/View/DubleTapExitWidget.dart';

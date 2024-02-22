@@ -56,7 +56,7 @@ class FirebaseStorageCacheService{
     String cachePath = "firebase_storage/$path";
 
     if (_assetCache.containsKey(cachePath)) {
-      StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] 메모리 캐시로부터 불러오기");
+      StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 메모리 캐시로부터 불러오기");
       return _assetCache[cachePath];
     }
 

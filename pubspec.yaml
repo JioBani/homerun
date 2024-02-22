@@ -89,6 +89,7 @@ flutter:
     - assets/pdfs/
     - assets/pdfs/temp.pdf
     - assets/images/Kaisa_16.jpg
+    - assets/images/homepage/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

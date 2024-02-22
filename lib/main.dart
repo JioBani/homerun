@@ -24,12 +24,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Size screenSize;
 
-    if(GetPlatform.isMobile){
+    screenSize =  const Size(360, 800);
+
+    /*if(GetPlatform.isMobile){
       screenSize =  const Size(360, 800);
     }
     else{
       screenSize =  const Size(1920, 1080);
-    }
+    }*/
 
     return ScreenUtilInit(
       designSize: screenSize,

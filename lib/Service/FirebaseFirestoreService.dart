@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/FirebaseFireStoreCache.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/AssessmentQuestion.dart';
+import 'package:homerun/Model/NewsData.dart';
 import 'package:homerun/Model/NotificationData.dart';
 import 'package:homerun/Model/TestData.dart';
 
@@ -15,6 +16,7 @@ class FirebaseFirestoreService{
 
   final CollectionReference preSaleCollection = FirebaseFirestore.instance.collection('pre_sale');
   final CollectionReference assessmentCollection = FirebaseFirestore.instance.collection('assessment');
+  final CollectionReference _newsCollection = FirebaseFirestore.instance.collection('news');
 
   static FirebaseFirestoreService? _instance;
 
@@ -316,6 +318,20 @@ class FirebaseFirestoreService{
       }
     } catch (e, s) {
       StaticLogger.logger.e("[getAssessmentDto] 데이터 가져오기 실패 $e , $s");
+      return null;
+    }
+  }
+
+  Future<List<NewsData>?> getNewsList()async{
+    try {
+      QuerySnapshot querySnapshot = await _newsCollection.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.map((doc) => NewsData.fromMap(doc.id , doc.data() as Map<String, dynamic>)).toList();
+      } else {
+        return null;
+      }
+    } catch (e, s) {
+      StaticLogger.logger.e("[FirebaseFirestoreService.getNewsList()] 데이터 가져오기 실패 $e , $s");
       return null;
     }
   }

@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/View/GuidePage/guide_page.dart';
 
-class BasicGuideWidget extends StatelessWidget {
-  const BasicGuideWidget({super.key,
+class TypeGuideButtonWidget extends StatelessWidget {
+  const TypeGuideButtonWidget({
+    super.key,
     required this.imagePath,
-    required this.name,
-    required this.description,
+    required this.name
   });
 
-  final String name;
   final String imagePath;
-  final String description;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -51,22 +48,14 @@ class BasicGuideWidget extends StatelessWidget {
             child: Text(
               name,
               style: TextStyle(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  overflow: TextOverflow.ellipsis,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                overflow: TextOverflow.ellipsis,
                 color: Palette.defaultBlue
               ),
             ),
           ),
-          Text(
-            description,
-            style: TextStyle(
-              fontSize: 8.sp,
-              fontWeight: FontWeight.w600,
-              overflow: TextOverflow.visible,
-              color: Color.fromRGBO(164, 164, 166, 1)
-            ),
-          )
+          SizedBox(height: 10.h,)
         ],
       ),
     );
