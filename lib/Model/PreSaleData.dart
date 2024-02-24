@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 
 import 'SurveyData.dart';
 
-class PreSaleData{
+class HousingData{
   final String name;
   final String imageUrl;
   final String region;
@@ -16,7 +16,7 @@ class PreSaleData{
   late final DateTime? announcementDateDateTime;
   final SurveyData? surveyData;
 
-  PreSaleData({
+  HousingData({
     required this.name,
     required this.announcementDateTimeStamp,
     required this.category,
@@ -48,7 +48,7 @@ class PreSaleData{
     StaticLogger.logger.i("$name , ${getDateString()}");
   }
 
-  factory PreSaleData.fromDocumentSnapshot(DocumentSnapshot documentSnapshot){
+  factory HousingData.fromDocumentSnapshot(DocumentSnapshot documentSnapshot){
     String? name;
     Timestamp? announcementDate;
     String? region;
@@ -64,7 +64,7 @@ class PreSaleData{
       surveyData = SurveyData.fromMap(documentSnapshot['survey_list']);
 
 
-      return PreSaleData(
+      return HousingData(
         name : name ?? "없음",
         announcementDateTimeStamp : announcementDate,
         category : category ?? "없음",
@@ -75,7 +75,7 @@ class PreSaleData{
     }
     catch(e){
       StaticLogger.logger.e(e);
-      return PreSaleData(
+      return HousingData(
           name : name ?? "없음",
           announcementDateTimeStamp : announcementDate,
           category : category ?? "없음",

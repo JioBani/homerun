@@ -68,9 +68,9 @@ class _DataDevPageState extends State<DataDevPage> {
                 ),
                 TextButton(
                     onPressed: () async {
-                      Get.to(NewsDataTest());
+                      Get.to(TabBarExample());
                     },
-                    child: Text("뉴스테스트")
+                    child: Text("탭 테스트")
                 ),
                 /*StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestoreService.instance.getDataStream(),

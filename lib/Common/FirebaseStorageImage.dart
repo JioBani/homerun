@@ -11,12 +11,14 @@ class FireStorageImage extends StatefulWidget {
     required this.path,
     this.fit,
     this.width,
-    this.height
+    this.height,
+    this.loadingWidget
   });
   final String path;
   final BoxFit? fit;
   final double? width;
   final double? height;
+  final Widget? loadingWidget;
 
   @override
   State<FireStorageImage> createState() => _FireStorageImageState();
@@ -43,7 +45,7 @@ class _FireStorageImageState extends State<FireStorageImage> {
                     return const Text("이미지를 불러 올 수 없습니다.");
                   }
                   else{
-                    return const CupertinoActivityIndicator();
+                    return widget.loadingWidget ?? const CupertinoActivityIndicator();
                   }
                 }
             );
@@ -63,7 +65,7 @@ class _FireStorageImageState extends State<FireStorageImage> {
                     return const Text("이미지를 불러 올 수 없습니다.");
                   }
                   else{
-                    return const CupertinoActivityIndicator();
+                    return widget.loadingWidget ??  const CupertinoActivityIndicator();
                   }
                 }
             );

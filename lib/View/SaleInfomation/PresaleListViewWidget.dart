@@ -22,7 +22,7 @@ class PresaleListViewWidget extends StatefulWidget {
 class _PresaleListViewWidgetState extends State<PresaleListViewWidget> with AutomaticKeepAliveClientMixin {
   SaleInformationPageController saleInformationController = Get.find<SaleInformationPageController>();
   RefreshController refreshController = RefreshController(initialRefresh: false);
-  List<PreSaleData> presaleDataList = [];
+  List<HousingData> presaleDataList = [];
   PreSaleDataSet? dataSet;
   GlobalKey footerKey = GlobalKey();
   late ListViewFooter listViewFooter;

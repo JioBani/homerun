@@ -12,8 +12,8 @@ import 'package:homerun/View/SaleInfomation/PresaleInfo/PresaleInfoPage.dart';
 class ProfileRowWidget extends StatelessWidget {
   const ProfileRowWidget({super.key, required this.region, this.data0, this.data1});
   final String region;
-  final PreSaleData? data0;
-  final PreSaleData? data1;
+  final HousingData? data0;
+  final HousingData? data1;
 
 
   @override
@@ -33,7 +33,7 @@ class ProfileWidget extends StatelessWidget {
 
   final SaleInformationPageController controller = Get.find<SaleInformationPageController>();
   final String region;
-  final PreSaleData? preSaleData;
+  final HousingData? preSaleData;
 
   @override
   Widget build(BuildContext context) {

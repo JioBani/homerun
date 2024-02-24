@@ -9,7 +9,7 @@ import 'package:pdf_render/pdf_render_widgets.dart';
 
 class PresaleInfoPage extends StatelessWidget {
   const PresaleInfoPage({super.key, required this.preSaleData});
-  final PreSaleData preSaleData;
+  final HousingData preSaleData;
 
   @override
   Widget build(BuildContext context) {

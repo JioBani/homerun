@@ -9,7 +9,7 @@ import 'package:homerun/Model/PresaleDataSet.dart';
 class SaleInformationPageController extends GetxController{
 
   final ScrollController scrollController = ScrollController();
-  RxList<PreSaleData> presaleDataAllList = List<PreSaleData>.empty().obs;
+  RxList<HousingData> presaleDataAllList = List<HousingData>.empty().obs;
   List<DocumentSnapshot> preSaleSnapshotList = List<DocumentSnapshot>.empty();
   RxMap<String , int> limits = RxMap();
   RxMap<String , RxMap<String , PreSaleDataSet>> dataList = RxMap.from(
@@ -40,7 +40,7 @@ class SaleInformationPageController extends GetxController{
     }
   }
 
-  void refreshAllData(List<PreSaleData> datas){
+  void refreshAllData(List<HousingData> datas){
 
     presaleDataAllList.assignAll(datas);
 
@@ -58,7 +58,7 @@ class SaleInformationPageController extends GetxController{
           targetList[element.region]!.dataList.add(element);
         }
         else{
-          var data = PreSaleDataSet(<PreSaleData>[]);
+          var data = PreSaleDataSet(<HousingData>[]);
           data.dataList.add(element);
           targetList[element.region] = data;
         }

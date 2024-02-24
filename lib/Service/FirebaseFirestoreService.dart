@@ -1,5 +1,3 @@
-
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,7 +6,6 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/AssessmentQuestion.dart';
 import 'package:homerun/Model/NewsData.dart';
 import 'package:homerun/Model/NotificationData.dart';
-import 'package:homerun/Model/TestData.dart';
 
 class FirebaseFirestoreService{
 
@@ -261,12 +258,6 @@ class FirebaseFirestoreService{
   }
 
   Future<List<DocumentSnapshot>> getNextNDocuments(DocumentSnapshot? current, int n) async {
-    // Firestore 인스턴스를 초기화합니다.
-
-    // 지정한 컬렉션에서 문서를 가져옵니다.
-
-    // 다음 n개의 문서를 가져오기 위해 쿼리를 생성합니다.
-
     if(current == null){
       QuerySnapshot querySnapshot = await preSaleCollection
           .orderBy("generate")
@@ -283,12 +274,35 @@ class FirebaseFirestoreService{
           .getSavy();
       return querySnapshot.docs;
     }
-
-
-
-    // 쿼리 결과에서 다음 n개의 문서를 가져옵니다.
   }
 
+  Future<QuerySnapshot?> getHousingData(String category,String regional,DocumentSnapshot? start ,int count)async{
+    try{
+      if(start == null){
+        QuerySnapshot querySnapshot = await preSaleCollection
+            .orderBy("announcement_date")
+            .where("region" ,isEqualTo:regional )
+            .limit(count)
+            .getSavy();
+
+        return querySnapshot;
+      }
+      else{
+        QuerySnapshot querySnapshot = await preSaleCollection
+            .orderBy("announcement_date")
+            .where("region" ,isEqualTo:regional )
+            .startAfterDocument(start)
+            .limit(count)
+            .getSavy();
+
+        return querySnapshot;
+      }
+    }catch(e , s){
+      StaticLogger.logger.e("[FirebaseFirestoreService.getHousingData()] $e\n$s");
+      return null;
+    }
+
+  }
 
   Stream<QuerySnapshot> getDataStream() {
     return preSaleCollection.orderBy('announcement_date').snapshots();

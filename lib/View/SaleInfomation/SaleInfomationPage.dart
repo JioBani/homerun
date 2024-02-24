@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Controller/PresaleInfomationPage/SaleInformationPageController.dart';
-import 'package:homerun/Style/ShadowPalette.dart';
 import 'package:homerun/View/DubleTapExitWidget.dart';
-import 'package:homerun/NotUsed/InformationListViewWidget.dart';
-import 'package:homerun/NotUsed/LocationTabPageWidget.dart';
-import 'package:homerun/NotUsed/StreamTest.dart';
 import 'package:homerun/View/buttom_nav.dart';
 import 'package:get/get.dart';
 

@@ -45,7 +45,7 @@ class LocationTabBarViewPageWidget extends StatelessWidget {
 
         final List<QueryDocumentSnapshot> documents = snapshot.data!.docs;
         saleInformationController.refreshAllData(
-            documents.map((document) => PreSaleData.fromDocumentSnapshot(document)).toList()
+            documents.map((document) => HousingData.fromDocumentSnapshot(document)).toList()
         );
 
         return PresaleListViewWidget(category: category , region: region,);

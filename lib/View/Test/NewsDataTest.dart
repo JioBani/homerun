@@ -1,59 +1,109 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Model/NewsData.dart';
-import 'package:homerun/Service/FirebaseFirestoreService.dart';
 
-class NewsDataTest extends StatelessWidget {
-  const NewsDataTest({super.key});
+class TabBarExample extends StatelessWidget {
+  const TabBarExample({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(20), // 컨테이너 내부 여백
-              height: 300.h,
-              color: Colors.orange,
-              child: Text(
-                'Dynamic height content here. The content can be longer or shorter, '
-                    'and the container will adjust its size accordingly.',
-                style: TextStyle(color: Colors.white),
+    return DefaultTabController(
+      initialIndex: 1,
+      length: 3,
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              TabBar(
+                dividerColor: Colors.transparent,
+                tabs: <Widget>[
+                  Tab(
+                    text: 'Flights',
+                    icon: Icon(Icons.flight),
+                  ),
+                  Tab(
+                    text: 'Trips',
+                    icon: Icon(Icons.luggage),
+                  ),
+                  Tab(
+                    text: 'Explore',
+                    icon: Icon(Icons.explore),
+                  ),
+                ],
               ),
-            ),
-            Transform.translate(
-              offset: Offset(0, -30), // 이미지 위로 30픽셀 겹치도록 올립니다.
-              child: Container(
-                padding: EdgeInsets.all(20), // 컨테이너 내부 여백
-                color: Colors.black.withOpacity(0.5),
-                child: Column(
-                  children: [
-                    Text(
-                      'Dynamic height content here. The content can be longer or shorter, '
-                          'and the container will adjust its size accordingly.',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Text(
-                      'Dynamic height content here. The content can be longer or shorter, '
-                          'and the container will adjust its size accordingly.',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Text(
-                      'Dynamic height content here. The content can be longer or shorter, '
-                          'and the container will adjust its size accordingly.',
-                      style: TextStyle(color: Colors.white),
-                    ),
-
+              Expanded(
+                child: const TabBarView(
+                  children: <Widget>[
+                    NestedTabBar('Flights'),
+                    NestedTabBar('Trips'),
+                    NestedTabBar('Explore'),
                   ],
                 ),
               ),
-            ),
-            // 다른 컨텐츠들을 여기에 추가할 수 있습니다.
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class NestedTabBar extends StatefulWidget {
+  const NestedTabBar(this.outerTab, {super.key});
+
+  final String outerTab;
+
+  @override
+  State<NestedTabBar> createState() => _NestedTabBarState();
+}
+
+class _NestedTabBarState extends State<NestedTabBar>
+    with TickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 7, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        TabBar.secondary(
+          controller: _tabController,
+          tabs: const <Widget>[
+            Tab(text: '서울'),
+            Tab(text: '경기'),
+            Tab(text: '부산'),
+            Tab(text: '대전'),
+            Tab(text: '대구'),
+            Tab(text: '광주'),
+            Tab(text: '제주'),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              Card(
+                margin: const EdgeInsets.all(16.0),
+                child: Center(child: Text('${widget.outerTab}: Overview tab')),
+              ),
+              Card(
+                margin: const EdgeInsets.all(16.0),
+                child: Center(
+                    child: Text('${widget.outerTab}: Specifications tab')),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

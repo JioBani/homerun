@@ -1,7 +1,7 @@
 import 'PreSaleData.dart';
 
 class PreSaleDataSet{
-  List<PreSaleData> _dataList = [];
+  List<HousingData> _dataList = [];
   get dataList => _dataList;
 
   int _viewCount = 0;
