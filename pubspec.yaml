@@ -60,6 +60,8 @@ dependencies:
   path_provider:
   pdf_render:
   flutter_cache_manager:
+  animated_svg: ^2.0.0
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -90,6 +92,7 @@ flutter:
     - assets/pdfs/temp.pdf
     - assets/images/Kaisa_16.jpg
     - assets/images/homepage/
+    - assets/images/assessment/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

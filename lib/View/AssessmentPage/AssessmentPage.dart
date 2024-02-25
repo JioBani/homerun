@@ -5,11 +5,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Controller/AssessmentController.dart';
+import 'package:homerun/Model/AssessmentQuestion.dart';
 import 'package:homerun/Service/AssessmentDataService.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
-
-import '../buttom_nav.dart';
-import '../../Model/AssessmentQuestion.dart';
+import 'package:homerun/View/buttom_nav.dart';
 import 'QuestionWidget.dart';
 
 class AssessmentPage extends StatefulWidget{
@@ -25,8 +24,6 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
 
   @override
   void initState() {
-    // TODO: implement initState
-
     assessmentController = AssessmentController();
     Get.put(assessmentController);
     assessmentController.fetchAssessmentData();
@@ -109,6 +106,7 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: FutureBuilder(
           future: assessmentController.fetchAssessmentData(),
@@ -117,7 +115,6 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
               if(snapshot.data!){
                 TabController _tabController =
                 TabController(length: assessmentController.assessmentDto!.assessmentList.length + 1, vsync: this);
-
                 return Column(
                   children: [
                     Row(
@@ -135,7 +132,7 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
                             },
                             icon: Icon(Icons.cloud_download_rounded)
                         ),
-                        IconButton(
+                        /*IconButton(
                             onPressed: (){
                               FirebaseFirestoreService.instance.uploadAssessment();
                             },
@@ -149,12 +146,13 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
                               }
                             },
                             icon: Icon(Icons.download_done)
-                        ),
+                        ),*/
                       ],
                     ),
                     Expanded(
                       child: TabBarView(
                         controller: _tabController,
+                        physics: const NeverScrollableScrollPhysics(),
                         children: List.generate(
                             assessmentController.assessmentDto!.assessmentList.length + 1,
                                 (index){
@@ -196,7 +194,7 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
                               else{
                                 return Center(
                                   child: Padding(
-                                    padding: EdgeInsets.only(left: 10.w , right: 10.w),
+                                    padding: EdgeInsets.only(left: 25.w , right: 25.w),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
@@ -264,70 +262,6 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(),
-    );
-  }
-}
-
-class RadioTile extends StatelessWidget {
-  const RadioTile({
-    Key? key,
-    required this.selected,
-    required this.onTap,
-    required this.index,
-    required this.title,
-  }) : super(key: key);
-
-  final String title;
-  final int index;
-  final int? selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      onTap: onTap,
-      leading: Radio<int>(
-        groupValue: selected,
-        value: index,
-        onChanged: (val) {
-          onTap();
-        },
-      ),
-    );
-  }
-}
-
-class CheckBoxTile extends StatelessWidget {
-  const CheckBoxTile({
-    Key? key,
-    required this.selected,
-    required this.onTap,
-    required this.title,
-  }) : super(key: key);
-
-  final String title;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      onTap: onTap,
-      leading: Transform.scale(
-        scale: 1.2,
-        child: Checkbox(
-          value: selected,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(7.w)
-          ),
-          activeColor: Colors.blueGrey,
-          onChanged: (bool? value) {
-            onTap();
-          },
-        ),
-      ),
     );
   }
 }

@@ -4,7 +4,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:group_button/group_button.dart';
 import 'package:homerun/Controller/AssessmentController.dart';
-import 'package:homerun/Style/ShadowPalette.dart';
+import 'package:homerun/Style/Palette.dart';
+import 'package:homerun/View/AssessmentPage/AnswerCheckBoxTileWidget.dart';
 
 import '../../Model/AssessmentQuestion.dart';
 
@@ -84,23 +85,45 @@ class _QuestionWidgetState extends State<QuestionWidget>  with AutomaticKeepAliv
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.fromLTRB(0.w, 10.h, 0.w, 10.h),
+          padding: EdgeInsets.fromLTRB(7.w, 10.h, 7.w, 10.h),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.r),
-            color: Colors.white,
-            boxShadow: [
-              ShadowPalette.defaultShadowLight
-            ]
+            borderRadius: BorderRadius.circular(5.r),
+            color: Palette.assessmentPage.questionWidgetBackground,
           ),
          child: Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
            children: [
-             Text(
-               assessment.question,
-               style: TextStyle(
-                 fontSize: 17.sp,
-                 fontWeight: FontWeight.w900
-               ),
+             Row(
+               children: [
+                 Container(
+                   width: 26.sp,
+                   height: 26.sp,
+                   decoration: BoxDecoration(
+                     borderRadius: BorderRadius.circular(26.sp),
+                     color: Palette.assessmentPage.questionNumber
+                   ),
+                   child: Center(
+                     child: Text(
+                       "Q${widget.index}",
+                       style: TextStyle(
+                         fontSize: 13.sp,
+                         fontWeight: FontWeight.w700,
+                         color: Colors.white
+                       ),
+                     ),
+                   ),
+                 ),
+                 SizedBox(width: 8.w,),
+                 Text(
+                   assessment.question,
+                   style: TextStyle(
+                     fontSize: 15.sp,
+                     fontWeight: FontWeight.w700
+                   ),
+                 ),
+               ],
              ),
+             SizedBox(height: 12.h,),
              GetBuilder<AssessmentController>(
                builder: (controller) {
                  int? checked = widget.assessmentController.findSelected(widget.index);
@@ -110,10 +133,13 @@ class _QuestionWidgetState extends State<QuestionWidget>  with AutomaticKeepAliv
                  return GroupButton(
                    controller: _checkboxesController,
                    isRadio: true,
-                   options: const GroupButtonOptions(groupingType: GroupingType.column),
+                   options: const GroupButtonOptions(
+                       groupingType: GroupingType.column,
+                       //crossGroupAlignment: CrossGroupAlignment.start,
+                   ),
                    buttons: assessment.answers,
                    buttonIndexedBuilder: (selected, index, context) {
-                     return CheckBoxTile(
+                     return AnswerCheckBoxTile(
                        selected: _checkboxesController.selectedIndex == index,
                        onTap: () {
                          _checkboxesController.selectIndex(index);
@@ -127,49 +153,46 @@ class _QuestionWidgetState extends State<QuestionWidget>  with AutomaticKeepAliv
            ],
          ),
         ),
-        ElevatedButton(
-            onPressed: moveFront,
-            child: Text("다음")
-        ),
-        ElevatedButton(
-            onPressed: moveBack,
-            child: Text("이전")
-        ),
+        SizedBox(
+          width: double.infinity,
+          height: 50.h,
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                    onPressed: moveBack,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.assessmentPage.questionWidgetBackground,
+                      foregroundColor: Colors.black,
+                      surfaceTintColor :  Palette.assessmentPage.questionWidgetBackground,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.r), // 모서리 반경 설정
+                      ),
+                    ),
+                    child: Text("이전")
+                ),
+              ),
+              SizedBox(width: 3.w,),
+              Expanded(
+                child: ElevatedButton(
+                    onPressed: moveFront,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.assessmentPage.questionWidgetBackground,
+                      foregroundColor: Colors.black,
+                      surfaceTintColor :  Palette.assessmentPage.questionWidgetBackground,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.r), // 모서리 반경 설정
+                      ),
+                    ),
+                    child: Text("다음")
+                ),
+              ),
+            ],
+          ),
+        )
       ],
     );
   }
 }
 
-class CheckBoxTile extends StatelessWidget {
-  const CheckBoxTile({
-    Key? key,
-    required this.selected,
-    required this.onTap,
-    required this.title,
-  }) : super(key: key);
 
-  final String title;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      onTap: onTap,
-      leading: Transform.scale(
-        scale: 1.2,
-        child: Checkbox(
-          value: selected,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(2.w)
-          ),
-          activeColor: Colors.blueGrey,
-          onChanged: (bool? value) {
-            onTap();
-          },
-        ),
-      ),
-    );
-  }
-}
