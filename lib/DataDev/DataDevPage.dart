@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/View/DubleTapExitWidget.dart';
 import 'package:homerun/View/Test/CacheTest.dart';
+import 'package:homerun/View/Test/GuidePostUploadPage.dart';
 import 'package:homerun/View/Test/NewsDataTest.dart';
 import 'package:homerun/View/Test/PdfTest2.dart';
 import 'package:homerun/View/buttom_nav.dart';
@@ -71,6 +72,12 @@ class _DataDevPageState extends State<DataDevPage> {
                       Get.to(TabBarExample());
                     },
                     child: Text("탭 테스트")
+                ),
+                TextButton(
+                    onPressed: () async {
+                      Get.to(GuidePostUploadPage());
+                    },
+                    child: Text("길잡이 테스트 데이터")
                 ),
                 /*StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestoreService.instance.getDataStream(),

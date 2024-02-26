@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Style/Palette.dart';
-import 'package:homerun/View/GuidePage/guide_page.dart';
+import 'package:homerun/View/GuidePage/GuidePage.dart';
 
 class BasicGuideWidget extends StatelessWidget {
   const BasicGuideWidget({super.key,

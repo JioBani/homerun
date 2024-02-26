@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -5,8 +6,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:homerun/Controller/guide_page_controller.dart';
 import 'package:homerun/View/GuidePage/item_box_widget.dart';
 import 'package:homerun/View/buttom_nav.dart';
-
-import '../../Style/Palette.dart';
 
 class GuidePage extends StatefulWidget {
   GuidePage({super.key});
@@ -85,3 +84,4 @@ class _GuidePageState extends State<GuidePage> {
     );
   }
 }
+*/

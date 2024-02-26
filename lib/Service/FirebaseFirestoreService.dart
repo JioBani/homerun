@@ -14,13 +14,13 @@ class FirebaseFirestoreService{
   final CollectionReference preSaleCollection = FirebaseFirestore.instance.collection('pre_sale');
   final CollectionReference assessmentCollection = FirebaseFirestore.instance.collection('assessment');
   final CollectionReference _newsCollection = FirebaseFirestore.instance.collection('news');
+  final CollectionReference _guidePostCollection = FirebaseFirestore.instance.collection('guide');
 
   static FirebaseFirestoreService? _instance;
 
   FirebaseFirestoreService._();
 
   static FirebaseFirestoreService get instance {
-    // 이미 인스턴스가 생성된 경우, 해당 인스턴스를 반환합니다.
     _instance ??= FirebaseFirestoreService._();
     return _instance!;
   }
@@ -262,7 +262,7 @@ class FirebaseFirestoreService{
       QuerySnapshot querySnapshot = await preSaleCollection
           .orderBy("generate")
           .limit(n)
-          .getSavy();
+          .get();
       return querySnapshot.docs;
 
     }
@@ -271,7 +271,7 @@ class FirebaseFirestoreService{
           .orderBy("generate")
           .startAfterDocument(current)
           .limit(n)
-          .getSavy();
+          .get();
       return querySnapshot.docs;
     }
   }
@@ -302,6 +302,29 @@ class FirebaseFirestoreService{
       return null;
     }
 
+
+  }
+
+  Future<QuerySnapshot?> getGuidePostData(String type,DocumentSnapshot? start ,int count)async{
+    try{
+      if(start == null){
+        QuerySnapshot querySnapshot = await _guidePostCollection
+            .limit(count)
+            .getSavy();
+
+        return querySnapshot;
+      }
+      else{
+        QuerySnapshot querySnapshot = await _guidePostCollection
+            .startAfterDocument(start)
+            .limit(count)
+            .getSavy();
+        return querySnapshot;
+      }
+    }catch(e , s){
+      StaticLogger.logger.e("[FirebaseFirestoreService.getGuidePostData()] $e\n$s");
+      return null;
+    }
   }
 
   Stream<QuerySnapshot> getDataStream() {

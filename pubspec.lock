@@ -289,6 +289,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.6.5"
+  firestore_cache:
+    dependency: "direct main"
+    description:
+      name: firestore_cache
+      sha256: d6d5246aa94756938756219183d66084749a57cd09727f8d1000ba5732a0426e
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.1"
   fixnum:
     dependency: transitive
     description:

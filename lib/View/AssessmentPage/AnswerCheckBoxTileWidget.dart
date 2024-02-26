@@ -38,7 +38,7 @@ class AnswerCheckBoxTile extends StatelessWidget {
 
 
 class AnswerCheckboxWidget extends StatefulWidget {
-  AnswerCheckboxWidget({Key? key , required this.value , required this.onChange}) : super(key: key);
+  const AnswerCheckboxWidget({Key? key , required this.value , required this.onChange}) : super(key: key);
   final bool value;
   final void Function(bool) onChange;
 

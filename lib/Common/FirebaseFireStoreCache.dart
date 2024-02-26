@@ -19,6 +19,8 @@ extension FirestoreDocumentExtension on DocumentReference {
       return this.get(GetOptions(source: Source.server));
     }
   }
+
+
 }
 
 // https://github.com/furkansarihan/firestore_collection/blob/master/lib/firestore_query.dart

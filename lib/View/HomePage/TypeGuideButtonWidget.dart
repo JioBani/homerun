@@ -3,22 +3,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Style/Palette.dart';
+import 'package:homerun/View/GuidePage/GuidePage.dart';
 import 'package:homerun/View/GuidePage/guide_page.dart';
 
 class TypeGuideButtonWidget extends StatelessWidget {
-  const TypeGuideButtonWidget({
+  TypeGuideButtonWidget({
     super.key,
     required this.imagePath,
-    required this.name
+    required this.name,
+    this.size
   });
 
   final String imagePath;
   final String name;
+  double? size;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 100.w,
+      width: size ?? 100.w,
       child: Column(
         children: [
           InkWell(
@@ -26,10 +29,10 @@ class TypeGuideButtonWidget extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: Palette.defaultGrey,
-                borderRadius: BorderRadius.circular(109.w),
+                borderRadius: BorderRadius.circular(size ?? 100.w),
               ),
-              width: 100.w,
-              height: 100.w,
+              width: size ?? 100.w,
+              height: size ?? 100.w,
               child: Stack(
                 alignment: Alignment.center,
                 children: [

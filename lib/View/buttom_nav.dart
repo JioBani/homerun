@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:homerun/View/GuidePage/GuidePage.dart';
 import 'package:homerun/View/HomePage/home_page.dart';
 import 'package:homerun/View/HousingInformationPage/HousingInformationPage.dart';
 import 'package:homerun/View/SaleInfomation/SaleInfomationPage.dart';
@@ -41,7 +42,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         transition: Transition.noTransition,
       );
       case 1 : Get.off(
-        Test(),
+        GuidePage(),
         transition: Transition.noTransition,
       );
       case 2 : Get.off(
