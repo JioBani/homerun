@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:homerun/Common/Firebase/FirestoreAutoCacher.dart';
 import 'package:homerun/Common/FirebaseFireStoreCache.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/AssessmentQuestion.dart';
@@ -9,20 +10,97 @@ import 'package:homerun/Model/NotificationData.dart';
 
 class FirebaseFirestoreService{
 
+  static String cacheField = "updateAt";
+
   final CollectionReference _notificationCollection = FirebaseFirestore.instance.collection('notification');
 
   final CollectionReference preSaleCollection = FirebaseFirestore.instance.collection('pre_sale');
-  final CollectionReference assessmentCollection = FirebaseFirestore.instance.collection('assessment');
-  final CollectionReference _newsCollection = FirebaseFirestore.instance.collection('news');
+
+  final CollectionReference _updateRecordDocument = FirebaseFirestore.instance.collection('updates');
+
+  //#. 청약길잡이
+  late final FirestoreAutoCacher _guidePostCacher;
   final CollectionReference _guidePostCollection = FirebaseFirestore.instance.collection('guide');
 
-  static FirebaseFirestoreService? _instance;
+  //#. 분양공고
+  final CollectionReference _housingDataCollection = FirebaseFirestore.instance.collection('pre_sale');
+  late final FirestoreAutoCacher _housingDataCacher;
 
-  FirebaseFirestoreService._();
+  //#. 청약뉴스
+  final CollectionReference _newsCollection = FirebaseFirestore.instance.collection('news');
+  late final FirestoreAutoCacher _newsCacher;
+
+  //#. 청약기본자격
+  final CollectionReference _assessmentCollection = FirebaseFirestore.instance.collection('assessment');
+  late final FirestoreAutoCacher _assessmentCacher ;
+
+
+  static FirebaseFirestoreService? _instance;
 
   static FirebaseFirestoreService get instance {
     _instance ??= FirebaseFirestoreService._();
     return _instance!;
+  }
+
+  FirebaseFirestoreService._(){
+
+    //#. 청약길잡이
+    _guidePostCacher = FirestoreAutoCacher(
+        collectionReference: _guidePostCollection,
+        updatedTimesDocument: _updateRecordDocument.doc('guide'),
+        cacheField: cacheField
+    );
+
+
+    //#. 분양공고
+    _housingDataCacher = FirestoreAutoCacher(
+        collectionReference: _housingDataCollection,
+        updatedTimesDocument: _updateRecordDocument.doc('pre_sale'),
+        cacheField: cacheField
+    );
+
+
+    //#. 청약뉴스
+    _newsCacher = FirestoreAutoCacher(
+        collectionReference: _newsCollection,
+        updatedTimesDocument: _updateRecordDocument.doc('news'),
+        cacheField: cacheField
+    );
+
+    //#. 청약뉴스
+    _assessmentCacher = FirestoreAutoCacher(
+        collectionReference: _assessmentCollection,
+        updatedTimesDocument: _updateRecordDocument.doc('assessment'),
+        cacheField: cacheField
+    );
+  }
+
+  static void init(){
+    _instance ??= FirebaseFirestoreService._();
+  }
+
+  //#. 청약길잡이
+  Future<QuerySnapshot?> getGuidePostData(String category,DocumentSnapshot? start ,int count)async{
+    try{
+      if(start == null){
+        return _guidePostCacher.getQuerySnapshot(
+            _guidePostCacher.collectionReference
+            .limit(count)
+            .where('category' , isEqualTo : category)
+        );
+      }
+      else{
+        return _guidePostCacher.getQuerySnapshot(
+            _guidePostCacher.collectionReference
+            .startAfterDocument(start)
+            .limit(count)
+            .where('category' , isEqualTo : category)
+        );
+      }
+    }catch(e , s){
+      StaticLogger.logger.e("[FirebaseFirestoreService.getGuidePostData()] $e\n$s");
+      return null;
+    }
   }
 
   Future<List<NotificationData>> getNotificationData() async {
@@ -301,30 +379,6 @@ class FirebaseFirestoreService{
       StaticLogger.logger.e("[FirebaseFirestoreService.getHousingData()] $e\n$s");
       return null;
     }
-
-
-  }
-
-  Future<QuerySnapshot?> getGuidePostData(String type,DocumentSnapshot? start ,int count)async{
-    try{
-      if(start == null){
-        QuerySnapshot querySnapshot = await _guidePostCollection
-            .limit(count)
-            .getSavy();
-
-        return querySnapshot;
-      }
-      else{
-        QuerySnapshot querySnapshot = await _guidePostCollection
-            .startAfterDocument(start)
-            .limit(count)
-            .getSavy();
-        return querySnapshot;
-      }
-    }catch(e , s){
-      StaticLogger.logger.e("[FirebaseFirestoreService.getGuidePostData()] $e\n$s");
-      return null;
-    }
   }
 
   Stream<QuerySnapshot> getDataStream() {
@@ -337,7 +391,7 @@ class FirebaseFirestoreService{
 
   Future<void> uploadAssessment()async {
     try{
-      await assessmentCollection.add(AssessmentDto(assessmentList: questions, version: "1.0").toMap());
+      await _assessmentCollection.add(AssessmentDto(assessmentList: questions, version: "1.0").toMap());
       StaticLogger.logger.i("[uploadAssessment] 업로드 완료");
     }catch(e , s){
       StaticLogger.logger.e("[uploadAssessment] 업로드 실패 $e , $s");
@@ -346,7 +400,7 @@ class FirebaseFirestoreService{
 
   Future<AssessmentDto?> getAssessmentDto() async {
     try {
-      QuerySnapshot querySnapshot = await assessmentCollection.get();
+      QuerySnapshot querySnapshot = await _assessmentCollection.get();
       if (querySnapshot.docs.isNotEmpty) {
         Map<String, dynamic> data = querySnapshot.docs.first.data() as Map<String, dynamic>;
         return AssessmentDto.fromMap(data);

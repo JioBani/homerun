@@ -14,12 +14,7 @@ class GuidePostUploadPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                  onPressed: (){
-                    uploadTestData();
-                  },
-                  child: Text("데이터 업로드 하기")
-              )
+
             ],
           ),
         ),
@@ -27,18 +22,8 @@ class GuidePostUploadPage extends StatelessWidget {
     );
   }
 
-  final CollectionReference _guidePostCollection = FirebaseFirestore.instance.collection('guide');
 
-  Future<void> uploadGuidePostData(GuidePostData data) async {
-    try {
-      await _guidePostCollection.add(data.toMap());
-      StaticLogger.logger.i("[FirebaseFirestoreService.uploadGuidePostData()] 데이터 업로드 성공");
-    } catch (e, s) {
-      StaticLogger.logger.e("[FirebaseFirestoreService.uploadGuidePostData()] 데이터 업로드 실패: $e\n$s");
-    }
-  }
-
-  GuidePostData createTestGuidePostData(String category , int index) {
+  /*GuidePostData createTestGuidePostData(String category , int index) {
     final Map<String, List<String>> titles = {
       '신혼부부': [
         '신혼부부 특별공급 신청자격은?',
@@ -114,6 +99,7 @@ class GuidePostUploadPage extends StatelessWidget {
       subTitle: titles[category]![index],
       thumbnailImagePath: 'guide/${index + 1}.jpg',
       postPdfPath: 'guide/${index + 1 + 1}.pdf',
+      updateAt: DateTime.now(),
     );
   }
 
@@ -135,10 +121,73 @@ class GuidePostUploadPage extends StatelessWidget {
       }
     }
     
-    await Future.wait(datas.map((e) => uploadGuidePostData(e)));
+    await Future.wait(datas.map((e) => FirebaseAdminService.instance.uploadGuidePost(e)));
 
     StaticLogger.logger.i("업로드 완료");
   }
 
+  Future<void> updateTestData()async{
+    //QuerySnapshot? querySnapshot = await FirebaseFirestoreService.instance.getGuidePostData("신혼부부", null, 1);
+    QuerySnapshot? querySnapshot = await FirebaseAdminService.instance.getGuidePostData("신혼부부", null, 1);
+
+    if(querySnapshot != null){
+      GuidePostData? data = GuidePostData.fromDocumentSnapshot(querySnapshot.docs[0]);
+
+      if(data == null){
+        StaticLogger.logger.e("[데이터 가져오기 실패]");
+      }
+
+      String newDataString = DateTime.now().toString();
+
+      GuidePostData newData = GuidePostData(
+          category: "신혼부부",
+          title: newDataString,
+          subTitle: newDataString,
+          thumbnailImagePath: newDataString,
+          postPdfPath: newDataString,
+          updateAt: DateTime.now()
+      );
+
+      await FirebaseAdminService.instance.updateGuidePost(
+          querySnapshot.docs[0].reference,
+          newData
+      );
+
+      StaticLogger.logger.i("[업데이트 완료] ${querySnapshot.docs[0].id}");
+    }
+  }
+
+  Future<void> getTestData()async{
+    //QuerySnapshot? querySnapshot = await FirebaseFirestoreService.instance.getGuidePostData("신혼부부", null, 1);
+    QuerySnapshot? querySnapshot = await FirebaseAdminService.instance.getGuidePostData("신혼부부", null, 1);
+
+    if(querySnapshot != null){
+      GuidePostData? data = GuidePostData.fromDocumentSnapshot(querySnapshot.docs[0]);
+
+      if(data != null){
+        StaticLogger.logger.i(data.toMap());
+      }
+      else{
+        StaticLogger.logger.e("[데이터 가져오기 실패]");
+      }
+    }
+  }
+
+  Future<void> getTestData2()async{
+    //QuerySnapshot? querySnapshot = await FirebaseFirestoreService.instance.getGuidePostData("신혼부부", null, 1);
+    QuerySnapshot? querySnapshot = await FirebaseAdminService.instance.getGuidePostData2("신혼부부", null, 1);
+
+    if(querySnapshot != null){
+      GuidePostData? data = GuidePostData.fromDocumentSnapshot(querySnapshot.docs[0]);
+
+      if(data != null){
+        StaticLogger.logger.i(querySnapshot.docs[0].id);
+        StaticLogger.logger.i(data.toMap());
+      }
+      else{
+        StaticLogger.logger.e("[데이터 가져오기 실패]");
+      }
+    }
+  }*/
 }
 

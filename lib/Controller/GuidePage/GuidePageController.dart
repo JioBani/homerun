@@ -27,6 +27,7 @@ class GuidePageController extends GetxController{
 
     if(snapShotList.isNotEmpty){
       querySnapshot = await FirebaseFirestoreService.instance.getGuidePostData(type, snapShotList.last, nums);
+      //querySnapshot = await FirebaseFirestoreService.instance.getGuidePostData(type, snapShotList.last, nums);
     }
     else{
       querySnapshot = await FirebaseFirestoreService.instance.getGuidePostData(type, null, nums);
