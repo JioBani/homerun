@@ -28,7 +28,6 @@ class _RegionalTabViewState extends State<RegionalTabView>  with TickerProviderS
   late ListViewFooter listViewFooter;
   late RegionalInfoController controller;
   bool isInit = false;
-  LoadingState initLoadingResult = LoadingState.none;
   int loadSize = 5;
 
   @override
@@ -40,7 +39,7 @@ class _RegionalTabViewState extends State<RegionalTabView>  with TickerProviderS
         RegionalInfoController(category: widget.category, regional: widget.region) , tag: tag
     );
     listViewFooter = ListViewFooter(key : footerKey, refreshController: refreshController);
-    _onLoad().then((value) => initLoadingResult = value);
+    _onLoad();
   }
 
   Future<LoadingState> _onLoad() async {
@@ -68,66 +67,69 @@ class _RegionalTabViewState extends State<RegionalTabView>  with TickerProviderS
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
-
-        int nums = controller.housingDataList.length;
-        return ListView.builder(
-            shrinkWrap: true,
-            itemCount: nums + 1,
-            itemBuilder: (context , index){
-              if(index == nums){
-                if(nums < loadSize){
-                  return Text('더 불러올 데이터가 없습니다.');
+        if(!isInit){
+          return const CupertinoActivityIndicator();
+        }
+        else{
+          int nums = controller.housingDataList.length;
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: nums + 1,
+              itemBuilder: (context , index){
+                if(index == nums){
+                  if(nums < loadSize){
+                    return Text('더 불러올 데이터가 없습니다.');
+                  }
+                  else{
+                    return LoadingButton(onLoad: _onLoad);
+                  }
                 }
                 else{
-                  return LoadingButton(onLoad: _onLoad);
-                }
-              }
-              else{
-                HousingData housingData = controller.housingDataList[index];
+                  HousingData housingData = controller.housingDataList[index];
 
-                return InkWell(
-                  onTap: (){
-                    Get.to(PresaleInfoPage(preSaleData: housingData,));
-                  },
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "#${housingData.name}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20.sp,
-                              color: Palette.defaultBlue
+                  return InkWell(
+                    onTap: (){
+                      Get.to(PresaleInfoPage(preSaleData: housingData,));
+                    },
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "#${housingData.name}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.sp,
+                                color: Palette.defaultBlue
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 140.w,
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10.r),
-                            child: FireStorageImage(
-                              //TODO 이미지 연결
-                              path: "images/housing_info/test01.png",
-                              fit: BoxFit.fill,
-                              loadingWidget: Container(
-                                color: Colors.blueGrey,
-                                child: const CupertinoActivityIndicator(),
-                              ),
-                            )
+                        SizedBox(
+                          width: double.infinity,
+                          height: 140.w,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.r),
+                              child: FireStorageImage(
+                                //TODO 이미지 연결
+                                path: "images/housing_info/test01.png",
+                                fit: BoxFit.fill,
+                                loadingWidget: Container(
+                                  color: Colors.blueGrey,
+                                  child: const CupertinoActivityIndicator(),
+                                ),
+                              )
+                          ),
                         ),
-                      ),
-                      Text(housingData.announcementDateDateTime.toString()),
-                      SizedBox(height: 20.h,)
-                    ],
-                  ),
-                );
+                        Text(housingData.announcementDateDateTime.toString()),
+                        SizedBox(height: 20.h,)
+                      ],
+                    ),
+                  );
+                }
+
               }
-
-            }
-        );
-
+          );
+        }
       }
     );
   }
