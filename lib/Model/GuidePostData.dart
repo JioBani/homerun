@@ -8,6 +8,8 @@ class GuidePostData{
   final String postPdfPath;
   final String category;
   DateTime? updateAt;
+  final bool isNone;
+  final Object? exception;
 
   GuidePostData({
     required this.category,
@@ -15,7 +17,9 @@ class GuidePostData{
     required this.subTitle,
     required this.thumbnailImagePath,
     required this.postPdfPath,
-    required this.updateAt
+    required this.updateAt,
+    this.isNone = false,
+    this.exception
   });
 
   factory GuidePostData.fromMap(Map<String, dynamic> map) {
@@ -41,12 +45,12 @@ class GuidePostData{
     };
   }
 
-  static GuidePostData? fromDocumentSnapshot(DocumentSnapshot snapshot) {
+  static GuidePostData fromDocumentSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
 
     if (data == null) {
       StaticLogger.logger.e("[GuidePostData.fromDocumentSnapshot()] 데이터를 변환하지 못 했습니다.");
-      return null;
+      throw Exception("데이터 없음");
     }
 
     Timestamp? updateAt = data['updateAt'] as Timestamp;
@@ -58,6 +62,30 @@ class GuidePostData{
       thumbnailImagePath: data['thumbnailImagePath'] ?? '',
       postPdfPath: data['postPdfPath'] ?? '',
       updateAt: updateAt.toDate(),
+    );
+  }
+
+  factory GuidePostData.none() {
+    return GuidePostData(
+        category: '',
+        title: '',
+        subTitle: '',
+        thumbnailImagePath: '',
+        postPdfPath: '',
+        updateAt: null,
+        isNone: true
+    );
+  }
+
+  factory GuidePostData.error(Object exception) {
+    return GuidePostData(
+        category: '',
+        title: '',
+        subTitle: '',
+        thumbnailImagePath: '',
+        postPdfPath: '',
+        updateAt: null,
+        exception: exception
     );
   }
 }

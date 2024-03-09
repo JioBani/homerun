@@ -79,6 +79,12 @@ class _DataDevPageState extends State<DataDevPage> {
                     },
                     child: Text("길잡이 테스트 데이터")
                 ),
+                TextButton(
+                    onPressed: () async {
+                      FirebaseFirestore.instance.clearPersistence();
+                    },
+                    child: Text("캐쉬지우기")
+                ),
                 /*StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestoreService.instance.getDataStream(),
                   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Service/FileDataService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirestoreAutoCacher{
   CollectionReference collectionReference;
   bool _isUpdated = false;
+  bool _isAddOrDeleted = false;
   Map<String , DateTime>? _updatedTimeMap;
   late Stream<DocumentSnapshot> _updatedTimesStream;
   final String _cacheField;
   DocumentSnapshot? _lastUpdatedSnapshot;
+  Timestamp? _addOrDeletedTime;
+
 
   FirestoreAutoCacher({
     required this.collectionReference,
@@ -21,7 +26,22 @@ class FirestoreAutoCacher{
       StaticLogger.logger.i("[FirestoreCacheController.onChanged()] 데이터가 업데이트 됨 : ${DateTime.now().toLocal()}");
       _isUpdated = true;
       _lastUpdatedSnapshot = snapshot;
+
+      try{
+        Timestamp timestamp = snapshot.get('addOrDeleted') as Timestamp;
+
+        if(_addOrDeletedTime == null || _addOrDeletedTime!.millisecondsSinceEpoch < timestamp.millisecondsSinceEpoch){
+          _isAddOrDeleted = true;
+          StaticLogger.logger.i("[FirestoreCacheController.onChanged()] 추가되거나 지워진 데이터가 있음 : ${DateTime.now().toLocal()}");
+          _addOrDeletedTime = timestamp;
+        }
+      }catch(e){
+        _isAddOrDeleted = true;
+        StaticLogger.logger.e("[FirestoreAutoCacher.listener()] $e");
+      }
+
     });
+
   }
 
   Future<QuerySnapshot<Object?>> getQuerySnapshot(Query query) async {
@@ -31,6 +51,13 @@ class FirestoreAutoCacher{
     }
 
     try {
+
+      if(_isAddOrDeleted){
+        _isAddOrDeleted = false;
+        StaticLogger.logger.i("추가된 데이터 있음 : 서버에서 가져옴");
+        return query.get(const GetOptions(source: Source.server));
+      }
+
       QuerySnapshot cacheSnapshot = await query.get(const GetOptions(source: Source.cache));
 
       if(cacheSnapshot.docs.isEmpty){
@@ -77,10 +104,17 @@ class FirestoreAutoCacher{
   Future<DocumentSnapshot<Object?>> getDocumentSnapshot(DocumentReference documentReference) async {
 
     if(_isUpdated || _updatedTimeMap == null){
-      _updateData();
+      await _updateData();
     }
 
     try {
+
+      if(_isAddOrDeleted){
+        _isAddOrDeleted = false;
+        StaticLogger.logger.i("추가된 데이터 있음 : 서버에서 가져옴");
+        return documentReference.get(const GetOptions(source: Source.server));
+      }
+
       DocumentSnapshot cacheSnapshot = await documentReference.get(const GetOptions(source: Source.cache));
 
       if(!cacheSnapshot.exists){

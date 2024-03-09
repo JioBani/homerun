@@ -5,6 +5,7 @@ import 'package:homerun/Controller/PresaleInfomationPage/SaleInformationPageCont
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/View/HousingInformationPage/HousingNumberWidget.dart';
 import 'package:homerun/View/buttom_nav.dart';
+import 'package:homerun/Vocabulary/Vocabulary.dart';
 
 import 'RegionalTabView.dart';
 
@@ -110,27 +111,10 @@ class _RegionalInfoTabViewState extends State<RegionalInfoTabView>
 
   late final TabController _tabController;
 
-  final List<String> regional = [
-    "서울",
-    "경기",
-    "강원",
-    "충북",
-    "충남",
-    "대전",
-    "대구",
-    "경북",
-    "경남",
-    "부산",
-    "전북",
-    "전남",
-    "광주",
-    "제주"
-  ];
-
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: regional.length, vsync: this);
+    _tabController = TabController(length: Vocabulary.regions.length, vsync: this);
   }
 
   @override
@@ -148,7 +132,7 @@ class _RegionalInfoTabViewState extends State<RegionalInfoTabView>
           tabAlignment: TabAlignment.start,
           controller: _tabController,
           isScrollable: true,
-          tabs: regional.map((e) => Tab(
+          tabs: Vocabulary.regions.map((e) => Tab(
             child: SizedBox(
               width: 35.w,
               child: Center(
@@ -164,7 +148,7 @@ class _RegionalInfoTabViewState extends State<RegionalInfoTabView>
             padding: EdgeInsets.only(top: 15.h),
             child: TabBarView(
               controller: _tabController,
-              children: regional.map((e) => RegionalTabView(region: e, category: widget.outerTab)).toList(),
+              children: Vocabulary.regions.map((e) => RegionalTabView(region: e, category: widget.outerTab)).toList(),
             ),
           ),
         ),

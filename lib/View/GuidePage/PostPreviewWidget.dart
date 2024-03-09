@@ -21,13 +21,16 @@ class PostPreviewWidget extends StatelessWidget {
       child: Builder(
         builder: (context) {
           if(guidePostData == null){
-            return Text("데이터를 불러오지 못 했습니다.");
+            return SizedBox.shrink();
+          }
+          else if(guidePostData!.exception != null){
+            return Text(guidePostData!.exception.toString());
           }
           else{
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
+                /*Expanded(
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(10.r),
                       child: FireStorageImage(
@@ -35,7 +38,7 @@ class PostPreviewWidget extends StatelessWidget {
                         fit: BoxFit.fitHeight,
                       )
                   ),
-                ),
+                ),*/
                 Text(
                   guidePostData!.title,
                   style: TextStyle(

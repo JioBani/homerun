@@ -38,6 +38,10 @@ class _GuidePostListPreviewPageState extends State<GuidePostListPreviewPage> wit
 
   @override
   Widget build(BuildContext context) {
+    List<GuidePostData> dataList = controller.guidePostListMap[widget.type]!;
+
+    super.build(context);
+
 
     return Column(
       children: [
@@ -74,12 +78,12 @@ class _GuidePostListPreviewPageState extends State<GuidePostListPreviewPage> wit
                             children: [
                               PostPreviewWidget(
                                 width: 150.w,
-                                guidePostData: controller.guidePostListMap[widget.type]![0],
+                                guidePostData: dataList.elementAtOrNull(0),
                               ),
                               SizedBox(width: 5.w,),
                               PostPreviewWidget(
                                 width: 150.w,
-                                guidePostData: controller.guidePostListMap[widget.type]![1],
+                                guidePostData: dataList.elementAtOrNull(1),
                               ),
                             ],
                           ),
@@ -90,12 +94,12 @@ class _GuidePostListPreviewPageState extends State<GuidePostListPreviewPage> wit
                             children: [
                               PostPreviewWidget(
                                 width: 150.w,
-                                guidePostData: controller.guidePostListMap[widget.type]![2],
+                                guidePostData: dataList.elementAtOrNull(2),
                               ),
                               SizedBox(width: 5.w,),
                               PostPreviewWidget(
                                 width: 150.w,
-                                guidePostData: controller.guidePostListMap[widget.type]![3],
+                                guidePostData: dataList.elementAtOrNull(3),
                               ),
                             ],
                           ),
@@ -115,7 +119,5 @@ class _GuidePostListPreviewPageState extends State<GuidePostListPreviewPage> wit
         ),
       ],
     );
-
-
   }
 }

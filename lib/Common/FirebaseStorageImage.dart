@@ -31,7 +31,7 @@ class _FireStorageImageState extends State<FireStorageImage> {
         builder: (context) {
           if(!kIsWeb){
             return FutureBuilder(
-                future: FirebaseStorageCacheService.getImage(widget.path),
+                future: FirebaseStorageCacheService.getImage(widget.path).timeout(const Duration(seconds: 10)),
                 builder: (context , snapshot){
                   if(snapshot.hasData){
                     return Image(

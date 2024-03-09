@@ -56,7 +56,7 @@ class FirebaseStorageCacheService{
     String cachePath = "firebase_storage/$path";
 
     if (_assetCache.containsKey(cachePath)) {
-      StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 메모리 캐시로부터 불러오기");
+      //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 메모리 캐시로부터 불러오기");
       return _assetCache[cachePath];
     }
 
@@ -73,7 +73,7 @@ class FirebaseStorageCacheService{
 
       //#.4-1 캐쉬가 최신이면
       if(cacheState == CacheState.recent){
-        StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 존재 : $cachePath");
+        //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 존재 : $cachePath");
         final file = await _readLocalCache(cachePath);
         if(file == null) {
           return null;
@@ -86,19 +86,19 @@ class FirebaseStorageCacheService{
 
       //#.4-2 캐쉬가 없거나 오래되었으면
       else if(cacheState == CacheState.old || cacheState == CacheState.error){
-        StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 없음 또는 오래됨 : $cachePath");
+        //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 없음 또는 오래됨 : $cachePath");
 
         final fileData = await _downloadAsset(spaceRef);
 
         if(fileData == null){
-          StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] storage 파일에 접근 할 수 없음 없음 : $cachePath");
+          //StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] storage 파일에 접근 할 수 없음 없음 : $cachePath");
           return null;
         }
 
         bool success = await _saveCache(cachePath , fileData);
 
         if(success){
-          StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 성공 : $cachePath");
+          //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 성공 : $cachePath");
         }
         else{
           StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 실패 : $cachePath");
@@ -119,7 +119,7 @@ class FirebaseStorageCacheService{
         bool success = await _saveCache(cachePath , fileData);
 
         if(success){
-          StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 성공 : $cachePath");
+          //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 성공 : $cachePath");
         }
         else{
           StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 실패 : $cachePath");

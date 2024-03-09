@@ -28,6 +28,8 @@ class _RegionalTabViewState extends State<RegionalTabView>  with TickerProviderS
   late ListViewFooter listViewFooter;
   late RegionalInfoController controller;
   bool isInit = false;
+  LoadingState initLoadingResult = LoadingState.none;
+  int loadSize = 5;
 
   @override
   void initState() {
@@ -38,22 +40,23 @@ class _RegionalTabViewState extends State<RegionalTabView>  with TickerProviderS
         RegionalInfoController(category: widget.category, regional: widget.region) , tag: tag
     );
     listViewFooter = ListViewFooter(key : footerKey, refreshController: refreshController);
-    _onLoad();
+    _onLoad().then((value) => initLoadingResult = value);
   }
 
   Future<LoadingState> _onLoad() async {
     var controller = Get.find<RegionalInfoController>(tag: tag);
-    final int? count = await controller.addData(5);
+    final int? count = await controller.addData(loadSize);
     LoadingState state;
     if(count == null){
       state = LoadingState.fail;
     }
-    else if(count == 0){
+    else if(count < loadSize){
       state = LoadingState.noMoreData;
     }
     else{
       state = LoadingState.complete;
     }
+    isInit = true;
     setState(() {
 
     });
@@ -63,54 +66,67 @@ class _RegionalTabViewState extends State<RegionalTabView>  with TickerProviderS
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: controller.housingDataList.length + 1,
-      itemBuilder: (context , index){
-        if(index == controller.housingDataList.length){
-          return LoadingButton(onLoad: _onLoad);
-        }
-        else{
-          HousingData housingData = controller.housingDataList[index];
+    return Builder(
+      builder: (context) {
 
-          return InkWell(
-            onTap: (){
-              Get.to(PresaleInfoPage(preSaleData: housingData,));
-            },
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "#${housingData.name}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20.sp,
-                      color: Palette.defaultBlue
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 140.w,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.r),
-                    child: FireStorageImage(
-                      //TODO 이미지 연결
-                      path: "images/housing_info/test01.png",
-                      fit: BoxFit.fill,
-                      loadingWidget: Container(
-                        color: Colors.blueGrey,
-                        child: const CupertinoActivityIndicator(),
+        int nums = controller.housingDataList.length;
+        return ListView.builder(
+            shrinkWrap: true,
+            itemCount: nums + 1,
+            itemBuilder: (context , index){
+              if(index == nums){
+                if(nums < loadSize){
+                  return Text('더 불러올 데이터가 없습니다.');
+                }
+                else{
+                  return LoadingButton(onLoad: _onLoad);
+                }
+              }
+              else{
+                HousingData housingData = controller.housingDataList[index];
+
+                return InkWell(
+                  onTap: (){
+                    Get.to(PresaleInfoPage(preSaleData: housingData,));
+                  },
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "#${housingData.name}",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20.sp,
+                              color: Palette.defaultBlue
+                          ),
+                        ),
                       ),
-                    )
+                      SizedBox(
+                        width: double.infinity,
+                        height: 140.w,
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.r),
+                            child: FireStorageImage(
+                              //TODO 이미지 연결
+                              path: "images/housing_info/test01.png",
+                              fit: BoxFit.fill,
+                              loadingWidget: Container(
+                                color: Colors.blueGrey,
+                                child: const CupertinoActivityIndicator(),
+                              ),
+                            )
+                        ),
+                      ),
+                      Text(housingData.announcementDateDateTime.toString()),
+                      SizedBox(height: 20.h,)
+                    ],
                   ),
-                ),
-                SizedBox(height: 20.h,)
-              ],
-            ),
-          );
-        }
+                );
+              }
+
+            }
+        );
 
       }
     );

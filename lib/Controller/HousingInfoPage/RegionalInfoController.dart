@@ -22,9 +22,16 @@ class RegionalInfoController extends GetxController {
     isLoading = true;
     update();
 
-    List<DocumentSnapshot>? result = (await FirebaseFirestoreService.instance.getHousingData(
+    /*List<DocumentSnapshot>? result = (await FirebaseFirestoreService.instance.getHousingData(
         category, regional, housingSnapshotList.isNotEmpty ? housingSnapshotList.last : null , count)
-    )?.docs;
+    )?.docs;*/
+
+    List<DocumentSnapshot>? result = await FirebaseFirestoreService.instance.getHousingData(
+        category,
+        regional,
+        housingSnapshotList.isNotEmpty ? housingSnapshotList.last : null ,
+        count
+    );
 
     if(result == null){
       isLoading = false;

@@ -2,11 +2,13 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/Firebase/FirestoreAutoCacher.dart';
+import 'package:homerun/Common/Firebase/FirestorePagination.dart';
 import 'package:homerun/Common/FirebaseFireStoreCache.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/AssessmentQuestion.dart';
 import 'package:homerun/Model/NewsData.dart';
 import 'package:homerun/Model/NotificationData.dart';
+import 'package:homerun/Vocabulary/Vocabulary.dart';
 
 class FirebaseFirestoreService{
 
@@ -21,10 +23,14 @@ class FirebaseFirestoreService{
   //#. 청약길잡이
   late final FirestoreAutoCacher _guidePostCacher;
   final CollectionReference _guidePostCollection = FirebaseFirestore.instance.collection('guide');
+  final Map<String , FirestorePagination> _guidePaginationWithType = Map();
+
 
   //#. 분양공고
   final CollectionReference _housingDataCollection = FirebaseFirestore.instance.collection('pre_sale');
   late final FirestoreAutoCacher _housingDataCacher;
+  final Map<String , Map<String , FirestorePagination>> _housingPagination = Map();
+
 
   //#. 청약뉴스
   final CollectionReference _newsCollection = FirebaseFirestore.instance.collection('news');
@@ -39,6 +45,7 @@ class FirebaseFirestoreService{
 
   static FirebaseFirestoreService get instance {
     _instance ??= FirebaseFirestoreService._();
+    
     return _instance!;
   }
 
@@ -51,6 +58,17 @@ class FirebaseFirestoreService{
         cacheField: cacheField
     );
 
+    for (var type in Vocabulary.specialType) {
+      _guidePaginationWithType[type] = FirestorePagination(
+          collectionReference: FirebaseFirestore.instance.collection('guide'),
+          query: FirebaseFirestore.instance.collection('guide').where('category' , isEqualTo: type),
+          pagingInterval: Duration(days: 5),
+          start: DateTime(2100,1,1,0),
+          pagingField: 'updateAt',
+          descending: true
+      );
+    }
+
 
     //#. 분양공고
     _housingDataCacher = FirestoreAutoCacher(
@@ -58,6 +76,23 @@ class FirebaseFirestoreService{
         updatedTimesDocument: _updateRecordDocument.doc('pre_sale'),
         cacheField: cacheField
     );
+
+    for(var state in Vocabulary.housingState){
+      Map<String , FirestorePagination> map = Map();
+      for(var region in Vocabulary.regions){
+        map[region] = FirestorePagination(
+            collectionReference: FirebaseFirestore.instance.collection('pre_sale'),
+            query: FirebaseFirestore.instance.collection('pre_sale')
+                  .where('category' , isEqualTo: state)
+                  .where('region' , isEqualTo: region),
+            pagingInterval: Duration(days: 5),
+            start: DateTime(2100,1,1,0),
+            pagingField: 'announcement_date',
+            descending: true
+        );
+      }
+      _housingPagination[state] = map;
+    }
 
 
     //#. 청약뉴스
@@ -80,13 +115,14 @@ class FirebaseFirestoreService{
   }
 
   //#. 청약길잡이
-  Future<QuerySnapshot?> getGuidePostData(String category,DocumentSnapshot? start ,int count)async{
+  Future<List<DocumentSnapshot>?> getGuidePostData(String category,DocumentSnapshot? start ,int count)async{
     try{
-      if(start == null){
+      /*if(start == null){
         return _guidePostCacher.getQuerySnapshot(
             _guidePostCacher.collectionReference
             .limit(count)
             .where('category' , isEqualTo : category)
+            .orderBy('updateAt' , descending: true)
         );
       }
       else{
@@ -95,8 +131,11 @@ class FirebaseFirestoreService{
             .startAfterDocument(start)
             .limit(count)
             .where('category' , isEqualTo : category)
+            .orderBy('updateAt' , descending: true)
         );
-      }
+      }*/
+      //return _guidePagination.get(count);
+      return _guidePaginationWithType[category]?.get(count);
     }catch(e , s){
       StaticLogger.logger.e("[FirebaseFirestoreService.getGuidePostData()] $e\n$s");
       return null;
@@ -354,9 +393,9 @@ class FirebaseFirestoreService{
     }
   }
 
-  Future<QuerySnapshot?> getHousingData(String category,String regional,DocumentSnapshot? start ,int count)async{
+  Future<List<DocumentSnapshot>?> getHousingData(String category,String regional,DocumentSnapshot? start ,int count)async{
     try{
-      if(start == null){
+      /*if(start == null){
         QuerySnapshot querySnapshot = await preSaleCollection
             .orderBy("announcement_date")
             .where("region" ,isEqualTo:regional )
@@ -374,9 +413,17 @@ class FirebaseFirestoreService{
             .getSavy();
 
         return querySnapshot;
+      }*/
+      if(start == null){
+        return _housingPagination[category]![regional]!.get(count);
       }
+      else{
+        return _housingPagination[category]![regional]!.getAfter(count , start);
+      }
+
     }catch(e , s){
       StaticLogger.logger.e("[FirebaseFirestoreService.getHousingData()] $e\n$s");
+      StaticLogger.logger.e("$category , $regional");
       return null;
     }
   }
