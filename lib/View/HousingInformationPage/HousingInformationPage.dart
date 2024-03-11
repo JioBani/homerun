@@ -61,21 +61,15 @@ class HousingInformationPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10.r),
                                 color: const Color.fromRGBO(251, 251, 251, 1)
                             ),
-                            child: const TabBar(
-                                tabs: [
-                                  Tab(text: "분양중"),
-                                  Tab(text: "분양임박"),
-                                  Tab(text: "분양마감"),
-                                ]
+                            child: TabBar(
+                                tabs: Vocabulary.housingState.map((e) => Tab(text: e,)).toList()
                             ),
                           ),
-                          const Expanded(
+                          Expanded(
                             child: TabBarView(
-                                children: [
-                                  RegionalInfoTabView("분양중"),
-                                  RegionalInfoTabView("분양임박"),
-                                  RegionalInfoTabView("분양마감"),
-                                ]
+                                children: Vocabulary.housingState.map(
+                                        (e) => RegionalInfoTabView(e,)
+                                ).toList()
                             ),
                           )
                         ],

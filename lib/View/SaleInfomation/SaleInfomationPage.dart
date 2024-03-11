@@ -4,6 +4,7 @@ import 'package:homerun/Controller/PresaleInfomationPage/SaleInformationPageCont
 import 'package:homerun/View/DubleTapExitWidget.dart';
 import 'package:homerun/View/buttom_nav.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Vocabulary/Vocabulary.dart';
 
 import 'CategoryTabbarViewPageWidget.dart';
 
@@ -44,49 +45,28 @@ class _SaleInformationPageState extends State<SaleInformationPage> with TickerPr
           toolbarHeight: 8.h,
           bottom: TabBar(
             controller: _tabController,
-            tabs: [
-              Tab(
-                child: Text(
-                  '분양중',
-                  style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600
-                  ),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  '분양예졍',
-                  style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600
-                  ),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  '분양완료',
-                  style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600
-                  ),
-                ),
-              ),
-            ],
+            tabs: List.generate(
+                Vocabulary.housingState.length,
+                    (index) =>  Tab(
+                      child: Text(
+                        Vocabulary.housingState[index],
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600
+                        ),
+                      ),
+                    ),
+              )
           ),
         ),
         body: SafeArea(
             child: TabBarView(
               controller: _tabController, // TabController 연결
-              children: [
-                // 탭 내용
-                CategoryTabBarViewPageWidget(category: "분양중",),
-                CategoryTabBarViewPageWidget(category: "분양예정",),
-                CategoryTabBarViewPageWidget(category: "분양완료",),
-              ],
+              children: List.generate(
+                  Vocabulary.housingState.length,
+                  (index) => CategoryTabBarViewPageWidget(category: Vocabulary.housingState[index],)
+              )
             ),
         ),
         bottomNavigationBar: CustomBottomNavigationBar(),

@@ -86,7 +86,6 @@ class FirestorePagination {
     return null;
   }
 
-
   Future<List<DocumentSnapshot>> getAfter(int n , DocumentSnapshot startAfter) async {
 
     //#. 1 시작점 찾기
@@ -123,7 +122,7 @@ class FirestorePagination {
 
     try{
       startUnit = _pagingUnits.firstWhere((element){
-        StaticLogger.logger.i("[로드한 유닛들 순회] $time : ${element.startAfter.toDate()} ~ ${element.end.toDate()} : ${element.isInRange(time)}");
+        //StaticLogger.logger.i("[로드한 유닛들 순회] $time : ${element.startAfter.toDate()} ~ ${element.end.toDate()} : ${element.isInRange(time)}");
         return element.isInRange(time);
       });
     }catch(e){
@@ -140,7 +139,7 @@ class FirestorePagination {
           before.setNext(newPage);
         }
 
-        StaticLogger.logger.i("$time : ${newPage.startAfter.toDate()} ~ ${newPage.end.toDate()}");
+        //StaticLogger.logger.i("$time : ${newPage.startAfter.toDate()} ~ ${newPage.end.toDate()}");
 
         if(newPage.isInRange(time)){
           startUnit = newPage;
@@ -170,7 +169,7 @@ class FirestorePagination {
       result.addAll(startUnit.lastSnapshot!.docs);
     }
 
-    StaticLogger.logger.i(result.map((e) => (e.get(_pagingField) as Timestamp).toDate()));
+    //StaticLogger.logger.i(result.map((e) => (e.get(_pagingField) as Timestamp).toDate()));
 
     int startIndex = -1;
 
@@ -477,6 +476,6 @@ class PagingUnit {
 
   void setNext(PagingUnit unit){
     _next = unit;
-    StaticLogger.logger.i(printNext());
+    //StaticLogger.logger.i(printNext());
   }
 }

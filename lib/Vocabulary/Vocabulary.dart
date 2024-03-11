@@ -27,7 +27,7 @@ class Vocabulary{
 
   static List<String> housingState = [
     "분양중",
-    "분양임박",
-    "분양마감",
+    "분양예정",
+    "분양완료",
   ];
 }

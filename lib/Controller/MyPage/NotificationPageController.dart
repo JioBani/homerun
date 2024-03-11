@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/NotificationData.dart';
@@ -44,11 +45,9 @@ class NotificationPageController extends GetxController{
   }
 
   Future<void> _getNotificationDataFromFirestore()async {
-    var list = await FirebaseFirestoreService.instance.getNotificationData();
-    notificationList.assignAll(list.obs);
-    String result ="";
-    for (var element in notificationList) {
-      result += "${element.time.toString()} : ${element.content}";
+    List<NotificationData>? list = await FirebaseFirestoreService.instance.getNotificationData(5);
+    if(list != null){
+      notificationList.assignAll(list.obs);
     }
   }
 

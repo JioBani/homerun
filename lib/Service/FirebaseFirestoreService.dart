@@ -1,44 +1,45 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:homerun/Common/Firebase/FirestoreAutoCacher.dart';
 import 'package:homerun/Common/Firebase/FirestorePagination.dart';
-import 'package:homerun/Common/FirebaseFireStoreCache.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/AssessmentQuestion.dart';
 import 'package:homerun/Model/NewsData.dart';
 import 'package:homerun/Model/NotificationData.dart';
 import 'package:homerun/Vocabulary/Vocabulary.dart';
 
+//TODO
+// 에러처리 일원화
+// 주석달기
+
 class FirebaseFirestoreService{
 
   static String cacheField = "updateAt";
 
-  final CollectionReference _notificationCollection = FirebaseFirestore.instance.collection('notification');
-
-  final CollectionReference preSaleCollection = FirebaseFirestore.instance.collection('pre_sale');
-
-  final CollectionReference _updateRecordDocument = FirebaseFirestore.instance.collection('updates');
+  //#. 공지사항
+  final FirestorePagination _notificationPagination = FirestorePagination(
+      collectionReference: FirebaseFirestore.instance.collection('notification'),
+      query: FirebaseFirestore.instance.collection('notification'),
+      pagingInterval: Duration(days: 5),
+      start: DateTime(2100,1,1,0),
+      pagingField: 'time',
+      descending: true
+  );
 
   //#. 청약길잡이
-  late final FirestoreAutoCacher _guidePostCacher;
   final CollectionReference _guidePostCollection = FirebaseFirestore.instance.collection('guide');
   final Map<String , FirestorePagination> _guidePaginationWithType = Map();
 
 
   //#. 분양공고
   final CollectionReference _housingDataCollection = FirebaseFirestore.instance.collection('pre_sale');
-  late final FirestoreAutoCacher _housingDataCacher;
   final Map<String , Map<String , FirestorePagination>> _housingPagination = Map();
 
 
   //#. 청약뉴스
   final CollectionReference _newsCollection = FirebaseFirestore.instance.collection('news');
-  late final FirestoreAutoCacher _newsCacher;
-
   //#. 청약기본자격
   final CollectionReference _assessmentCollection = FirebaseFirestore.instance.collection('assessment');
-  late final FirestoreAutoCacher _assessmentCacher ;
 
 
   static FirebaseFirestoreService? _instance;
@@ -52,12 +53,6 @@ class FirebaseFirestoreService{
   FirebaseFirestoreService._(){
 
     //#. 청약길잡이
-    _guidePostCacher = FirestoreAutoCacher(
-        collectionReference: _guidePostCollection,
-        updatedTimesDocument: _updateRecordDocument.doc('guide'),
-        cacheField: cacheField
-    );
-
     for (var type in Vocabulary.specialType) {
       _guidePaginationWithType[type] = FirestorePagination(
           collectionReference: FirebaseFirestore.instance.collection('guide'),
@@ -71,12 +66,6 @@ class FirebaseFirestoreService{
 
 
     //#. 분양공고
-    _housingDataCacher = FirestoreAutoCacher(
-        collectionReference: _housingDataCollection,
-        updatedTimesDocument: _updateRecordDocument.doc('pre_sale'),
-        cacheField: cacheField
-    );
-
     for(var state in Vocabulary.housingState){
       Map<String , FirestorePagination> map = Map();
       for(var region in Vocabulary.regions){
@@ -96,45 +85,33 @@ class FirebaseFirestoreService{
 
 
     //#. 청약뉴스
-    _newsCacher = FirestoreAutoCacher(
-        collectionReference: _newsCollection,
-        updatedTimesDocument: _updateRecordDocument.doc('news'),
-        cacheField: cacheField
-    );
+
 
     //#. 청약뉴스
-    _assessmentCacher = FirestoreAutoCacher(
-        collectionReference: _assessmentCollection,
-        updatedTimesDocument: _updateRecordDocument.doc('assessment'),
-        cacheField: cacheField
-    );
+
   }
 
   static void init(){
     _instance ??= FirebaseFirestoreService._();
   }
 
+  //#. 일반
+  Future<List<NotificationData>?> getNotificationData(int n) async {
+    try{
+      final snapshots = await _notificationPagination.get(5);
+
+      return snapshots!.map((element) => NotificationData.fromMap(element.data() as Map<String, dynamic>)).toList();
+
+    }catch(e){
+      StaticLogger.logger.e(e);
+      return null;
+    }
+  }
+
+
   //#. 청약길잡이
   Future<List<DocumentSnapshot>?> getGuidePostData(String category,DocumentSnapshot? start ,int count)async{
     try{
-      /*if(start == null){
-        return _guidePostCacher.getQuerySnapshot(
-            _guidePostCacher.collectionReference
-            .limit(count)
-            .where('category' , isEqualTo : category)
-            .orderBy('updateAt' , descending: true)
-        );
-      }
-      else{
-        return _guidePostCacher.getQuerySnapshot(
-            _guidePostCacher.collectionReference
-            .startAfterDocument(start)
-            .limit(count)
-            .where('category' , isEqualTo : category)
-            .orderBy('updateAt' , descending: true)
-        );
-      }*/
-      //return _guidePagination.get(count);
       return _guidePaginationWithType[category]?.get(count);
     }catch(e , s){
       StaticLogger.logger.e("[FirebaseFirestoreService.getGuidePostData()] $e\n$s");
@@ -142,26 +119,62 @@ class FirebaseFirestoreService{
     }
   }
 
-  Future<List<NotificationData>> getNotificationData() async {
-    try{
-      final snapshot = await _notificationCollection.get();
-
-      List<NotificationData> dataList = [];
-
-
-      for (var element in snapshot.docs) {
-        dataList.add(NotificationData.fromMap(element.data() as Map<String, dynamic>));
+  //#. 청약자격진단
+  Future<AssessmentDto?> getAssessmentDto() async {
+    // 컬렉션의 크기가 크지 않기 떄문에 get으로 가져오는것으로 설정
+    try {
+      QuerySnapshot querySnapshot = await _assessmentCollection.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        Map<String, dynamic> data = querySnapshot.docs.first.data() as Map<String, dynamic>;
+        return AssessmentDto.fromMap(data);
+      } else {
+        return null;
       }
-
-      return dataList;
-
-    }catch(e){
-      StaticLogger.logger.e(e);
-      return [];
+    } catch (e, s) {
+      StaticLogger.logger.e("[getAssessmentDto] 데이터 가져오기 실패 $e , $s");
+      return null;
     }
   }
 
-  Future<void> addPreSaleData() async {
+  //#. 분양정보
+  Future<List<DocumentSnapshot>?> getHousingData(String category,String regional,DocumentSnapshot? start ,int count)async{
+    try{
+      if(!_housingPagination.containsKey(category)){
+        throw Exception('$category가 데이터에 없음');
+      }
+
+      if(start == null){
+        return _housingPagination[category]![regional]!.get(count);
+      }
+      else{
+        return _housingPagination[category]![regional]!.getAfter(count , start);
+      }
+    }catch(e , s){
+      StaticLogger.logger.e("[FirebaseFirestoreService.getHousingData()] $e\n$s");
+      return null;
+    }
+  }
+
+  //#. 청약뉴스
+  Future<List<NewsData>?> getNewsList()async{
+    //TODO 청약 뉴스 페이지 만들면서 페이지내이션을 사용해서 가져오도록 변경하기
+
+    try {
+      QuerySnapshot querySnapshot = await _newsCollection.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.map((doc) => NewsData.fromMap(doc.id , doc.data() as Map<String, dynamic>)).toList();
+      } else {
+        return null;
+      }
+    } catch (e, s) {
+      StaticLogger.logger.e("[FirebaseFirestoreService.getNewsList()] 데이터 가져오기 실패 $e , $s");
+      return null;
+    }
+  }
+
+
+
+  /*Future<void> addPreSaleData() async {
     // 업로드할 데이터를 맵 형식으로 생성합니다.
     Map<String, dynamic> data = {
       'generate': Timestamp.now(),
@@ -178,7 +191,7 @@ class FirebaseFirestoreService{
 
     // Firestore에 데이터를 추가합니다.
 
-  }
+  }*/
 
   String getRandomRegion() {
     final List<String> regions = [
@@ -374,67 +387,6 @@ class FirebaseFirestoreService{
     return testData;
   }
 
-  Future<List<DocumentSnapshot>> getNextNDocuments(DocumentSnapshot? current, int n) async {
-    if(current == null){
-      QuerySnapshot querySnapshot = await preSaleCollection
-          .orderBy("generate")
-          .limit(n)
-          .get();
-      return querySnapshot.docs;
-
-    }
-    else{
-      QuerySnapshot querySnapshot = await preSaleCollection
-          .orderBy("generate")
-          .startAfterDocument(current)
-          .limit(n)
-          .get();
-      return querySnapshot.docs;
-    }
-  }
-
-  Future<List<DocumentSnapshot>?> getHousingData(String category,String regional,DocumentSnapshot? start ,int count)async{
-    try{
-      /*if(start == null){
-        QuerySnapshot querySnapshot = await preSaleCollection
-            .orderBy("announcement_date")
-            .where("region" ,isEqualTo:regional )
-            .limit(count)
-            .getSavy();
-
-        return querySnapshot;
-      }
-      else{
-        QuerySnapshot querySnapshot = await preSaleCollection
-            .orderBy("announcement_date")
-            .where("region" ,isEqualTo:regional )
-            .startAfterDocument(start)
-            .limit(count)
-            .getSavy();
-
-        return querySnapshot;
-      }*/
-      if(start == null){
-        return _housingPagination[category]![regional]!.get(count);
-      }
-      else{
-        return _housingPagination[category]![regional]!.getAfter(count , start);
-      }
-
-    }catch(e , s){
-      StaticLogger.logger.e("[FirebaseFirestoreService.getHousingData()] $e\n$s");
-      StaticLogger.logger.e("$category , $regional");
-      return null;
-    }
-  }
-
-  Stream<QuerySnapshot> getDataStream() {
-    return preSaleCollection.orderBy('announcement_date').snapshots();
-  }
-
-  Stream<QuerySnapshot> getSurveyData() {
-    return preSaleCollection.orderBy('announcement_date').snapshots();
-  }
 
   Future<void> uploadAssessment()async {
     try{
@@ -442,35 +394,6 @@ class FirebaseFirestoreService{
       StaticLogger.logger.i("[uploadAssessment] 업로드 완료");
     }catch(e , s){
       StaticLogger.logger.e("[uploadAssessment] 업로드 실패 $e , $s");
-    }
-  }
-
-  Future<AssessmentDto?> getAssessmentDto() async {
-    try {
-      QuerySnapshot querySnapshot = await _assessmentCollection.get();
-      if (querySnapshot.docs.isNotEmpty) {
-        Map<String, dynamic> data = querySnapshot.docs.first.data() as Map<String, dynamic>;
-        return AssessmentDto.fromMap(data);
-      } else {
-        return null;
-      }
-    } catch (e, s) {
-      StaticLogger.logger.e("[getAssessmentDto] 데이터 가져오기 실패 $e , $s");
-      return null;
-    }
-  }
-
-  Future<List<NewsData>?> getNewsList()async{
-    try {
-      QuerySnapshot querySnapshot = await _newsCollection.get();
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.map((doc) => NewsData.fromMap(doc.id , doc.data() as Map<String, dynamic>)).toList();
-      } else {
-        return null;
-      }
-    } catch (e, s) {
-      StaticLogger.logger.e("[FirebaseFirestoreService.getNewsList()] 데이터 가져오기 실패 $e , $s");
-      return null;
     }
   }
 }

@@ -22,7 +22,7 @@ class LocationTabBarViewPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
+    /*return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestoreService.instance.getDataStream(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
@@ -50,6 +50,7 @@ class LocationTabBarViewPageWidget extends StatelessWidget {
 
         return PresaleListViewWidget(category: category , region: region,);
       },
-    );
+    );*/
+    return PresaleListViewWidget(category: category , region: region,);
   }
 }

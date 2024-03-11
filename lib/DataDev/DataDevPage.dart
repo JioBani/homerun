@@ -31,23 +31,9 @@ class _DataDevPageState extends State<DataDevPage> {
               children: [
                 TextButton(
                   onPressed: (){
-                    FirebaseFirestoreService.instance.addPreSaleData();
+                    //FirebaseFirestoreService.instance.addPreSaleData();
                   },
                   child: Text("데이터 추가")
-                ),
-                TextButton(
-                    onPressed: () async {
-                      if(documentList.length == 0){
-                        documentList.addAll(await FirebaseFirestoreService.instance.getNextNDocuments(null, 5));
-                      }
-                      else{
-                        documentList.addAll(await FirebaseFirestoreService.instance.getNextNDocuments(documentList[documentList.length - 1], 5));
-                      }
-                      setState(() {
-
-                      });
-                    },
-                    child: Text("데이터 가져오기")
                 ),
                 TextButton(
                     onPressed: () async {

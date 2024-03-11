@@ -56,9 +56,11 @@ class _RegionalTabViewState extends State<RegionalTabView>  with TickerProviderS
       state = LoadingState.complete;
     }
     isInit = true;
-    setState(() {
+    if(mounted){
+      setState(() {
 
-    });
+      });
+    }
     return state;
   }
 
