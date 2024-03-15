@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 
 
+//TODO limitTolast를 통해서 최적화 할 수 있는지 확인
 class FirestorePagination {
   final CollectionReference collectionReference;
   final Duration _pagingInterval;
