@@ -223,33 +223,13 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
               }
               else{
                 return Center(
-                  child: Column(
-                    children: [
-                      IconButton(
-                          onPressed: (){
-                            FirebaseFirestoreService.instance.uploadAssessment();
-                          },
-                          icon: Icon(Icons.add)
-                      ),
-                      Text("데이터를 불러오지 못했습니다."),
-                    ],
-                  ),
+                  child: Text("데이터를 불러오지 못했습니다."),
                 );
               }
             }
             else if(snapshot.hasError){
               return Center(
-                child: Column(
-                  children: [
-                    IconButton(
-                        onPressed: (){
-                          FirebaseFirestoreService.instance.uploadAssessment();
-                        },
-                        icon: Icon(Icons.add)
-                    ),
-                    Text(snapshot.error.toString()),
-                  ],
-                ),
+                child: Text(snapshot.error.toString()),
               );
             }
             else{
