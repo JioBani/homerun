@@ -8,6 +8,7 @@ import 'package:homerun/Controller/AssessmentController.dart';
 import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
 import 'package:homerun/Service/AssessmentDataService.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
+import 'package:homerun/View/AssessmentPage/ResultTabViewPage.dart';
 import 'package:homerun/View/buttom_nav.dart';
 import 'QuestionWidget.dart';
 
@@ -157,39 +158,7 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
                             assessmentController.assessmentDto!.assessmentList.length + 1,
                                 (index){
                               if(index == assessmentController.assessmentDto!.assessmentList.length ){
-                                return Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ElevatedButton(
-                                          onPressed: (){
-                                            StaticLogger.logger.i("[AssessmentPage] ${assessmentController.print()}");
-                                          },
-                                          child: Text("결과 출력")
-                                      ),
-                                      ElevatedButton(
-                                          onPressed: (){
-                                            AssessmentDataService.saveAnswer(
-                                                assessmentController.getProgress()
-                                            );
-                                          },
-                                          child: Text("결과 저장하기")
-                                      ),
-                                      ElevatedButton(
-                                          onPressed: () async {
-                                            Get.find<AssessmentController>().loadAnswers();
-                                          },
-                                          child: Text("결과 불러오기")
-                                      ),
-                                      ElevatedButton(
-                                          onPressed: (){
-                                            StaticLogger.logger.i("[AssessmentPage] ${assessmentController.print()}");
-                                          },
-                                          child: Text("결과 삭제하기")
-                                      ),
-                                    ],
-                                  ),
-                                );
+                                return const ResultTabViewPage();
                               }
                               else{
                                 return Center(
