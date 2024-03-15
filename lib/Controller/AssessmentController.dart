@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Model/AssessmentProgress.dart';
+import 'package:homerun/Model/Assessment/AssessmentProgress.dart';
 import 'package:homerun/Service/AssessmentDataService.dart';
-import 'package:homerun/Model/AssessmentQuestion.dart';
+import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 
 class AssessmentController extends GetxController{

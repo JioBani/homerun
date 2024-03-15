@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/Firebase/FirestorePagination.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Model/AssessmentQuestion.dart';
+import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
 import 'package:homerun/Model/NewsData.dart';
 import 'package:homerun/Model/NotificationData.dart';
 import 'package:homerun/Vocabulary/Vocabulary.dart';
@@ -39,7 +39,8 @@ class FirebaseFirestoreService{
   //#. 청약뉴스
   final CollectionReference _newsCollection = FirebaseFirestore.instance.collection('news');
   //#. 청약기본자격
-  final CollectionReference _assessmentCollection = FirebaseFirestore.instance.collection('assessment');
+  final CollectionReference _assessmentCollection =
+    FirebaseFirestore.instance.collection('assessment').doc('assessments').collection('data');
 
 
   static FirebaseFirestoreService? _instance;

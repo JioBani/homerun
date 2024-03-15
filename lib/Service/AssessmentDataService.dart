@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Model/AssessmentProgress.dart';
+import 'package:homerun/Model/Assessment/AssessmentProgress.dart';
 import 'package:homerun/Service/FileDataService.dart';
 
 class AssessmentDataService{

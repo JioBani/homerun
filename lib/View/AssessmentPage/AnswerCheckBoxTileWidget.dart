@@ -24,11 +24,18 @@ class AnswerCheckBoxTile extends StatelessWidget {
           },
         ),
         SizedBox(width: 5.w,),
-        Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 13.sp,
+        Flexible(
+          child: RichText(
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            text: TextSpan(
+              text: title,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 13.sp,
+                color: Colors.black
+              ),
+            ),
           ),
         )
       ],

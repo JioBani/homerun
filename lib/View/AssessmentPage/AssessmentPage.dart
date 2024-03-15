@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Controller/AssessmentController.dart';
-import 'package:homerun/Model/AssessmentQuestion.dart';
+import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
 import 'package:homerun/Service/AssessmentDataService.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/View/buttom_nav.dart';

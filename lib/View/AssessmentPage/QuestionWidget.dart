@@ -7,7 +7,7 @@ import 'package:homerun/Controller/AssessmentController.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/View/AssessmentPage/AnswerCheckBoxTileWidget.dart';
 
-import '../../Model/AssessmentQuestion.dart';
+import '../../Model/Assessment/AssessmentQuestion.dart';
 
 class QuestionWidget extends StatefulWidget {
   const QuestionWidget({
