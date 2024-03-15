@@ -1,15 +1,17 @@
-import 'package:get/get.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/Assessment/AssessmentProgress.dart';
 import 'package:homerun/Service/AssessmentDataService.dart';
 import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
+import 'package:homerun/Model/Assessment/Condition.dart';
 
 class AssessmentController extends GetxController{
     AssessmentDto? assessmentDto;
     late Map<Assessment , AssessmentAnswer?> answers;
     int _nextQuestion = 0;
     int get nextQuestion => _nextQuestion;
+    late List<Condition>? conditionList;
 
     final List<int> _pageMoveStack = [];
 
@@ -17,6 +19,7 @@ class AssessmentController extends GetxController{
     Future<bool> fetchAssessmentData() async {
         answers = <Assessment, AssessmentAnswer?>{};
         assessmentDto = await FirebaseFirestoreService.instance.getAssessmentDto();
+        conditionList = await FirebaseFirestoreService.instance.getConditionList();
         if(assessmentDto != null){
             for (var q in assessmentDto!.assessmentList) {
                 answers[q] = null;
@@ -32,6 +35,12 @@ class AssessmentController extends GetxController{
 
     void setAnswer(Assessment assessment, AssessmentAnswer? answer){
         answers[assessment] = answer;
+        if(conditionList != null){
+            for (var condition in conditionList!) {
+                condition.setValues({assessment.id : answer?.index ?? -1});
+            }
+        }
+        StaticLogger.logger.i(printCondition());
     }
 
     void setNextQuestion(int index){
@@ -47,6 +56,20 @@ class AssessmentController extends GetxController{
         });
 
         return result;
+    }
+
+    String printCondition(){
+        if(conditionList == null){
+            return 'null';
+        }
+
+        String str = "";
+        for (var condition in conditionList!) {
+            str += "${condition.questionId} : ${condition.toExpressionWithCheckedValue()} = ${ condition.isTrue()}";            //str += condition.key.toExpressionWithCheckedValue();
+            //str += condition.key.isTureDebug().toString();
+            str += '\n';
+        }
+        return str;
     }
 
     AssessmentProgress getProgress(){

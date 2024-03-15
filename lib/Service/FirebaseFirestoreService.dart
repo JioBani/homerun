@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/Firebase/FirestorePagination.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
+import 'package:homerun/Model/Assessment/Condition.dart';
 import 'package:homerun/Model/NewsData.dart';
 import 'package:homerun/Model/NotificationData.dart';
 import 'package:homerun/Vocabulary/Vocabulary.dart';
@@ -38,9 +39,12 @@ class FirebaseFirestoreService{
 
   //#. 청약뉴스
   final CollectionReference _newsCollection = FirebaseFirestore.instance.collection('news');
+
   //#. 청약기본자격
   final CollectionReference _assessmentCollection =
     FirebaseFirestore.instance.collection('assessment').doc('assessments').collection('data');
+  final CollectionReference _conditionCollection =
+    FirebaseFirestore.instance.collection('assessment').doc('conditions').collection('data');
 
 
   static FirebaseFirestoreService? _instance;
@@ -136,6 +140,21 @@ class FirebaseFirestoreService{
       return null;
     }
   }
+  Future<List<Condition>?> getConditionList() async {
+    // 컬렉션의 크기가 크지 않기 떄문에 get으로 가져오는것으로 설정
+    try {
+      QuerySnapshot querySnapshot = await _conditionCollection.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.map((doc) => Condition.fromMap(doc.data() as Map<String , dynamic>)).toList();
+      } else {
+        return null;
+      }
+    } catch (e, s) {
+      StaticLogger.logger.e("[getAssessmentDto] 데이터 가져오기 실패 $e , $s");
+      return null;
+    }
+  }
+
 
   //#. 분양정보
   Future<List<DocumentSnapshot>?> getHousingData(String category,String regional,DocumentSnapshot? start ,int count)async{
