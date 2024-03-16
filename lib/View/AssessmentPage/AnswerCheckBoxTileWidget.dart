@@ -72,7 +72,7 @@ class _AnswerCheckboxWidgetState extends State<AnswerCheckboxWidget> with Ticker
               children: [
                 AnimatedOpacity(
                   opacity: widget.value ? 1.0 : 0.0,
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 150),
                   child: Image.asset(
                       "assets/images/assessment/check.png",
                       width: 25.sp,
@@ -82,7 +82,7 @@ class _AnswerCheckboxWidgetState extends State<AnswerCheckboxWidget> with Ticker
                 ),
                 AnimatedOpacity(
                   opacity: widget.value ? 0 : 1,
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 150),
                   child:  Image.asset(
                       "assets/images/assessment/uncheck.png",
                       width: 20.sp,
