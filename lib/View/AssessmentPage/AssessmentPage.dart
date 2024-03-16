@@ -155,8 +155,12 @@ class _AssessmentPageState extends State<AssessmentPage> with TickerProviderStat
                         controller: _tabController,
                         physics: const NeverScrollableScrollPhysics(),
                         children: List.generate(
-                            assessmentController.assessmentDto!.assessmentList.length + 1,
-                                (index){
+                            assessmentController.assessmentDto!.assessmentList.length + 1,(index){
+                              /*if(index == 0){
+                                return const ResultTabViewPage();
+                              }*/
+
+
                               if(index == assessmentController.assessmentDto!.assessmentList.length ){
                                 return const ResultTabViewPage();
                               }

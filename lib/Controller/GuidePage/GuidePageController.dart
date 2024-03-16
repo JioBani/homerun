@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/GuidePostData.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
-import 'package:homerun/Vocabulary/Vocabulary.dart';
+import 'package:homerun/Vocabulary/VocabularyList.dart';
 
 enum LoadingState{
   idle,

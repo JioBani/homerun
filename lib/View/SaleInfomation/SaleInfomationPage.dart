@@ -4,7 +4,7 @@ import 'package:homerun/Controller/PresaleInfomationPage/SaleInformationPageCont
 import 'package:homerun/View/DubleTapExitWidget.dart';
 import 'package:homerun/View/buttom_nav.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Vocabulary/Vocabulary.dart';
+import 'package:homerun/Vocabulary/VocabularyList.dart';
 
 import 'CategoryTabbarViewPageWidget.dart';
 

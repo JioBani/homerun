@@ -1,6 +1,7 @@
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/Assessment/AssessmentProgress.dart';
+import 'package:homerun/Model/Assessment/Conditioninfo.dart';
 import 'package:homerun/Service/AssessmentDataService.dart';
 import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
@@ -11,7 +12,7 @@ class AssessmentController extends GetxController{
     late Map<Assessment , AssessmentAnswer?> answers;
     int _nextQuestion = 0;
     int get nextQuestion => _nextQuestion;
-    late List<Condition>? conditionList;
+    late List<ConditionInfo>? conditionInfoList;
 
     final List<int> _pageMoveStack = [];
 
@@ -19,7 +20,7 @@ class AssessmentController extends GetxController{
     Future<bool> fetchAssessmentData() async {
         answers = <Assessment, AssessmentAnswer?>{};
         assessmentDto = await FirebaseFirestoreService.instance.getAssessmentDto();
-        conditionList = await FirebaseFirestoreService.instance.getConditionList();
+        conditionInfoList = await FirebaseFirestoreService.instance.getConditionInfoList();
         if(assessmentDto != null){
             for (var q in assessmentDto!.assessmentList) {
                 answers[q] = null;
@@ -35,9 +36,9 @@ class AssessmentController extends GetxController{
 
     void setAnswer(Assessment assessment, AssessmentAnswer? answer){
         answers[assessment] = answer;
-        if(conditionList != null){
-            for (var condition in conditionList!) {
-                condition.setValues({assessment.id : answer?.index ?? -1});
+        if(conditionInfoList != null){
+            for (var conditionInfo in conditionInfoList!) {
+                conditionInfo.condition.setValues({assessment.id : answer?.index ?? -1});
             }
         }
         StaticLogger.logger.i(printCondition());
@@ -59,13 +60,15 @@ class AssessmentController extends GetxController{
     }
 
     String printCondition(){
-        if(conditionList == null){
+        if(conditionInfoList == null){
             return 'null';
         }
 
         String str = "";
-        for (var condition in conditionList!) {
-            str += "${condition.questionId} : ${condition.toExpressionWithCheckedValue()} = ${ condition.isTrue()}";            //str += condition.key.toExpressionWithCheckedValue();
+        for (var conditionInfo in conditionInfoList!) {
+            str += "${conditionInfo.condition.questionId} : "
+                "${conditionInfo.condition.toExpressionWithCheckedValue()} = "
+                "${ conditionInfo.condition.isTrue()}";
             //str += condition.key.isTureDebug().toString();
             str += '\n';
         }

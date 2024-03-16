@@ -5,9 +5,10 @@ import 'package:homerun/Common/Firebase/FirestorePagination.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
 import 'package:homerun/Model/Assessment/Condition.dart';
+import 'package:homerun/Model/Assessment/Conditioninfo.dart';
 import 'package:homerun/Model/NewsData.dart';
 import 'package:homerun/Model/NotificationData.dart';
-import 'package:homerun/Vocabulary/Vocabulary.dart';
+import 'package:homerun/Vocabulary/VocabularyList.dart';
 
 //TODO
 // 에러처리 일원화
@@ -140,12 +141,13 @@ class FirebaseFirestoreService{
       return null;
     }
   }
-  Future<List<Condition>?> getConditionList() async {
+
+  Future<List<ConditionInfo>?> getConditionInfoList() async {
     // 컬렉션의 크기가 크지 않기 떄문에 get으로 가져오는것으로 설정
     try {
       QuerySnapshot querySnapshot = await _conditionCollection.get();
       if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.map((doc) => Condition.fromMap(doc.data() as Map<String , dynamic>)).toList();
+        return querySnapshot.docs.map((doc) => ConditionInfo.fromMap(doc.data() as Map<String , dynamic>)).toList();
       } else {
         return null;
       }

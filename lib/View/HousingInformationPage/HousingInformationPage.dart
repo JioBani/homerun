@@ -5,7 +5,7 @@ import 'package:homerun/Controller/PresaleInfomationPage/SaleInformationPageCont
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/View/HousingInformationPage/HousingNumberWidget.dart';
 import 'package:homerun/View/buttom_nav.dart';
-import 'package:homerun/Vocabulary/Vocabulary.dart';
+import 'package:homerun/Vocabulary/VocabularyList.dart';
 
 import 'RegionalTabView.dart';
 

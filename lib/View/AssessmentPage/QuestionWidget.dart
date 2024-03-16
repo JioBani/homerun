@@ -98,27 +98,40 @@ class _QuestionWidgetState extends State<QuestionWidget>  with AutomaticKeepAliv
                  Container(
                    width: 26.sp,
                    height: 26.sp,
+                   alignment: Alignment.center,
+                   padding: EdgeInsets.all(3.sp),
                    decoration: BoxDecoration(
                      borderRadius: BorderRadius.circular(26.sp),
                      color: Palette.assessmentPage.questionNumber
                    ),
-                   child: Center(
-                     child: Text(
-                       "Q${widget.index}",
-                       style: TextStyle(
-                         fontSize: 13.sp,
-                         fontWeight: FontWeight.w700,
-                         color: Colors.white
+                   child: FittedBox(
+                     fit: BoxFit.scaleDown,
+                     child: RichText(
+                       overflow: TextOverflow.ellipsis,
+                       text: TextSpan(
+                         text: "Q${widget.index}",
+                         style: TextStyle(
+                           fontSize: 13.sp,
+                           fontWeight: FontWeight.w700,
+                           color: Colors.white
+                         ),
                        ),
                      ),
                    ),
                  ),
                  SizedBox(width: 8.w,),
-                 Text(
-                   assessment.question,
-                   style: TextStyle(
-                     fontSize: 15.sp,
-                     fontWeight: FontWeight.w700
+                 Flexible(
+                   child: RichText(
+                     maxLines: 3,
+                     overflow: TextOverflow.ellipsis,
+                     text: TextSpan(
+                       text : assessment.question,
+                       style: TextStyle(
+                         fontSize: 15.sp,
+                         fontWeight: FontWeight.w700,
+                         color: Colors.black
+                       ),
+                     ),
                    ),
                  ),
                ],
