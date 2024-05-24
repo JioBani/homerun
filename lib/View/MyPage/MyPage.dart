@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Controller/LoginController.dart';
 import 'package:homerun/DataDev/DataDevPage.dart';
+import 'package:homerun/Page/Test/View/TestPage.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Service/LoginService.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
@@ -63,6 +64,11 @@ class _MyPageState extends State<MyPage> {
                 iconData: Icons.exit_to_app,
                 content: "회원탈퇴",
                 page: DataDevPage(),
+              ),
+              ExtraActionWidget(
+                iconData: Icons.exit_to_app,
+                content: "테스트페이지",
+                page: TestPage(),
               ),
               Container(
                 padding: EdgeInsets.only(left: 10.w , right: 10.w),
