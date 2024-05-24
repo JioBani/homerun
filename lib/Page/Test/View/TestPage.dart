@@ -9,15 +9,18 @@ class TestPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            TextButton(
-                onPressed: (){
-                  Get.to(HousingSaleNoticesPage());
-                },
-                child: Text("분양공고 페이지")
-            )
-          ],
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextButton(
+                  onPressed: (){
+                    Get.to(HousingSaleNoticesPage());
+                  },
+                  child: Text("분양공고 페이지")
+              )
+            ],
+          ),
         ),
       ),
     );
