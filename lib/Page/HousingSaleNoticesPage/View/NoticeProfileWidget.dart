@@ -8,8 +8,12 @@ class NoticeProfileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 120.w,
-      margin: EdgeInsets.all(5.0),
-      color: Colors.red,
+      width: double.infinity,
+      margin: EdgeInsets.fromLTRB(0, 5.w, 0, 5.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(3.r),
+        color: Color(0xffA4A4A6),
+      ),
     );
   }
 }
