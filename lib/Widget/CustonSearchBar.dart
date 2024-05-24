@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({super.key});
 
+  final String hintText = "원하는 정보를 빨리 탐색 할 수 있어요.";
+
   @override
   Widget build(BuildContext context) {
-    return TextField(
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Hint',
-        )
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10.w, 10.w, 10.w, 10.w),
+      child: SizedBox(
+        height: 35.w,
+        child: TextFormField(
+          textAlignVertical: TextAlignVertical.bottom,
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            filled: true,
+            fillColor: Colors.grey[200],
+          ),
+        ),
+      ),
     );
   }
 }
