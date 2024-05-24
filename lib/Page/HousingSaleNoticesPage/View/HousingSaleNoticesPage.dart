@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homerun/Page/HousingSaleNoticesPage/View/NoticesTabPage.dart';
 import 'package:homerun/Style/Palette.dart';
+import 'package:homerun/View/HousingInformationPage/HousingInformationPage.dart';
+import 'package:homerun/Vocabulary/VocabularyList.dart';
 import 'package:homerun/Widget/CustonSearchBar.dart';
 
 class HousingSaleNoticesPage extends StatelessWidget {
@@ -21,7 +24,32 @@ class HousingSaleNoticesPage extends StatelessWidget {
                 ),
               ),
             ),
-            CustomSearchBar()
+            CustomSearchBar(),
+            DefaultTabController(
+                length: 3,
+                child: Expanded(
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.r),
+                            color: const Color.fromRGBO(251, 251, 251, 1)
+                        ),
+                        child: TabBar(
+                            tabs: Vocabulary.housingState.map((e) => Tab(text: e,)).toList()
+                        ),
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                            children: Vocabulary.housingState.map(
+                                    (e) => NoticesTabPage()
+                            ).toList()
+                        ),
+                      )
+                    ],
+                  ),
+                )
+            )
           ],
         ),
       ),
