@@ -20,9 +20,9 @@ class HousingSaleNoticesPage extends StatelessWidget {
                 child: Text(
                   "청약홈런",
                   style: TextStyle(
-                      fontSize: 30.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Palette.defaultBlue
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Palette.defaultSkyBlue
                   ),
                 ),
               ),
