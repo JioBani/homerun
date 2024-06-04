@@ -94,6 +94,7 @@ flutter:
     - assets/images/Kaisa_16.jpg
     - assets/images/homepage/
     - assets/images/assessment/
+    - assets/images/SearchBar/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
