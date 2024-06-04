@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Page/HousingSaleNoticesPage/View/NoticesTabPage.dart';
 import 'package:homerun/Style/Palette.dart';
-import 'package:homerun/View/HousingInformationPage/HousingInformationPage.dart';
 import 'package:homerun/Vocabulary/VocabularyList.dart';
 import 'package:homerun/Widget/CustonSearchBar.dart';
 
@@ -18,7 +17,8 @@ class HousingSaleNoticesPage extends StatelessWidget {
           child: Column(
             children: [
               Center(
-                child: Text("청약홈런",
+                child: Text(
+                  "청약홈런",
                   style: TextStyle(
                       fontSize: 30.sp,
                       fontWeight: FontWeight.w600,
@@ -26,25 +26,51 @@ class HousingSaleNoticesPage extends StatelessWidget {
                   ),
                 ),
               ),
-              CustomSearchBar(),
+              const CustomSearchBar(),
               DefaultTabController(
                   length: 3,
                   child: Expanded(
                     child: Column(
                       children: [
                         Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              color: const Color.fromRGBO(251, 251, 251, 1)
-                          ),
-                          child: TabBar(
-                              tabs: Vocabulary.housingState.map((e) => Tab(text: e,)).toList()
-                          ),
+                            decoration: BoxDecoration(
+                                border: Border(bottom: BorderSide(color: Colors.grey, width: 2.sp))),
+                            child: TabBar(
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                indicatorColor:  const Color(0xff2E3C6B),
+                                labelColor:  const Color(0xff2E3C6B),
+                                unselectedLabelColor: Colors.grey,
+                                labelStyle: TextStyle(
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w700
+                                ),
+                                tabs: Vocabulary.housingState.map((e) => Tab(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "분양전",
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w700
+                                          ),
+                                        ),
+                                        Text(
+                                          "(13)",
+                                            style: TextStyle(
+                                              fontSize: 13.sp,
+                                              fontWeight: FontWeight.w500
+                                            )
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ).toList()
+                            )
                         ),
                         Expanded(
                           child: TabBarView(
                               children: Vocabulary.housingState.map(
-                                      (e) => NoticesTabPage()
+                                      (e) => const NoticesTabPage()
                               ).toList()
                           ),
                         )
