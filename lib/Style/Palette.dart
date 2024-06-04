@@ -8,6 +8,8 @@ class Palette{
   static const Color defaultGrey = Color.fromRGBO(239, 238, 238, 1);
   static final AssessmentPagePalette assessmentPage = AssessmentPagePalette();
   static final FontPalette font = FontPalette();
+  static const Color defaultSkyBlue =  Color(0xff35C5F0);
+
 }
 
 class AssessmentPagePalette{
