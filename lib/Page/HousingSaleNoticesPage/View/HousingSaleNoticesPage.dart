@@ -29,6 +29,20 @@ class HousingSaleNoticesPage extends StatelessWidget {
               SizedBox(height: 12.w,),
               CustomSearchBar(),
               SizedBox(height: 21.w,),
+              SizedBox(
+                width: double.infinity,
+                height: 110.w,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10.r),
+                    topRight: Radius.circular(10.r),
+                  ),
+                  child: Image.asset(
+                    "assets/images/Test/ad.png",
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+              ),
               DefaultTabController(
                   length: 3,
                   child: Expanded(
