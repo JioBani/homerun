@@ -27,7 +27,8 @@ class HousingSaleNoticesPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12.w,),
-              const CustomSearchBar(),
+              CustomSearchBar(),
+              SizedBox(height: 21.w,),
               DefaultTabController(
                   length: 3,
                   child: Expanded(
