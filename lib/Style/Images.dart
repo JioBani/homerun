@@ -7,3 +7,7 @@ class HomeImages{
   static const String myPage = "assets/images/homepage/마이페이지.png";
 }
 
+class SearchBarImages{
+  static const String search = "assets/images/SearchBar/search.png";
+}
+
