@@ -32,28 +32,10 @@ class MyApp extends StatelessWidget {
 
     screenSize =  const Size(360, 800);
 
-    /*if(GetPlatform.isMobile){
-      screenSize =  const Size(360, 800);
-    }
-    else{
-      screenSize =  const Size(1920, 1080);
-    }*/
-
     return ScreenUtilInit(
       designSize: screenSize,
        builder: (BuildContext context,child) => GetMaterialApp(
          title: 'Flutter Demo',
-         // theme: ThemeData(
-         //   //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-         //   useMaterial3: true,
-         //   appBarTheme: AppBarTheme(
-         //     color: Colors.white
-         //   ),
-         //   fontFamily: 'Pretendard',
-         //   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-         //     backgroundColor: Colors.transparent,
-         //   ),
-         // ),
          theme: ThemeData(
            colorScheme: MaterialTheme.lightScheme().toColorScheme()
          ),
