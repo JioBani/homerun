@@ -13,7 +13,7 @@ class HousingSaleNoticesPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 0),
+          padding: EdgeInsets.fromLTRB(25.w, 14.w, 25.w, 0),
           child: Column(
             children: [
               Center(
