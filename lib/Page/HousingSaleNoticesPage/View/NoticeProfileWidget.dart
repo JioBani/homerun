@@ -14,6 +14,21 @@ class NoticeProfileWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(3.r),
         color: Color(0xffA4A4A6),
       ),
+      child: Row(
+        children: [
+          Column(
+            children: [
+              Text(
+                "서울 (민간분양) | 조회수 3,245",
+                style: TextStyle(
+                  fontSize: 8.sp,
+                ),
+              )
+            ],
+          ),
+          Column(),
+        ],
+      ),
     );
   }
 }
