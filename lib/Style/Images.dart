@@ -1,5 +1,6 @@
 class Images{
   static const String homeTemp = "assets/images/home_temp.jpg";
+  static const String backIcon = "assets/images/back.png";
 }
 
 class HomeImages{
