@@ -145,7 +145,7 @@ flutter:
           weight: 900
     - family: BCcard
       fonts:
-        - asset: assets/fonts/BCcard/BCcardB.ttf
         - asset: assets/fonts/BCcard/BCcardL.ttf
+        - asset: assets/fonts/BCcard/BCcardB.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
