@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: screenSize,
        builder: (BuildContext context,child) => GetMaterialApp(
-         title: 'Flutter Demo',
          theme: ThemeData(
+           fontFamily: 'BCcard',
            colorScheme: MaterialTheme.lightScheme().toColorScheme()
          ),
          home: HomePage(),
