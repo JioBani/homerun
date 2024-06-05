@@ -96,7 +96,30 @@ class AdNoticePage extends StatelessWidget {
                         fontWeight: FontWeight.w700 //폰트 굵기가 미디움인데 작게 보여서 bold로 변경
                       ),
                     ),
-                  )
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 6.w,),
+            Padding(
+              padding: EdgeInsets.only(left: 25.w),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 12.sp,
+                    height: 12.sp,
+                    child: Image.asset(
+                      HousingSaleNoticesPageImages.pinMap
+                    ),
+                  ),
+                  SizedBox(width: 4.w,),
+                  Text(
+                    "서대문구 월드 메리앙",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15.sp
+                    ),
+                  ),
                 ],
               ),
             )
@@ -106,3 +129,4 @@ class AdNoticePage extends StatelessWidget {
     );
   }
 }
+
