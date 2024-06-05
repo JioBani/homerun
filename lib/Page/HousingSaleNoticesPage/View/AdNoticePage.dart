@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Style/Images.dart';
 
 class AdNoticePage extends StatelessWidget {
@@ -30,49 +31,9 @@ class AdNoticePage extends StatelessWidget {
                   ),
                 ),
                 const Expanded(child: SizedBox.shrink()),
-                InkWell(
-                  onTap: ()=>Get.back(),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: 18.sp,
-                        height: 18.sp,
-                        child: Image.asset(
-                          Images.partnershipAd,
-                        ),
-                      ),
-                      SizedBox(height: 3.w,),
-                      Text(
-                        "제휴공고",
-                        style: TextStyle(
-                          fontSize: 7.sp
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                LargeIconButton(iconPath: Images.partnershipAd, text: "제휴광고",onTap: (){},),
                 SizedBox(width: 7.w,),
-                InkWell(
-                  onTap: ()=>Get.back(),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: 18.sp,
-                        height: 18.sp,
-                        child: Image.asset(
-                          Images.adInquiry,
-                        ),
-                      ),
-                      SizedBox(height: 3.w,),
-                      Text(
-                        "광고문의",
-                        style: TextStyle(
-                            fontSize: 7.sp
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                LargeIconButton(iconPath: Images.adInquiry, text: "광고문의",onTap: (){},),
                 SizedBox(width: 25.w,)
               ],
             ),
@@ -129,4 +90,5 @@ class AdNoticePage extends StatelessWidget {
     );
   }
 }
+
 
