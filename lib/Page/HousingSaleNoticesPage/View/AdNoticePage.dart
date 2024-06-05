@@ -14,6 +14,7 @@ class AdNoticePage extends StatelessWidget {
           children: [
             SizedBox(height: 17.w,),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(width: 25.w,),
                 InkWell(
@@ -25,7 +26,52 @@ class AdNoticePage extends StatelessWidget {
                       Images.backIcon,
                     ),
                   ),
-                )
+                ),
+                const Expanded(child: SizedBox.shrink()),
+                InkWell(
+                  onTap: ()=>Get.back(),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 18.sp,
+                        height: 18.sp,
+                        child: Image.asset(
+                          Images.partnershipAd,
+                        ),
+                      ),
+                      SizedBox(height: 3.w,),
+                      Text(
+                        "제휴공고",
+                        style: TextStyle(
+                          fontSize: 7.sp
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(width: 7.w,),
+                InkWell(
+                  onTap: ()=>Get.back(),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 18.sp,
+                        height: 18.sp,
+                        child: Image.asset(
+                          Images.adInquiry,
+                        ),
+                      ),
+                      SizedBox(height: 3.w,),
+                      Text(
+                        "광고문의",
+                        style: TextStyle(
+                            fontSize: 7.sp
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(width: 25.w,)
               ],
             )
           ],
