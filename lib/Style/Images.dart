@@ -1,8 +1,12 @@
 class Images{
   static const String homeTemp = "assets/images/home_temp.jpg";
-  static const String backIcon = "assets/images/back.png";
-  static const String adInquiry = "assets/images/ad_inquiry.png";
-  static const String partnershipAd = "assets/images/partnership_ad.png";
+  static const String backIcon = "assets/images/icon/back.png";
+  static const String adInquiry = "assets/images/icon/ad_inquiry.png";
+  static const String partnershipAd = "assets/images/icon/partnership_ad.png";
+  static const String scrap = "assets/images/icon/scrap.png";
+  static const String download = "assets/images/icon/download.png";
+  static const String heart = "assets/images/icon/heart.png";
+  static const String share = "assets/images/icon/share.png";
 }
 
 class HomeImages{

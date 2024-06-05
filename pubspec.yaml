@@ -96,6 +96,7 @@ flutter:
     - assets/images/assessment/
     - assets/images/SearchBar/
     - assets/images/Test/
+    - assets/images/icon/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
