@@ -21,7 +21,7 @@ class HousingSaleNoticesPage extends StatelessWidget {
                   "청약홈런",
                   style: TextStyle(
                       fontSize: 20.sp,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.bold,
                       color: Palette.defaultSkyBlue
                   ),
                 ),
@@ -50,36 +50,16 @@ class HousingSaleNoticesPage extends StatelessWidget {
                       children: [
                         Container(
                             decoration: BoxDecoration(
-                                border: Border(bottom: BorderSide(color: Colors.grey, width: 2.sp))),
+                                border: Border(bottom: BorderSide(color: Colors.grey, width: 0.1.sp))),
                             child: TabBar(
                                 indicatorSize: TabBarIndicatorSize.tab,
-                                indicatorColor:  const Color(0xff2E3C6B),
-                                labelColor:  const Color(0xff2E3C6B),
                                 unselectedLabelColor: Colors.grey,
                                 labelStyle: TextStyle(
                                   fontSize: 13.sp,
-                                  fontWeight: FontWeight.w700
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'BCcard'
                                 ),
-                                tabs: Vocabulary.housingState.map((e) => Tab(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          "분양전",
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.w700
-                                          ),
-                                        ),
-                                        Text(
-                                          "(13)",
-                                            style: TextStyle(
-                                              fontSize: 13.sp,
-                                              fontWeight: FontWeight.w500
-                                            )
-                                        ),
-                                      ],
-                                    ),
-                                  )
+                                tabs: Vocabulary.housingState.map((e) => Tab(text: "분양전")
                                 ).toList()
                             )
                         ),
