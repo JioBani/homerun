@@ -6,6 +6,8 @@ import 'package:homerun/Style/Images.dart';
 class AdNoticePage extends StatelessWidget {
   const AdNoticePage({super.key});
 
+  final Color typeColor = const Color(0xffFF4545);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,6 +75,30 @@ class AdNoticePage extends StatelessWidget {
                 ),
                 SizedBox(width: 25.w,)
               ],
+            ),
+            SizedBox(height: 22.w,),
+            Padding(
+              padding: EdgeInsets.only(left: 25.w),
+              child: Row(
+                children: [
+                  Text("서울"),
+                  SizedBox(width: 4.w,),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(4.w, 0, 4.w, 0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: typeColor),
+                      borderRadius: BorderRadius.circular(3.r), // radius가 약하게 보여서 2인데 3으로 변경
+                    ),
+                    child: Text(
+                      "민간분양",
+                      style: TextStyle(
+                        color: typeColor,
+                        fontWeight: FontWeight.w700 //폰트 굵기가 미디움인데 작게 보여서 bold로 변경
+                      ),
+                    ),
+                  )
+                ],
+              ),
             )
           ],
         ),
