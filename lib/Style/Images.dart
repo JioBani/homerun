@@ -19,6 +19,6 @@ class SearchBarImages{
 }
 
 class HousingSaleNoticesPageImages{
-  static const String search = "assets/images/housing_sale_notices_page/pin_map.png";
+  static const String pinMap = "assets/images/housing_sale_notices_page/pin_map.png";
 }
 
