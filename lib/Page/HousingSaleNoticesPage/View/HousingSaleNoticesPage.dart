@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Page/HousingSaleNoticesPage/View/NoticesTabPage.dart';
+import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Vocabulary/VocabularyList.dart';
 import 'package:homerun/Widget/CustonSearchBar.dart';
@@ -20,9 +21,10 @@ class HousingSaleNoticesPage extends StatelessWidget {
                 child: Text(
                   "청약홈런",
                   style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Palette.defaultSkyBlue
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Palette.defaultSkyBlue,
+                    fontFamily: Fonts.title
                   ),
                 ),
               ),
@@ -57,7 +59,7 @@ class HousingSaleNoticesPage extends StatelessWidget {
                                 labelStyle: TextStyle(
                                   fontSize: 13.sp,
                                   fontWeight: FontWeight.bold,
-                                  fontFamily: 'BCcard'
+                                  fontFamily: Fonts.title
                                 ),
                                 tabs: Vocabulary.housingState.map((e) => Tab(text: "분양전")
                                 ).toList()
