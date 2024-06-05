@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
+import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/MaterialTheme.dart';
 import 'package:homerun/View/HomePage/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
       designSize: screenSize,
        builder: (BuildContext context,child) => GetMaterialApp(
          theme: ThemeData(
-           fontFamily: 'BCcard',
+           fontFamily: Fonts.content,
            colorScheme: MaterialTheme.lightScheme().toColorScheme()
          ),
          home: HomePage(),
