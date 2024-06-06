@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SmallIconButton extends StatelessWidget {
-  const SmallIconButton({super.key, required this.text, required this.iconPath, required this.onTap});
+  const SmallIconButton({super.key, required this.iconPath, required this.text, required this.onTap});
   final String iconPath;
   final String text;
   final Function onTap;
