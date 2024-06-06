@@ -97,7 +97,15 @@ class AdNoticePage extends StatelessWidget {
                 SizedBox(width: 17.w,)
               ],
             ),
-            SizedBox(height: 6.w,)
+            SizedBox(height: 6.w,),
+            SizedBox(
+              width: double.infinity,
+              height: 174.w,
+              child: Image.asset(
+                "assets/images/Test/ad.png",
+                fit: BoxFit.fitHeight,
+              ),
+            )
           ],
         ),
       ),
