@@ -7,15 +7,15 @@ import 'package:homerun/Common/FirebaseStorageImage.dart';
 /// Firebase Storage의 특정 경로에 저장된 이미지들을 [FireStorageImage]들의 Colum으로 출력해주는 위젯.
 ///
 /// [path] : 이 경로는 Firebase Storage에서 이미지가 위치한 폴더를 지정합니다.
-class FireStorageImageList extends StatefulWidget {
-  const FireStorageImageList({super.key, required this.path});
+class FireStorageImageColum extends StatefulWidget {
+  const FireStorageImageColum({super.key, required this.path});
   final String path;
 
   @override
-  State<FireStorageImageList> createState() => _FireStorageImageListState();
+  State<FireStorageImageColum> createState() => _FireStorageImageColumState();
 }
 
-class _FireStorageImageListState extends State<FireStorageImageList> {
+class _FireStorageImageColumState extends State<FireStorageImageColum> {
   ListResult? listResult;
 
   @override
