@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/MaterialTheme.dart';
@@ -13,6 +15,12 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   KakaoSdk.init(nativeAppKey: 'c16877ed41cb3c133854a81a6ce4e980');
+  await NaverMapSdk.instance.initialize(
+    clientId: "dtcofwiywj",
+    onAuthFailed: (ex) {
+      StaticLogger.logger.e("[main] 네이버 맵 인증 오류 : $ex");
+    }
+  );
 
 
   await Firebase.initializeApp(
