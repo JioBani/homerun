@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/Widget/FireStorageImageList.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
 import 'package:homerun/Style/Images.dart';
 
-class AdNoticePage extends StatelessWidget {
+class AdNoticePage extends StatefulWidget {
   const AdNoticePage({super.key});
 
+  @override
+  State<AdNoticePage> createState() => _AdNoticePageState();
+}
+
+class _AdNoticePageState extends State<AdNoticePage> {
   final Color typeColor = const Color(0xffFF4545);
 
   @override
@@ -111,7 +115,7 @@ class AdNoticePage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.fromLTRB(25.w, 30.w, 25.w, 0),
               child: const FireStorageImageColum(path: "housing_notices/2024000001",),
-            )
+            ),
           ],
         ),
       ),
