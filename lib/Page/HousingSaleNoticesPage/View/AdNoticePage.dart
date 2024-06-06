@@ -108,7 +108,10 @@ class AdNoticePage extends StatelessWidget {
                 fit: BoxFit.fitHeight,
               ),
             ),
-            const FireStorageImageList(path: "housing_notices/2024000001",)
+            Padding(
+              padding: EdgeInsets.fromLTRB(25.w, 30.w, 25.w, 0),
+              child: const FireStorageImageColum(path: "housing_notices/2024000001",),
+            )
           ],
         ),
       ),
