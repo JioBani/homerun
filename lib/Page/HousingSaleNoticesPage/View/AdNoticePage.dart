@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
+import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
 import 'package:homerun/Style/Images.dart';
 
 class AdNoticePage extends StatelessWidget {
@@ -83,7 +84,20 @@ class AdNoticePage extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
+            SizedBox(height: 3.w,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SmallIconButton(iconPath: Images.heart, text: "좋아요", onTap: (){}),
+                SizedBox(width: 4.w,),
+                SmallIconButton(iconPath: Images.scrap, text: "스크랩", onTap: (){}),
+                SizedBox(width: 4.w,),
+                SmallIconButton(iconPath: Images.share, text: "공유", onTap: (){}),
+                SizedBox(width: 17.w,)
+              ],
+            ),
+            SizedBox(height: 6.w,)
           ],
         ),
       ),
