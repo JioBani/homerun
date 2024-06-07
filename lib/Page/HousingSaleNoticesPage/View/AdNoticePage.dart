@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/FireStorageImageList.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
+import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
+import 'package:homerun/Service/NaverGeocodeService.dart';
 import 'package:homerun/Style/Images.dart';
 
 class AdNoticePage extends StatefulWidget {
-  const AdNoticePage({super.key});
+  const AdNoticePage({super.key, required this.announcement});
+  final APTAnnouncement announcement;
 
   @override
   State<AdNoticePage> createState() => _AdNoticePageState();
@@ -15,6 +20,39 @@ class AdNoticePage extends StatefulWidget {
 
 class _AdNoticePageState extends State<AdNoticePage> {
   final Color typeColor = const Color(0xffFF4545);
+
+  final NaverGeocodeService _geocodeService = NaverGeocodeService.getInstanceWithInit(
+      'dtcofwiywj',
+      'jmYn8LME9lCkEVI0LSrDWyYouYVMf6pMI1QsKclj'
+  );
+
+  Future<void> moveMapCameraToAddress(NaverMapController controller) async {
+    try {
+      final geocodeData = await _geocodeService.fetchGeocode(widget.announcement.supplyLocationAddress ?? '');
+      if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
+        var position = NLatLng(
+            double.parse(geocodeData.addresses![0].y ?? ''),
+            double.parse(geocodeData.addresses![0].x ?? ''));
+
+        final cameraUpdate = NCameraUpdate.withParams(
+          target: position,
+        );
+
+        await controller.updateCamera(cameraUpdate);
+
+        final infoWindow = NInfoWindow.onMap(
+            id: "position",
+            position: position,
+            text: widget.announcement.houseName ?? ''
+        );
+
+        controller.addOverlay(infoWindow);
+      }
+    } catch (e , s) {
+      //TODO 사용자에게 알림 주기
+      StaticLogger.logger.e("$e \n $s");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +154,41 @@ class _AdNoticePageState extends State<AdNoticePage> {
               padding: EdgeInsets.fromLTRB(25.w, 30.w, 25.w, 0),
               child: const FireStorageImageColum(path: "housing_notices/2024000001",),
             ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(25.w, 10.w, 25.w, 10.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "위치보기",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13.sp
+                    ),
+                  ),
+                  SizedBox(height: 5.w,),
+                  Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        height: 150.w,
+                        child: NaverMap(
+                          onMapReady: (controller){
+                            moveMapCameraToAddress(controller);
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        iconSize: 25.sp,
+                          onPressed: (){},
+                          icon: const Icon(Icons.fullscreen_rounded)
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
