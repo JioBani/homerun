@@ -9,8 +9,15 @@ class NaverGeocodeService {
   NaverGeocodeService._();
 
   static NaverGeocodeService? _instance;
+
   static NaverGeocodeService get instance {
     _instance ??= NaverGeocodeService._();
+    return _instance!;
+  }
+
+  static NaverGeocodeService getInstanceWithInit(String clientId, String clientSecret){
+    _instance ??= NaverGeocodeService._();
+    _instance!.init(clientId, clientSecret);
     return _instance!;
   }
 
