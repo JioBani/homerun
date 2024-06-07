@@ -14,9 +14,10 @@ class NaverGeocodeService {
     return _instance!;
   }
 
-  void init(String clientId, String clientSecret){
+  NaverGeocodeService init(String clientId, String clientSecret){
     _clientId = clientId;
     _clientSecret = clientSecret;
+    return this;
   }
 
   Future<NaverMapGeocode> fetchGeocode(String query, {String? coordinate}) async {
