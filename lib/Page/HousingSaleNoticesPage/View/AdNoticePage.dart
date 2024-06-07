@@ -7,7 +7,8 @@ import 'package:homerun/Common/Widget/FireStorageImageList.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
-import 'package:homerun/Service/NaverGeocodeService.dart';
+import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
+import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
 import 'package:homerun/Style/Images.dart';
 
 class AdNoticePage extends StatefulWidget {
@@ -22,8 +23,8 @@ class _AdNoticePageState extends State<AdNoticePage> {
   final Color typeColor = const Color(0xffFF4545);
 
   final NaverGeocodeService _geocodeService = NaverGeocodeService.getInstanceWithInit(
-      'dtcofwiywj',
-      'jmYn8LME9lCkEVI0LSrDWyYouYVMf6pMI1QsKclj'
+      clientId,
+      clientSecret
   );
 
   Future<void> moveMapCameraToAddress(NaverMapController controller) async {
