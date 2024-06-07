@@ -27,34 +27,6 @@ class _AdNoticePageState extends State<AdNoticePage> {
       clientSecret
   );
 
-  Future<void> moveMapCameraToAddress(NaverMapController controller) async {
-    try {
-      final geocodeData = await _geocodeService.fetchGeocode(widget.announcement.supplyLocationAddress ?? '');
-      if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
-        var position = NLatLng(
-            double.parse(geocodeData.addresses![0].y ?? ''),
-            double.parse(geocodeData.addresses![0].x ?? ''));
-
-        final cameraUpdate = NCameraUpdate.withParams(
-          target: position,
-        );
-
-        await controller.updateCamera(cameraUpdate);
-
-        final infoWindow = NInfoWindow.onMap(
-            id: "position",
-            position: position,
-            text: widget.announcement.houseName ?? ''
-        );
-
-        controller.addOverlay(infoWindow);
-      }
-    } catch (e , s) {
-      //TODO 사용자에게 알림 주기
-      StaticLogger.logger.e("$e \n $s");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,11 +146,7 @@ class _AdNoticePageState extends State<AdNoticePage> {
                       SizedBox(
                         width: double.infinity,
                         height: 150.w,
-                        child: NaverMap(
-                          onMapReady: (controller){
-                            moveMapCameraToAddress(controller);
-                          },
-                        ),
+                        child: APTAddressNaverMap(announcement: widget.announcement,geocodeService: _geocodeService,)
                       ),
                       IconButton(
                         iconSize: 25.sp,
@@ -196,5 +164,60 @@ class _AdNoticePageState extends State<AdNoticePage> {
     );
   }
 }
+
+class APTAddressNaverMap extends StatefulWidget {
+  const APTAddressNaverMap({super.key, required this.announcement, required this.geocodeService});
+
+  final APTAnnouncement announcement;
+  final NaverGeocodeService geocodeService;
+
+  @override
+  State<APTAddressNaverMap> createState() => _APTAddressNaverMapState();
+}
+
+class _APTAddressNaverMapState extends State<APTAddressNaverMap> with AutomaticKeepAliveClientMixin{
+
+  @override
+  bool get wantKeepAlive => true;
+
+  Future<void> moveMapCameraToAddress(NaverMapController controller) async {
+    try {
+      final geocodeData = await widget.geocodeService.fetchGeocode(widget.announcement.supplyLocationAddress ?? '');
+      if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
+        var position = NLatLng(
+            double.parse(geocodeData.addresses![0].y ?? ''),
+            double.parse(geocodeData.addresses![0].x ?? ''));
+
+        final cameraUpdate = NCameraUpdate.withParams(
+          target: position,
+        );
+
+        await controller.updateCamera(cameraUpdate);
+
+        final infoWindow = NInfoWindow.onMap(
+            id: "position",
+            position: position,
+            text: widget.announcement.houseName ?? ''
+        );
+
+        controller.addOverlay(infoWindow);
+      }
+    } catch (e , s) {
+      //TODO 사용자에게 알림 주기
+      StaticLogger.logger.e("$e \n $s");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return  NaverMap(
+      onMapReady: (controller){
+        moveMapCameraToAddress(controller);
+      },
+    );
+  }
+}
+
 
 
