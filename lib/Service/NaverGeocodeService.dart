@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:homerun/Model/NaverMap/NaverMapGeoCode.dart';
 
 class NaverGeocodeService {
-  late final String? _clientId;
-  late final String? _clientSecret;
+  late String? _clientId;
+  late String? _clientSecret;
 
   NaverGeocodeService._();
 
