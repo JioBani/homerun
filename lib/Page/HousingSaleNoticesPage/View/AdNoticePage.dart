@@ -1,11 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/FireStorageImageList.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
+import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
@@ -146,11 +146,18 @@ class _AdNoticePageState extends State<AdNoticePage> {
                       SizedBox(
                         width: double.infinity,
                         height: 150.w,
-                        child: APTAddressNaverMap(announcement: widget.announcement,geocodeService: _geocodeService,)
+                        child: LocationMap(announcement: widget.announcement,geocodeService: _geocodeService,)
                       ),
                       IconButton(
                         iconSize: 25.sp,
-                          onPressed: (){},
+                          onPressed: (){
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => Dialog.fullscreen(
+                                child:FullLoactionMap(announcement: widget.announcement,geocodeService: _geocodeService,)
+                              )
+                            );
+                          },
                           icon: const Icon(Icons.fullscreen_rounded)
                       ),
                     ],
@@ -164,60 +171,4 @@ class _AdNoticePageState extends State<AdNoticePage> {
     );
   }
 }
-
-class APTAddressNaverMap extends StatefulWidget {
-  const APTAddressNaverMap({super.key, required this.announcement, required this.geocodeService});
-
-  final APTAnnouncement announcement;
-  final NaverGeocodeService geocodeService;
-
-  @override
-  State<APTAddressNaverMap> createState() => _APTAddressNaverMapState();
-}
-
-class _APTAddressNaverMapState extends State<APTAddressNaverMap> with AutomaticKeepAliveClientMixin{
-
-  @override
-  bool get wantKeepAlive => true;
-
-  Future<void> moveMapCameraToAddress(NaverMapController controller) async {
-    try {
-      final geocodeData = await widget.geocodeService.fetchGeocode(widget.announcement.supplyLocationAddress ?? '');
-      if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
-        var position = NLatLng(
-            double.parse(geocodeData.addresses![0].y ?? ''),
-            double.parse(geocodeData.addresses![0].x ?? ''));
-
-        final cameraUpdate = NCameraUpdate.withParams(
-          target: position,
-        );
-
-        await controller.updateCamera(cameraUpdate);
-
-        final infoWindow = NInfoWindow.onMap(
-            id: "position",
-            position: position,
-            text: widget.announcement.houseName ?? ''
-        );
-
-        controller.addOverlay(infoWindow);
-      }
-    } catch (e , s) {
-      //TODO 사용자에게 알림 주기
-      StaticLogger.logger.e("$e \n $s");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return  NaverMap(
-      onMapReady: (controller){
-        moveMapCameraToAddress(controller);
-      },
-    );
-  }
-}
-
-
 
