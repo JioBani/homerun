@@ -61,8 +61,8 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
   }
 }
 
-class FullLoactionMap extends StatelessWidget {
-  FullLoactionMap({super.key, required this.announcement, required this.geocodeService});
+class FullLocationMap extends StatelessWidget {
+  FullLocationMap({super.key, required this.announcement, required this.geocodeService});
   final APTAnnouncement announcement;
   final NaverGeocodeService geocodeService;
   NaverMapController? naverMapController;
