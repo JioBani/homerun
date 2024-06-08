@@ -132,12 +132,24 @@ class _AdNoticePageState extends State<AdNoticePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "위치보기",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13.sp
-                    ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 12.sp,
+                        height: 12.sp,
+                        child: Image.asset(
+                            HousingSaleNoticesPageImages.map
+                        ),
+                      ),
+                      SizedBox(width: 3.w,),
+                      Text(
+                        "위치보기",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13.sp
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 5.w,),
                   Stack(
@@ -154,7 +166,7 @@ class _AdNoticePageState extends State<AdNoticePage> {
                             showDialog<String>(
                               context: context,
                               builder: (BuildContext context) => Dialog.fullscreen(
-                                child:FullLoactionMap(announcement: widget.announcement,geocodeService: _geocodeService,)
+                                child:FullLocationMap(announcement: widget.announcement,geocodeService: _geocodeService,)
                               )
                             );
                           },
