@@ -3,14 +3,15 @@ class SiteReview {
   String content;
   String writer;
   int view;
-  List<String> images;
+  String imagesRefPath;
+
 
   SiteReview({
     required this.title,
     required this.content,
     required this.writer,
     required this.view,
-    required this.images,
+    required this.imagesRefPath,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,7 +20,7 @@ class SiteReview {
       'content': content,
       'writer': writer,
       'view': view,
-      'images': images,
+      'imagesRefPath': imagesRefPath,
     };
   }
 
@@ -29,7 +30,7 @@ class SiteReview {
       content: map['content'],
       writer: map['writer'],
       view: map['view'],
-      images: List<String>.from(map['images']),
+      imagesRefPath: map['imagesRefPath'],
     );
   }
 }
