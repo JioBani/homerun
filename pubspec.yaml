@@ -65,6 +65,7 @@ dependencies:
   firestore_cache:
   flutter_naver_map:
   card_swiper:
+  smooth_page_indicator:
 
 dev_dependencies:
   flutter_test:
