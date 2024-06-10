@@ -23,3 +23,7 @@ class HousingSaleNoticesPageImages{
   static const String map = "assets/images/housing_sale_notices_page/map.png";
 }
 
+class NoticePageImages{
+  static const String star = "assets/images/notice_page/star.png";
+}
+
