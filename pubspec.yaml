@@ -101,6 +101,7 @@ flutter:
     - assets/images/Test/
     - assets/images/icon/
     - assets/images/housing_sale_notices_page/
+    - assets/images/notice_page/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
