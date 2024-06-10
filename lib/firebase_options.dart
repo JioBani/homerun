@@ -52,6 +52,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '623100855509',
     projectId: 'homerun-3e122',
     authDomain: 'homerun-3e122.firebaseapp.com',
+    databaseURL: 'https://homerun-3e122-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'homerun-3e122.appspot.com',
     measurementId: 'G-J6Z1VBWPSR',
   );
@@ -61,6 +62,7 @@ class DefaultFirebaseOptions {
     appId: '1:623100855509:android:44a56f2d8b96e41a604e5c',
     messagingSenderId: '623100855509',
     projectId: 'homerun-3e122',
+    databaseURL: 'https://homerun-3e122-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'homerun-3e122.appspot.com',
   );
 
@@ -69,8 +71,10 @@ class DefaultFirebaseOptions {
     appId: '1:623100855509:ios:4e8bf06abf9726f9604e5c',
     messagingSenderId: '623100855509',
     projectId: 'homerun-3e122',
+    databaseURL: 'https://homerun-3e122-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'homerun-3e122.appspot.com',
     iosClientId: '623100855509-mj9smjc03og0fmg7hdrc7v8bh6bjf8al.apps.googleusercontent.com',
     iosBundleId: 'com.homerun.app.homerun',
   );
+
 }

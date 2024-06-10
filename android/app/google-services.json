@@ -1,10 +1,83 @@
 {
   "project_info": {
     "project_number": "623100855509",
+    "firebase_url": "https://homerun-3e122-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "homerun-3e122",
     "storage_bucket": "homerun-3e122.appspot.com"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623100855509:android:fad15280f5523eed604e5c",
+        "android_client_info": {
+          "package_name": "com.example.homerun_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "623100855509-oco1al11282353aqa0lf745eh8ep05v1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbbBKFfP65LoBLXfQR5YOhjmUar7gf4UY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "623100855509-oco1al11282353aqa0lf745eh8ep05v1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "623100855509-mj9smjc03og0fmg7hdrc7v8bh6bjf8al.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.homerun.app.homerun"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623100855509:android:64ea1a819b5f3769604e5c",
+        "android_client_info": {
+          "package_name": "com.homerun.admin.admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "623100855509-oco1al11282353aqa0lf745eh8ep05v1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbbBKFfP65LoBLXfQR5YOhjmUar7gf4UY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "623100855509-oco1al11282353aqa0lf745eh8ep05v1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "623100855509-mj9smjc03og0fmg7hdrc7v8bh6bjf8al.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.homerun.app.homerun"
+              }
+            }
+          ]
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:623100855509:android:44a56f2d8b96e41a604e5c",

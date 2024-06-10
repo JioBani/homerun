@@ -1,16 +1,1 @@
-{
-  "hosting": {
-    "public": "build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
-}
+{"hosting":{"public":"build/web","ignore":["firebase.json","**/.*","**/node_modules/**"],"rewrites":[{"source":"**","destination":"/index.html"}]},"flutter":{"platforms":{"android":{"default":{"projectId":"homerun-3e122","appId":"1:623100855509:android:44a56f2d8b96e41a604e5c","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"homerun-3e122","configurations":{"android":"1:623100855509:android:44a56f2d8b96e41a604e5c","ios":"1:623100855509:ios:4e8bf06abf9726f9604e5c","web":"1:623100855509:web:e5a37134204fdef9604e5c"}}}}}}
