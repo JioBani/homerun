@@ -12,8 +12,8 @@ import 'package:homerun/Style/Images.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SiteReviewWidget extends StatefulWidget {
-  const SiteReviewWidget({super.key, required this.siteReview});
-  final SiteReview siteReview;
+  const SiteReviewWidget({super.key, required this.noticeId});
+  final String noticeId;
 
   @override
   State<SiteReviewWidget> createState() => _SiteReviewWidgetState();
@@ -22,7 +22,7 @@ class SiteReviewWidget extends StatefulWidget {
 class _SiteReviewWidgetState extends State<SiteReviewWidget> {
   final PageController _pageController = PageController(viewportFraction: 1 / 3, initialPage: 0);
   int _currentIndex = 0;
-  late SiteReviewWidgetController siteReviewWidgetController = Get.put(SiteReviewWidgetController(noticeId: widget.siteReview.noticeId));
+  late SiteReviewWidgetController siteReviewWidgetController = Get.put(SiteReviewWidgetController(noticeId: widget.noticeId));
 
   @override
   void initState() {
@@ -174,7 +174,7 @@ class _ThumbnailWidgetState extends State<ThumbnailWidget> with AutomaticKeepAli
                   return const CupertinoActivityIndicator();
                 }
                 else if(loadingState == LoadingState.fail){
-                  return const Text("로딩실패"); //TODO 로딩실패시 인터페이스 추가 
+                  return const Text("로딩실패"); //TODO 로딩실패시 인터페이스 추가
                 }
                 else{
                   if(imagePaths!.isEmpty){
