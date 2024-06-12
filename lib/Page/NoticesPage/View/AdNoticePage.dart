@@ -6,6 +6,7 @@ import 'package:homerun/Common/Widget/FireStorageImageList.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
 import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
+import 'package:homerun/Page/NoticesPage/View/SiteReviewWidget.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
@@ -174,6 +175,7 @@ class _AdNoticePageState extends State<AdNoticePage> {
                       ),
                     ],
                   ),
+                  SiteReviewWidget(noticeId: 'test')
                 ],
               ),
             )
