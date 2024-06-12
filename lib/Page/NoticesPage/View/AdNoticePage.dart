@@ -175,10 +175,30 @@ class _AdNoticePageState extends State<AdNoticePage> {
                       ),
                     ],
                   ),
-                  SiteReviewWidget(noticeId: 'test')
                 ],
               ),
-            )
+            ),
+            SizedBox(height: 24.w,),
+            Row(
+              children: [
+                SizedBox(width: 25.w,), //TODO 패팅 확인하기
+                Image.asset(
+                  NoticePageImages.siteReview,
+                  width: 13.sp,
+                  height: 13.sp,
+                ),
+                SizedBox(width: 2.w,),
+                Text(
+                  "${widget.announcement.houseName} 현장리뷰",
+                  style: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.secondary
+                  ),
+                ),
+              ],
+            ),
+            SiteReviewWidget(noticeId: 'test')
           ],
         ),
       ),
