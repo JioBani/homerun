@@ -1,4 +1,5 @@
 class SiteReview {
+  String noticeId;
   String title;
   String content;
   String writer;
@@ -7,6 +8,7 @@ class SiteReview {
 
 
   SiteReview({
+    required this.noticeId,
     required this.title,
     required this.content,
     required this.writer,
@@ -16,6 +18,7 @@ class SiteReview {
 
   Map<String, dynamic> toMap() {
     return {
+      'noticeId' : noticeId,
       'title': title,
       'content': content,
       'writer': writer,
@@ -26,6 +29,7 @@ class SiteReview {
 
   factory SiteReview.fromMap(Map<String, dynamic> map) {
     return SiteReview(
+      noticeId: map['noticeId'],
       title: map['title'],
       content: map['content'],
       writer: map['writer'],
