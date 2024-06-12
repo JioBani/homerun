@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 
+//TODO : 컬러스키마 다시 제대로 제작해야함
 class MaterialTheme {
   final TextTheme textTheme;
 
@@ -13,7 +14,7 @@ class MaterialTheme {
       onPrimary: Color(0xffffffff),
       primaryContainer: Color(0xffb9eaff),
       onPrimaryContainer: Color(0xff001f29),
-      secondary: Color(0xffFF9C32),
+      secondary: Color(0xff2E3C6B),
       onSecondary: Color(0xffffffff),
       secondaryContainer: Color(0xffd9e2ff),
       onSecondaryContainer: Color(0xff001944),
