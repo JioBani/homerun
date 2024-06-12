@@ -37,4 +37,15 @@ class SiteReview {
       imagesRefPath: map['imagesRefPath'],
     );
   }
+
+  factory SiteReview.test() {
+    return SiteReview(
+      noticeId: '1',
+      title: "테스트1",
+      content: '테스트1',
+      writer: 'writer',
+      view: 0,
+      imagesRefPath: 'site_review/test/1',
+    );
+  }
 }
