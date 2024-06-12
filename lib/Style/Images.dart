@@ -25,5 +25,6 @@ class HousingSaleNoticesPageImages{
 
 class NoticePageImages{
   static const String star = "assets/images/notice_page/star.png";
+  static const String siteReview = "assets/images/notice_page/site_review.png";
 }
 
