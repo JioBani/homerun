@@ -40,7 +40,7 @@ dependencies:
   flutter_screenutil :
   firebase_core :
   cloud_firestore:
-  firebase_auth:
+  firebase_auth: 5.1.0
   logger:
   firebase_storage:
   cached_network_image:
@@ -59,10 +59,8 @@ dependencies:
   group_button:
   path_provider:
   pdf_render:
-  flutter_cache_manager:
   animated_svg: ^2.0.0
   flutter_svg: ^2.0.10+1
-  firestore_cache:
   flutter_naver_map:
   card_swiper:
   smooth_page_indicator:
