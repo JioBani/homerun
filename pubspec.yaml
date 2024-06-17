@@ -64,6 +64,9 @@ dependencies:
   flutter_naver_map:
   card_swiper:
   smooth_page_indicator:
+  flutter_naver_login :
+
+
 
 dev_dependencies:
   flutter_test:
