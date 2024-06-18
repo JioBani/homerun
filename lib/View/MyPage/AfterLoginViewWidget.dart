@@ -21,7 +21,7 @@ class AfterLoginViewWidget extends StatelessWidget {
         width: double.infinity,
         child: Column(
           children: [
-            SizedBox(height: 100.h,),
+            SizedBox(height: 25.h,),
             Padding(
               padding: EdgeInsets.only(left: 30.w, right: 30.w),
               child: Row(
@@ -31,20 +31,20 @@ class AfterLoginViewWidget extends StatelessWidget {
                       LoginService.instance.user?.kakaoAccount?.profile?.profileImageUrl ?? "",
                       errorBuilder: (context , exception ,stackTrace,){
                         return SizedBox(
-                          width: 200.w,
-                          height: 200.w,
+                          width: 50.w,
+                          height: 50.w,
                         );
                       },
-                      width: 200.w,
-                      height: 200.w,
+                      width: 50.w,
+                      height: 50.w,
                     )
                   ),
-                  SizedBox(width: 50.w,),
+                  SizedBox(width: 10.w,),
                   Text(
                     LoginService.instance.user?.kakaoAccount?.profile?.nickname ?? "",
                     style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontSize: 50.w
+                        fontSize: 14.sp
                     ),
                   ),
                   Expanded(child: SizedBox()),

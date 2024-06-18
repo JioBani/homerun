@@ -11,7 +11,7 @@ class ProfileActionButtonWidget extends StatelessWidget {
     required this.page
   });
 
-  final double iconSize = 100.w;
+  final double iconSize = 20.sp;
   final IconData icon;
   final String title;
   final Widget page;
@@ -34,7 +34,7 @@ class ProfileActionButtonWidget extends StatelessWidget {
           title,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: 25.w
+            fontSize: 10.sp
           ),
         )
       ],
