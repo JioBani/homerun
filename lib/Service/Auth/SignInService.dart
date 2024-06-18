@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Service/Auth/KakaoSignInService.dart';
 import 'package:homerun/Service/Auth/NaverSignInService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
@@ -124,13 +125,15 @@ class SignInService extends GetxService{
   }
 
   Future<String> getCustomTokenByKakao(kakao.User user , String accessToken) async {
-    final customTokenResponse = await http
-        .post(Uri.parse("http://10.0.2.2:3000/auth"),
+    final customTokenResponse = await http.post(Uri.parse("http://10.0.2.2:3000/auth"),
         headers: {'Authorization': 'Bearer $accessToken'},
-        body: {
-          'uid' : user.id.toString(),
-          'displayName' : user.kakaoAccount?.name ?? ''
-        }
+        body: UserDto(
+            socialProvider: SocialProvider.kakao,
+            uid: user.id.toString(),
+            displayName: '',
+            birth: '',
+            gender: Gender.none
+        ).toMap()
     ).timeout(const Duration(seconds: 10));
 
     return customTokenResponse.body;
@@ -142,10 +145,7 @@ class SignInService extends GetxService{
     final customTokenResponse = await http
         .post(Uri.parse("http://10.0.2.2:3000/auth"),
         headers: {'Authorization': 'Bearer ${accessToken.accessToken}'},
-        body: {
-          'uid' : naverLoginResult.account.id.toString(),
-          'displayName' : naverLoginResult.account.name
-        }
+        body:  UserDto.test().toMap()
     ).timeout(const Duration(seconds: 10));
 
     return customTokenResponse.body;
@@ -173,8 +173,8 @@ class SignInService extends GetxService{
 
         return true;
       }
-    }catch(e){
-      StaticLogger.logger.e("[SignInService.getUserDocumentSnashotStream()] 오류가 발생했습니다. : $e");
+    }catch(e , s){
+      StaticLogger.logger.e("[SignInService.getUserDocumentSnashotStream()] 오류가 발생했습니다. : $e , $s");
       return false;
     }
   }
