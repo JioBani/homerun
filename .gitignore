@@ -117,3 +117,10 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+lib/Service/NaverGeocodeService/ServiceKey.dart
+android/app/src/main/res/values/strings.xml
+lib/Page/Test/View/ApiTest.dart
+lib/Page/Test/View/KakaoLoginTestPage.dart
+lib/Page/Test/View/NaverMapTestPage.dart
+lib/Page/Test/View/SiteReviewTestDataPage.dart
+lib/Page/Test/View/SizeReviewWidgetTestPage.dart
