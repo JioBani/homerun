@@ -74,6 +74,39 @@ class SignInService extends GetxService{
     }
   }
 
+  Future<bool> signOut(AuthType authType) async {
+    try {
+      signInState.value = SignInState.loading;
+
+      // #1. Firebase에서 로그아웃
+      await FirebaseAuth.instance.signOut();
+
+      // #2. Kakao 로그아웃
+      if (authType == AuthType.kakao) {
+        await kakao.UserApi.instance.logout();
+      }
+      // #3. Naver 로그아웃
+      else if (authType == AuthType.naver) {
+        await FlutterNaverLogin.logOut();
+      }
+
+      // #4. 유저 상태 초기화
+      userDto.value = null;
+      userSnapshot.value = null;
+      userSubscription?.cancel();
+
+      signInState.value = SignInState.signOut;
+      StaticLogger.logger.i('[SignInService.signOut()] 로그아웃 성공');
+      return true;
+    } catch (e, s) {
+      StaticLogger.logger.e('[SignInService.signOut()] 로그아웃에 실패하였습니다: $e');
+      StaticLogger.logger.e('[SignInService.signOut()] $s');
+      signInState.value = SignInState.signOut;
+      return false;
+    }
+  }
+
+
   Future<String?> checkKakaoAccessToken() async {
     if(await kakao.AuthApi.instance.hasToken()){
       try {
@@ -98,7 +131,7 @@ class SignInService extends GetxService{
 
   Future<String> getCustomTokenByKakao(kakao.User user , String accessToken) async {
     final customTokenResponse = await http
-        .post(Uri.parse("http://10.0.2.2:3000/kakao"),
+        .post(Uri.parse("http://10.0.2.2:3000/auth"),
         headers: {'Authorization': 'Bearer $accessToken'},
         body: {
           'uid' : user.id.toString(),
@@ -113,7 +146,7 @@ class SignInService extends GetxService{
     StaticLogger.logger.i(naverLoginResult.accessToken.accessToken);
     NaverAccessToken accessToken = await FlutterNaverLogin.currentAccessToken;
     final customTokenResponse = await http
-        .post(Uri.parse("http://10.0.2.2:3000/naver"),
+        .post(Uri.parse("http://10.0.2.2:3000/auth"),
         headers: {'Authorization': 'Bearer ${accessToken.accessToken}'},
         body: {
           'uid' : naverLoginResult.account.id.toString(),
