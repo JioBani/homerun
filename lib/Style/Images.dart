@@ -26,5 +26,11 @@ class HousingSaleNoticesPageImages{
 class NoticePageImages{
   static const String star = "assets/images/notice_page/star.png";
   static const String siteReview = "assets/images/notice_page/site_review.png";
+  static NoticePageCommentImages comment = NoticePageCommentImages();
 }
 
+class NoticePageCommentImages{
+  final String good = "assets/images/notice_page/comment/good.png";
+  final String bad = "assets/images/notice_page/comment/bad.png";
+  final String reply = "assets/images/notice_page/comment/reply.png";
+}

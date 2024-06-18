@@ -103,6 +103,7 @@ flutter:
     - assets/images/icon/
     - assets/images/housing_sale_notices_page/
     - assets/images/notice_page/
+    - assets/images/notice_page/comment/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
