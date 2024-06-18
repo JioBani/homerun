@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Controller/LoginController.dart';
+import 'package:homerun/Service/Auth/SignInService.dart';
 import 'package:homerun/Service/LoginService.dart';
 import 'package:homerun/View/MyPage/AfterLoginViewWidget.dart';
 import 'package:homerun/View/MyPage/BeforeLoginViewWidget.dart';
@@ -25,13 +27,24 @@ class _LoginViewWidgetState extends State<LoginViewWidget> {
       future: controller.checkLogin(),
       builder: (context , snapshot){
         if(snapshot.hasData){
-          return GetX<LoginController>(
-            builder: (getxController){
-              if(getxController.loginState.value == LoginState.login){
-                return AfterLoginViewWidget();
+          return GetX<SignInService>(
+            builder: (service){
+              if(service.signInState.value == SignInState.signOut){
+                return TextButton(onPressed: (){service.signIn(AuthType.kakao);}, child: Text('로그인'));
+              }
+              else if(service.signInState.value == SignInState.loading){
+                return CupertinoActivityIndicator();
+              }
+              else if(service.signInState.value == SignInState.signInSuccess){
+                return Text(service.userDto.value?.toMap().toString() ?? '유저데이터를 가져 올 수 없습니다.');
               }
               else{
-                return BeforeLoginViewWidget();
+                return Column(
+                  children: [
+                    Text('로그인에 실패했습니다.'),
+                    TextButton(onPressed: (){service.signIn(AuthType.kakao);}, child: Text('로그인'))
+                  ],
+                );
               }
             },
           ) ;
