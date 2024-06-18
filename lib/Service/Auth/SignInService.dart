@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Service/Auth/KakaoSignInService.dart';
 import 'package:homerun/Service/Auth/NaverSignInService.dart';
@@ -17,6 +18,13 @@ enum AuthType{
   naver
 }
 
+enum SignInState{
+  signOut,
+  signInSuccess,
+  signInFailure,
+  loading,
+}
+
 class SignInService extends GetxService{
 
   KakaoSignInService kakaoSignInService = KakaoSignInService();
@@ -25,9 +33,12 @@ class SignInService extends GetxService{
   Rx<UserDto?> userDto = Rx(null);
   Rx<DocumentSnapshot?> userSnapshot = Rx(null);
   StreamSubscription<DocumentSnapshot>? userSubscription;
+  Rx<SignInState> signInState = Rx(SignInState.signOut);
 
   Future<bool> signIn(AuthType authType) async {
     try{
+      signInState.value = SignInState.loading;
+
       //#1. 소셜로그인
       //#2. 커스텀 토큰 가져오기
 
@@ -49,14 +60,16 @@ class SignInService extends GetxService{
       await FirebaseAuth.instance.signInWithCustomToken(customToken);
 
       //#4. 유저 정보 가져오기
-      listenUserSnapshot();
+      await listenUserSnapshot();
 
       StaticLogger.logger.i('[SignInService.signIn()] 로그인 성공 ');
+      signInState.value = SignInState.signInSuccess;
       return true;
 
     }catch(e,s){
       StaticLogger.logger.e('[SignInService.signIn()] 로그인에 실패하였습니다. : $e');
       StaticLogger.logger.e('[SignInService.signIn()] $s');
+      signInState.value = SignInState.signInFailure;
       return false;
     }
   }
@@ -138,6 +151,4 @@ class SignInService extends GetxService{
       return false;
     }
   }
-
-
 }
