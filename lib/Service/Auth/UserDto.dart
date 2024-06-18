@@ -4,9 +4,9 @@ import 'package:homerun/Service/Auth/SocialProvider.dart';
 class UserDto {
   final String uid;
   final SocialProvider socialProvider;
-  final String displayName;
-  final String birth;
-  final Gender gender;
+  final String? displayName;
+  final String? birth;
+  final Gender? gender;
 
   UserDto({
     required this.socialProvider,
@@ -32,7 +32,7 @@ class UserDto {
       'uid': uid,
       'displayName': displayName,
       'birth': birth,
-      'gender': gender.name,
+      'gender': gender?.name,
     };
   }
 
