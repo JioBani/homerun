@@ -4,17 +4,34 @@ enum Gender {
   female,
 }
 
+extension GenderExtension on Gender {
+  String toShortString() {
+    return this.toString().split('.').last;
+  }
+
+  static Gender fromString(String genderString) {
+    switch (genderString) {
+      case 'male':
+        return Gender.male;
+      case 'female':
+        return Gender.female;
+      default:
+        return Gender.none;
+    }
+  }
+}
+
 class UserDto {
   String uid;
   String provider;
-  String nickName;
+  String displayName;
   String birth;
   Gender gender;
 
   UserDto({
     required this.uid,
     required this.provider,
-    required this.nickName,
+    required this.displayName,
     required this.birth,
     required this.gender,
   });
@@ -23,9 +40,9 @@ class UserDto {
     return UserDto(
       uid: map['uid'] as String,
       provider: map['provider'] as String,
-      nickName: map['nickName'] as String,
+      displayName: map['displayName'] as String,
       birth: map['birth'] as String,
-      gender: Gender.values[map['gender'] as int],
+      gender: GenderExtension.fromString(map['gender'] as String),
     );
   }
 
@@ -33,16 +50,16 @@ class UserDto {
     return {
       'uid': uid,
       'provider': provider,
-      'nickName': nickName,
+      'displayName': displayName,
       'birth': birth,
-      'gender': gender.index,
+      'gender': gender.toShortString(),
     };
   }
 
   UserDto.test()
       : uid = 'testUid',
         provider = 'testProvider',
-        nickName = 'testNickName',
+        displayName = 'testNickName',
         birth = '2000-01-01',
         gender = Gender.none;
 
