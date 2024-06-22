@@ -65,6 +65,7 @@ dependencies:
   card_swiper:
   smooth_page_indicator:
   flutter_naver_login :
+  firebase_app_check: ^0.3.0+1
 
 
 
