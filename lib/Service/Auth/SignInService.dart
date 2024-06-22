@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/enum/Gender.dart';
+import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/KakaoSignInService.dart';
 import 'package:homerun/Service/Auth/NaverSignInService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
@@ -101,31 +101,9 @@ class SignInService extends GetxService{
     }
   }
 
-
-  Future<String?> checkKakaoAccessToken() async {
-    if(await kakao.AuthApi.instance.hasToken()){
-      try {
-        kakao.AccessTokenInfo tokenInfo = await kakao.UserApi.instance.accessTokenInfo();
-        print('토큰 유효성 체크 성공 ${tokenInfo.id} ${tokenInfo.expiresIn}');
-        return (await kakao.TokenManagerProvider.instance.manager.getToken())?.accessToken;
-      } catch (error) {
-        if (error is kakao.KakaoException && error.isInvalidTokenError()) {
-          StaticLogger.logger.e("토큰 만료");
-          return null;
-        } else {
-          StaticLogger.logger.e("토큰 정보 확인 실패");
-          return null;
-        }
-      }
-    }
-    else{
-      StaticLogger.logger.e("토큰 없음");
-      return null;
-    }
-  }
-
   Future<String> getCustomTokenByKakao(kakao.User user , String accessToken) async {
-    final customTokenResponse = await http.post(Uri.parse("http://10.0.2.2:3000/auth"),
+    //String url = "http://10.0.2.2:3000/auth";
+    final customTokenResponse = await http.post(Uri.parse(FirebaseFunctionEndpoints.signIn),
         headers: {'Authorization': 'Bearer $accessToken'},
         body: UserDto(
             socialProvider: SocialProvider.kakao,
@@ -140,10 +118,12 @@ class SignInService extends GetxService{
   }
 
   Future<String> getCustomTokenByNaver(NaverLoginResult naverLoginResult) async {
+    //String url = "http://10.0.2.2:3000/auth";
+
     StaticLogger.logger.i(naverLoginResult.accessToken.accessToken);
     NaverAccessToken accessToken = await FlutterNaverLogin.currentAccessToken;
     final customTokenResponse = await http
-        .post(Uri.parse("http://10.0.2.2:3000/auth"),
+        .post(Uri.parse(FirebaseFunctionEndpoints.signIn),
         headers: {'Authorization': 'Bearer ${accessToken.accessToken}'},
         body:  UserDto.test().toMap()
     ).timeout(const Duration(seconds: 10));
