@@ -1,8 +1,8 @@
 import 'HttpError.dart';
 
-class ApiResponse {
+class ApiResponse<T> {
   final int status;
-  final dynamic data;
+  final T? data;
   final HttpError? error;
 
   ApiResponse({
@@ -14,7 +14,7 @@ class ApiResponse {
   factory ApiResponse.fromMap(Map<String, dynamic> map) {
     return ApiResponse(
       status: map['status'],
-      data: map['data'],
+      data: map['data'] as T,
       error: map['error'] != null ? HttpError.fromMap(map['error']) : null,
     );
   }
