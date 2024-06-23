@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
@@ -6,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
+import 'package:homerun/Service/Auth/ApiResponse.dart';
 import 'package:homerun/Service/Auth/KakaoSignInService.dart';
 import 'package:homerun/Service/Auth/NaverSignInService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
@@ -39,16 +41,28 @@ class SignInService extends GetxService{
 
       final String customToken;
 
+      ApiResponse<String> tokenResponse;
+
       if(socialProvider == SocialProvider.kakao){
         var (kakao.OAuthToken token , kakao.User user) = await kakaoSignInService.signIn();
-        customToken = await getCustomTokenByKakao(user , token.accessToken);
+        tokenResponse = await getCustomTokenByKakao(user , token.accessToken);
       }
       else if(socialProvider == SocialProvider.naver){
         NaverLoginResult naverLoginResult = await naverSignInService.signIn();
-        customToken = await getCustomTokenByNaver(naverLoginResult);
+        tokenResponse = await getCustomTokenByNaver(naverLoginResult);
       }
       else{
         throw Exception('알 수 없는 로그인 요청');
+      }
+
+      if(tokenResponse.status != 200){
+        throw tokenResponse.error ?? Exception('알 수 없는 오류');
+      }
+      else if(tokenResponse.data == null){
+        throw Exception('알 수 없는 오류');
+      }
+      else{
+        customToken = tokenResponse.data!;
       }
 
       //#3. 커스텀 토큰으로 firebase 로그인
@@ -101,7 +115,7 @@ class SignInService extends GetxService{
     }
   }
 
-  Future<String> getCustomTokenByKakao(kakao.User user , String accessToken) async {
+  Future<ApiResponse<String>> getCustomTokenByKakao(kakao.User user , String accessToken) async {
     //String url = "http://10.0.2.2:3000/auth";
     final customTokenResponse = await http.post(Uri.parse(FirebaseFunctionEndpoints.signIn),
         headers: {'Authorization': 'Bearer $accessToken'},
@@ -114,10 +128,10 @@ class SignInService extends GetxService{
         ).toMap()
     ).timeout(const Duration(seconds: 10));
 
-    return customTokenResponse.body;
+    return ApiResponse<String>.fromMap(jsonDecode(customTokenResponse.body));
   }
 
-  Future<String> getCustomTokenByNaver(NaverLoginResult naverLoginResult) async {
+  Future<ApiResponse<String>> getCustomTokenByNaver(NaverLoginResult naverLoginResult) async {
     //String url = "http://10.0.2.2:3000/auth";
 
     StaticLogger.logger.i(naverLoginResult.accessToken.accessToken);
@@ -128,7 +142,7 @@ class SignInService extends GetxService{
         body:  UserDto.test().toMap()
     ).timeout(const Duration(seconds: 10));
 
-    return customTokenResponse.body;
+    return ApiResponse<String>.fromMap(jsonDecode(customTokenResponse.body));
   }
 
   Future<bool> listenUserSnapshot() async{
@@ -157,5 +171,10 @@ class SignInService extends GetxService{
       StaticLogger.logger.e("[SignInService.getUserDocumentSnashotStream()] 오류가 발생했습니다. : $e , $s");
       return false;
     }
+  }
+
+  Future<String> getKakaoAccessToken() async {
+    var (kakao.OAuthToken token , kakao.User user) = await kakaoSignInService.signIn();
+    return token.accessToken;
   }
 }
