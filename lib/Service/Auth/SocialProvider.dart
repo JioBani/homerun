@@ -17,4 +17,17 @@ extension SocialProviderExtension on SocialProvider {
         throw Exception('Unknown social provider: $provider');
     }
   }
+
+  String toEnumString() {
+    switch (this) {
+      case SocialProvider.kakao:
+        return "kakao";
+      case SocialProvider.naver:
+        return "naver";
+      case SocialProvider.other:
+        return "other";
+      default:
+        throw Exception('Unknown social provider: $this');
+    }
+  }
 }
