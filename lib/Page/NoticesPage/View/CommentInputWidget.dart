@@ -1,81 +1,176 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
+import 'package:homerun/Style/TestImages.dart';
 
-class CommentInputWidget extends StatelessWidget {
-  CommentInputWidget({super.key, required this.noticeId});
+class CommentInputWidget extends StatefulWidget {
+  const CommentInputWidget({super.key, required this.noticeId});
   final String noticeId;
 
-  final TextEditingController _controller = TextEditingController();
+  @override
+  State<CommentInputWidget> createState() => _CommentInputWidgetState();
+}
 
-  Future<void> _submitComment() async {
-    try{
-      //await CommentService().delete(noticeId,'f2Y7kbN9sV4Aj2mbyeUL');
-      if(_controller.text.isNotEmpty){
-        await CommentService().uploadComment(_controller.text,noticeId);
-      }
-    }catch(e){
-      StaticLogger.logger.e(e);
-    }
+class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProviderStateMixin {
+  bool _isFormVisible = false;
+  Widget hintTextWidget = const CommentHintTextWidget();
+  Widget inputFormWidget =  const CommentInputFormWidget();
+  late Widget child = hintTextWidget;
+
+  @override
+  void initState() {
+    super.initState();
   }
 
-  final String hintText = "댓글을 입력해주세요.";
+  void _toggleFormVisibility() {
+    setState(() {
+      _isFormVisible = !_isFormVisible;
+      if(_isFormVisible){
+        child = inputFormWidget;
+      }
+      else{
+        child = hintTextWidget;
+      }
+    });
+  }
+
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(milliseconds: 200),
+    vsync: this,
+  );
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(1.5.sp),
-      child: DecoratedBox(
+    return InkWell(
+      onTap: (){
+        _toggleFormVisibility();
+      },
+      child: Container(
+        padding: EdgeInsets.fromLTRB(8.w, 4.w, 8.w, 4.w),
         decoration: BoxDecoration(
-          color: Color(0xffFBFBFB),
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.circular(5.r),
+          color: const Color(0xffFBFBFB),
+          border: Border.all(color: const Color(0xffA4A4A6)),
         ),
-        child: TextFormField(
-          controller: _controller,
-          decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(top: 7.5.sp , bottom: 7.5.sp,left: 7.5.w),
-              hintText: hintText,
-              isDense :true,
-              filled: true,
-              fillColor: Color(0xffFBFBFB),
-              hintStyle: TextStyle(
-                  fontSize: 11.sp,
-                  color: Color(0xff767676)
+        child: AnimatedCrossFade(
+          duration: _controller.duration!,
+          firstCurve: Curves.bounceInOut,
+          secondCurve: Curves.bounceInOut,
+          firstChild: hintTextWidget,
+          secondChild: inputFormWidget,
+          crossFadeState: _isFormVisible ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+        ),
+      ),
+    );
+  }
+}
+
+class CommentHintTextWidget extends StatelessWidget {
+  const CommentHintTextWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      children: [
+        Text("댓글을 입력해주세요."),
+        Spacer(),
+        Text("등록")
+      ],
+    );
+  }
+}
+
+
+class CommentInputFormWidget extends StatefulWidget {
+  const CommentInputFormWidget({super.key});
+
+  @override
+  State<CommentInputFormWidget> createState() => _CommentInputFormWidgetState();
+}
+
+class _CommentInputFormWidgetState extends State<CommentInputFormWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(30.w),
+              child: Image.asset(
+                TestImages.ashe_43,
+                width: 30.w,
+                height: 30.w,
               ),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xffA4A4A6) , width: 0.5.sp),
-                borderRadius: BorderRadius.circular(3.r),
+            ),
+            SizedBox(width: 6.w,),
+            Text(
+              '고향은 서울',
+              style: TextStyle(
+                  fontSize: 13.sp,
+                  color: const Color(0xff767676)
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xffA4A4A6) , width: 0.5.sp),
-                borderRadius: BorderRadius.circular(3.r),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xffA4A4A6) , width: 0.5.sp),
-                borderRadius: BorderRadius.circular(3.r),
-              ),
-              suffixIcon: InkWell(
-                onTap: _submitComment,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
+            ),
+            const Spacer(),
+            InkWell(
+              onTap: (){
+
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    color: Theme.of(context).primaryColor
+                ),
+                width: 50.w,
+                height: 20.w,
+                child: Center(
                   child: Text(
-                    '등록',
+                    "등록",
                     style: TextStyle(
-                      fontSize: 11.sp,
-                      color: Theme.of(context).colorScheme.secondary
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11.sp,
+                        color: Colors.white
                     ),
                   ),
                 ),
               ),
+            )
+          ],
+        ),
+        SizedBox(height: 8.w,),
+        TextFormField(
+          maxLines: 6,
+          cursorColor: const Color(0xFF35C5F0),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: const Color(0x00FBFBFB),
+            hintText: '서로 곱고 아름다운 말을 사용해주세요 :-)',
+            hintStyle: TextStyle(color: const Color(0xFFD9D9D9) , fontSize: 11.sp),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6.r),
+              borderSide: BorderSide(color: const Color(0xFF35C5F0),width: 1.sp),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6.r),
+              borderSide: BorderSide(color: const Color(0xFF35C5F0),width: 1.sp),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 6.w),
           ),
           style: TextStyle(
               fontSize: 11.sp
           ),
-          minLines: 1,
-          maxLines: null, // Allow the TextFormField to grow dynamically
         ),
-      ),
+        SizedBox(height: 6.w,),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            '0 / 3000',
+            style: TextStyle(
+                fontSize: 11.sp,
+                color: const Color(0xff35C5F0)
+            ),
+          ),
+        )
+      ],
     );
   }
 }
