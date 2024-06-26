@@ -44,8 +44,11 @@ class CommentViewWidgetController extends GetxController{
     popularityLoader.load();
   }
 
-  Future<void> deleteComment()async {
-
+  Future<void> deleteComment(String commentId)async {
+    await commentService.delete(commentId , noticeId);
+    //TODO 적절하게 load하도록 변경
+    resendLoader.load();
+    popularityLoader.load();
   }
 
 }
