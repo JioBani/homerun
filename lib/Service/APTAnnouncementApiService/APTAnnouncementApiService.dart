@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/ServiceKey.dart';
+import 'package:homerun/Service/APTAnnouncementApiService/Security/ServiceKey.dart';
 import 'package:http/http.dart' as http;
 
 /**
