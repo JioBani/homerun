@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Comment {
+  final String commentId;
   final String displayName;
   final Timestamp date;
   final int good;
@@ -9,6 +10,7 @@ class Comment {
   final String uid;
 
   Comment({
+    required this.commentId,
     required this.displayName,
     required this.date,
     required this.good,
@@ -17,8 +19,9 @@ class Comment {
     required this.uid
   });
 
-  factory Comment.fromMap(Map<String, dynamic> map) {
+  factory Comment.fromMap(Map<String, dynamic> map , String commentId) {
     return Comment(
+      commentId: commentId,
       displayName: map['displayName'],
       date: map['date'],
       good: map['good'],
@@ -40,7 +43,8 @@ class Comment {
   }
 
   Comment.test()
-      : displayName = 'Test User',
+      : commentId = 'test',
+        displayName = 'Test User',
         date = Timestamp.now(),
         good = 0,
         bad = 0,
