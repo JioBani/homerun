@@ -198,7 +198,7 @@ class SignInService extends GetxService{
   }
 
   UserDto getUser(){
-    if(userDto.value == null){
+    if(FirebaseAuth.instance.currentUser == null || userDto.value == null){
       throw ApplicationUnauthorizedException();
     }
     else{
