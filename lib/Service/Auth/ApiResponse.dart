@@ -14,7 +14,7 @@ class ApiResponse<T> {
   factory ApiResponse.fromMap(Map<String, dynamic> map) {
     return ApiResponse(
       status: map['status'],
-      data: map['data'] as T,
+      data: map['data'] as T?,
       error: map['error'] != null ? HttpError.fromMap(map['error']) : null,
     );
   }
