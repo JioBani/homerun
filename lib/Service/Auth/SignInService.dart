@@ -5,15 +5,32 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/ApiResponse.dart';
+import 'package:homerun/Service/Auth/HttpError.dart';
 import 'package:homerun/Service/Auth/KakaoSignInService.dart';
 import 'package:homerun/Service/Auth/NaverSignInService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:http/http.dart' as http;
+
+class SignInServiceException implements Exception{
+  String message;
+
+  SignInServiceException(this.message);
+}
+
+class ApplicationUnauthorizedException extends SignInServiceException{
+  ApplicationUnauthorizedException()
+      : super('Application is not logged in.');
+}
+
+class UnknownUserInfoException extends SignInServiceException{
+  UnknownUserInfoException({String message = 'Unknown user info.'})
+      : super(message);
+}
+
 
 enum SignInState{
   signOut,
@@ -79,6 +96,10 @@ class SignInService extends GetxService{
       StaticLogger.logger.e('[SignInService.signIn()] 로그인에 실패하였습니다. : $e');
       StaticLogger.logger.e('[SignInService.signIn()] $s');
       signInState.value = SignInState.signInFailure;
+
+      if(e is HttpError){
+        StaticLogger.logger.e('[SignInService.signIn()]: ${e.code} : ${e.message}');
+      }
       return false;
     }
   }
@@ -119,13 +140,7 @@ class SignInService extends GetxService{
     //String url = "http://10.0.2.2:3000/auth";
     final customTokenResponse = await http.post(Uri.parse(FirebaseFunctionEndpoints.signIn),
         headers: {'Authorization': 'Bearer $accessToken'},
-        body: UserDto(
-            socialProvider: SocialProvider.kakao,
-            uid: user.id.toString(),
-            displayName: '',
-            birth: '',
-            gender: Gender.none
-        ).toMap()
+        body: {'social_provider' : SocialProvider.kakao.toEnumString()}
     ).timeout(const Duration(seconds: 10));
 
     return ApiResponse<String>.fromMap(jsonDecode(customTokenResponse.body));
@@ -134,12 +149,11 @@ class SignInService extends GetxService{
   Future<ApiResponse<String>> getCustomTokenByNaver(NaverLoginResult naverLoginResult) async {
     //String url = "http://10.0.2.2:3000/auth";
 
-    StaticLogger.logger.i(naverLoginResult.accessToken.accessToken);
     NaverAccessToken accessToken = await FlutterNaverLogin.currentAccessToken;
     final customTokenResponse = await http
         .post(Uri.parse(FirebaseFunctionEndpoints.signIn),
         headers: {'Authorization': 'Bearer ${accessToken.accessToken}'},
-        body:  UserDto.test().toMap()
+        body: {'social_provider' : SocialProvider.naver.toEnumString()}
     ).timeout(const Duration(seconds: 10));
 
     return ApiResponse<String>.fromMap(jsonDecode(customTokenResponse.body));
@@ -177,4 +191,19 @@ class SignInService extends GetxService{
     var (kakao.OAuthToken token , kakao.User user) = await kakaoSignInService.signIn();
     return token.accessToken;
   }
+
+  Future<String> getNaverAccessToken() async {
+    NaverLoginResult naverLoginResult = await naverSignInService.signIn();
+    return (await FlutterNaverLogin.currentAccessToken).accessToken;
+  }
+
+  UserDto getUser(){
+    if(userDto.value == null){
+      throw ApplicationUnauthorizedException();
+    }
+    else{
+      return userDto.value!;
+    }
+  }
+
 }
