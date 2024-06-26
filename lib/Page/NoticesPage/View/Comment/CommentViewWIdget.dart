@@ -1,15 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
-import 'package:homerun/Page/NoticesPage/View/CommentInputWidget.dart';
+import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/TestImages.dart';
 import 'package:intl/intl.dart';
+
+import 'CommentInputWidget.dart';
 
 class CommentViewWidget extends StatefulWidget {
   const CommentViewWidget({super.key, required this.noticeId});
@@ -26,7 +28,7 @@ class _CommentViewWidgetState extends State<CommentViewWidget> {
     Get.put(
         tag:widget.noticeId,
         CommentViewWidgetController(noticeId: widget.noticeId)
-    ).loadComments();
+    ).resendLoader.load();
 
     // TODO: implement initState
     super.initState();
@@ -38,28 +40,25 @@ class _CommentViewWidgetState extends State<CommentViewWidget> {
       padding: EdgeInsets.symmetric(horizontal: 30.w),
       child: Column(
         children: [
-          CommentInputWidget(noticeId: widget.noticeId,),
+          CommentInputWidget(noticeId: widget.noticeId),
           SizedBox(height: 20.w,),
-          GetX<CommentViewWidgetController>(
-            tag: widget.noticeId,
-            builder: (controller){
-              if(controller.loadingState.value == LoadingState.success){
-                return Column(
-                  children: controller.comments.map(
-                        (comment) => Padding(
-                          padding: EdgeInsets.symmetric(vertical: 5.w),
-                          child: CommentWidget(comment: comment,)
+          GetBuilder<CommentViewWidgetController>(
+              tag: widget.noticeId,
+              builder: (controller){
+                if(controller.resendLoader.loadingState == LoadingState.success){
+                  return Column(
+                    children: controller.resendLoader.comments.map(
+                            (comment) => Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5.w),
+                            child: CommentWidget(comment: comment, noticeId: widget.noticeId,)
                         )
-                  ).toList(),
-                );
+                    ).toList(),
+                  );
+                }
+                else{
+                  return const CupertinoActivityIndicator();
+                }
               }
-              else if(controller.loadingState.value == LoadingState.fail){
-                return Text('오류');
-              }
-              else{
-                return CupertinoActivityIndicator();
-              }
-            }
           )
         ],
       ),
@@ -68,9 +67,10 @@ class _CommentViewWidgetState extends State<CommentViewWidget> {
 }
 
 class CommentWidget extends StatelessWidget {
-  const CommentWidget({super.key, required this.comment});
+  const CommentWidget({super.key, required this.comment, required this.noticeId});
 
   final Comment comment;
+  final String noticeId;
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +102,22 @@ class CommentWidget extends StatelessWidget {
                   style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
                 )
               ],
+            ),
+            const Expanded(child: SizedBox()),
+            Builder(
+                builder: (context){
+                  if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.uid == comment.uid){
+                    return TextButton(
+                        onPressed: () async {
+                          await CommentService().delete(noticeId, comment.commentId);
+                        },
+                        child: const Text('삭제')
+                    );
+                  }
+                  else{
+                    return const SizedBox();
+                  }
+                }
             )
           ],
         ),
@@ -124,7 +140,9 @@ class CommentWidget extends StatelessWidget {
             CommentIconButton(
               imagePath: NoticePageImages.comment.good,
               content: '300',
-              onTap: () {},
+              onTap: () {
+                //Get.find<CommentService>().likeComment(noticeId, comment.commentId);
+              },
             ),
             CommentIconButton(
               imagePath: NoticePageImages.comment.bad,
@@ -156,10 +174,13 @@ class CommentIconButton extends StatelessWidget {
       width: 45.w,
       child: Row(
         children: [
-          Image.asset(
-            imagePath,
-            width: 9.5.sp,
-            height: 9.5.sp,
+          InkWell(
+            onTap: (){onTap();},
+            child: Image.asset(
+              imagePath,
+              width: 9.5.sp,
+              height: 9.5.sp,
+            ),
           ),
           SizedBox(
             width: 2.w,

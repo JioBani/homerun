@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/instance_manager.dart';
+import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
+import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
 import 'package:homerun/Style/TestImages.dart';
 
 class CommentInputWidget extends StatefulWidget {
@@ -13,11 +16,12 @@ class CommentInputWidget extends StatefulWidget {
 class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProviderStateMixin {
   bool _isFormVisible = false;
   Widget hintTextWidget = const CommentHintTextWidget();
-  Widget inputFormWidget =  const CommentInputFormWidget();
-  late Widget child = hintTextWidget;
+  late Widget inputFormWidget =  CommentInputFormWidget(noticeId: widget.noticeId,);
+  late Widget child;
 
   @override
   void initState() {
+    child = hintTextWidget;
     super.initState();
   }
 
@@ -81,13 +85,17 @@ class CommentHintTextWidget extends StatelessWidget {
 
 
 class CommentInputFormWidget extends StatefulWidget {
-  const CommentInputFormWidget({super.key});
+  const CommentInputFormWidget({super.key, required this.noticeId});
+  final String noticeId;
 
   @override
   State<CommentInputFormWidget> createState() => _CommentInputFormWidgetState();
 }
 
 class _CommentInputFormWidgetState extends State<CommentInputFormWidget> {
+  final CommentService commentService = CommentService();
+  final TextEditingController textEditingController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -112,8 +120,17 @@ class _CommentInputFormWidgetState extends State<CommentInputFormWidget> {
             ),
             const Spacer(),
             InkWell(
-              onTap: (){
+              onTap: () async {
+                if(textEditingController.text.isNotEmpty){
+                  // Result result = await commentService.uploadComment(textEditingController.text, widget.noticeId);
+                  // if(result.isSuccess){
+                  //   Get.find<CommentViewWidgetController>(tag: widget.noticeId).loadCommentsByPopularity();
+                  // }
+                  Get.find<CommentViewWidgetController>(tag: widget.noticeId).uploadComment(textEditingController.text);
+                }
+                else{
 
+                }
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -138,6 +155,7 @@ class _CommentInputFormWidgetState extends State<CommentInputFormWidget> {
         ),
         SizedBox(height: 8.w,),
         TextFormField(
+          controller: textEditingController,
           maxLines: 6,
           cursorColor: const Color(0xFF35C5F0),
           decoration: InputDecoration(
