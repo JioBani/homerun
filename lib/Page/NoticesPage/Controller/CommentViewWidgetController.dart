@@ -1,35 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:homerun/Common/Firebase/FirestorePagination.dart';
-import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Page/Common/FirebaseResponse.dart';
-import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
+import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
+
+import 'CommentLoader.dart';
 
 class CommentViewWidgetController extends GetxController{
-  Rx<LoadingState> loadingState = Rx(LoadingState.before);
-  RxList<Comment> comments = RxList([]);
   final String noticeId;
+  CommentService commentService = CommentService();
 
-  CommentViewWidgetController({required this.noticeId});
+  Stream<QuerySnapshot>? snapshotStream;
 
-  Future<void> loadComments() async {
-    loadingState.value = LoadingState.loading;
+  late final CommentLoader resendLoader;
+  late final CommentLoader popularityLoader;
 
-    FirebaseResponse<QuerySnapshot> response = await FirebaseResponse.handleRequest<QuerySnapshot>(
-        action: () => FirebaseFirestore.instance.collection('notice_comment').doc(noticeId).collection('free').orderBy('date' , descending: true).get()
+  
+  //#1. 인기순
+  //#2. 최신순
+
+  CommentViewWidgetController({required this.noticeId}){
+    resendLoader = CommentLoader(
+        controller: this,
+        query: FirebaseFirestore.instance
+            .collection('notice_comment')
+            .doc(noticeId)
+            .collection('free')
+            .orderBy('date' , descending: true)
     );
 
-    if(response.isSuccess){
-      comments.assignAll(response.response!.docs.map((e) =>  Comment.fromMap(e.data() as Map<String , dynamic>)));
-      StaticLogger.logger.i('[CommentViewWidgetController.loadComments()] 댓글 가져오기 성공 :${response.exception}');
-      loadingState.value = LoadingState.success;
-    }
-    else{
-      StaticLogger.logger.e('[CommentViewWidgetController.loadComments()] 댓글 가져오기 실패 :${response.exception}');
-      loadingState.value = LoadingState.fail;
-    }
+    popularityLoader = CommentLoader(
+        controller: this,
+        query: FirebaseFirestore.instance
+            .collection('notice_comment')
+            .doc(noticeId)
+            .collection('free')
+            .orderBy('like' , descending: true)
+            .limit(3)
+    );
+  }
+
+  Future<void> uploadComment(String content) async {
+    await commentService.uploadComment(content, noticeId);
+    resendLoader.load();
+    popularityLoader.load();
+  }
+
+  Future<void> deleteComment()async {
+
   }
 
 }
