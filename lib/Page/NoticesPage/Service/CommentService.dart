@@ -81,5 +81,86 @@ class CommentService{
       StaticLogger.logger.e(res.exception.runtimeType.toString());
     }
   }
+
+  Future<void> like(String noticeId , String commentId) async{
+    String userId = Get.find<SignInService>().getUser().uid;
+
+    final commentRef = FirebaseFirestore.instance
+        .collection('notice_comment')
+        .doc(noticeId)
+        .collection('free')
+        .doc(commentId);
+
+    final likeRef = commentRef.collection('likes').doc(userId);
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final DocumentSnapshot likeSnapshot = await likeRef.get();
+
+      if (!likeSnapshot.exists || likeSnapshot['value'] != 1) {
+        transaction.set(likeRef, {'value': 1, 'timestamp': FieldValue.serverTimestamp()});
+        transaction.update(commentRef, {
+          'like': FieldValue.increment(1),
+          'dislike': likeSnapshot.exists && likeSnapshot['value'] == -1
+              ? FieldValue.increment(-1)
+              : FieldValue.increment(0),
+        });
+      }
+    });
+  }
+
+  Future<Result> updateLikeStatus(String noticeId, String commentId, int newLikeValue) async {
+    try{
+      if (newLikeValue != 1 && newLikeValue != -1 && newLikeValue != 0) {
+        throw ArgumentError('likeValue must be either 1 (like), -1 (dislike), or 0 (neutral)');
+      }
+
+      String userId = Get.find<SignInService>().getUser().uid;
+
+      final commentRef = FirebaseFirestore.instance
+          .collection('notice_comment')
+          .doc(noticeId)
+          .collection('free')
+          .doc(commentId);
+
+      final likeRef = commentRef.collection('likes').doc(userId);
+
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final likeSnapshot = await transaction.get(likeRef);
+
+        int previousLikeValue = 0;
+        if (likeSnapshot.exists) {
+          previousLikeValue = likeSnapshot['value'];
+        }
+
+        if (previousLikeValue != newLikeValue) {
+          if (newLikeValue == 0) {
+            transaction.delete(likeRef);
+          } else {
+            transaction.set(likeRef, {
+              'value': newLikeValue,
+              'timestamp': FieldValue.serverTimestamp()
+            });
+          }
+
+          int likeChange = 0;
+          int dislikeChange = 0;
+
+          if (previousLikeValue == 1) likeChange -= 1;
+          if (previousLikeValue == -1) dislikeChange -= 1;
+          if (newLikeValue == 1) likeChange += 1;
+          if (newLikeValue == -1) dislikeChange += 1;
+
+          transaction.update(commentRef, {
+            'like': FieldValue.increment(likeChange),
+            'dislike': FieldValue.increment(dislikeChange),
+          });
+        }
+      });
+
+      return Result<void>.fromSuccess();
+    }catch(e , s){
+      return Result<void>.fromFailure(e, s);
+    }
+  }
 }
 
