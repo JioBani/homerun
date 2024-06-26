@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Page/HousingSaleNoticesPage/View/NoticesTabPage.dart';
+import 'package:homerun/Page/NoticesPage/View/CommentViewWIdget.dart';
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Vocabulary/VocabularyList.dart';
@@ -75,7 +76,8 @@ class HousingSaleNoticesPage extends StatelessWidget {
                       ],
                     ),
                   )
-              )
+              ),
+              SizedBox(height: 20.w,),
             ],
           ),
         ),
