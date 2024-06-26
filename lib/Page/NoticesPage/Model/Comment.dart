@@ -4,8 +4,8 @@ class Comment {
   final String commentId;
   final String displayName;
   final Timestamp date;
-  final int good;
-  final int bad;
+  final int like;
+  final int dislike;
   final String content;
   final String uid;
 
@@ -13,21 +13,21 @@ class Comment {
     required this.commentId,
     required this.displayName,
     required this.date,
-    required this.good,
-    required this.bad,
+    required this.like,
+    required this.dislike,
     required this.content,
     required this.uid
   });
 
   factory Comment.fromMap(Map<String, dynamic> map , String commentId) {
     return Comment(
-      commentId: commentId,
-      displayName: map['displayName'],
-      date: map['date'],
-      good: map['good'],
-      bad: map['bad'],
-      content: map['content'],
-      uid: map['uid']
+        commentId: commentId,
+        displayName: map['displayName'],
+        date: map['date'],
+        like: map['like'],
+        dislike: map['dislike'],
+        content: map['content'],
+        uid: map['uid']
     );
   }
 
@@ -35,8 +35,8 @@ class Comment {
     return {
       'displayName': displayName,
       'date': date,
-      'good': good,
-      'bad': bad,
+      'like': like,
+      'dislike': dislike,
       'content': content,
       'uid' : uid
     };
@@ -46,9 +46,8 @@ class Comment {
       : commentId = 'test',
         displayName = 'Test User',
         date = Timestamp.now(),
-        good = 0,
-        bad = 0,
+        like = 0,
+        dislike = 0,
         content = '청년특공 어떻게 될까요? 부모님과 함께 살고 있는데도 가능할까요? 부린이라 모르는게 너무 많아요....ㅠ_ㅠ',
         uid = 'test';
-
 }
