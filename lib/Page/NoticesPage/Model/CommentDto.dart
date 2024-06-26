@@ -17,7 +17,7 @@ class CommentDto {
     required this.uid
   });
 
-  factory CommentDto.fromMap(Map<String, dynamic> map , String commentId) {
+  factory CommentDto.fromMap(Map<String, dynamic> map) {
     return CommentDto(
         displayName: map['displayName'],
         date: map['date'],
