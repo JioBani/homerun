@@ -1,17 +1,73 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
 import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/TestImages.dart';
 import 'package:intl/intl.dart';
 
-class CommentWidget extends StatelessWidget {
+class CommentWidget extends StatefulWidget {
   const CommentWidget({super.key, required this.comment, required this.noticeId});
 
   final Comment comment;
   final String noticeId;
+
+  @override
+  State<CommentWidget> createState() => _CommentWidgetState();
+}
+
+class _CommentWidgetState extends State<CommentWidget> {
+  final CommentService commentService = CommentService();
+  late int likeState;
+  late int like;
+  late int dislike;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    likeState = widget.comment.likeState;
+    like = widget.comment.commentDto.like;
+    dislike = widget.comment.commentDto.dislike;
+    super.initState();
+  }
+
+  Future<void> updateLikeState(int newLikeState) async {
+    int previousLikeState = likeState;
+    int likeChange = 0;
+    int dislikeChange = 0;
+
+    Result result = await commentService.updateLikeStatus(widget.noticeId, widget.comment.commentId,newLikeState);
+
+    if(result.isSuccess){
+      if(newLikeState == 1){
+        likeChange = 1;
+        if(previousLikeState == 1) return;
+        if(previousLikeState == -1) dislikeChange = -1;
+      }
+      else if(newLikeState == -1){
+        dislikeChange = 1;
+        if(previousLikeState == 1) likeChange = -1;
+        if(previousLikeState == -1) return;
+      }
+      else{
+        if(previousLikeState == 1) likeChange = -1;
+        if(previousLikeState == -1) dislikeChange = -1;
+      }
+
+      likeState = newLikeState;
+      like += likeChange;
+      dislike += dislikeChange;
+      setState(() {});
+    }
+    else{
+      StaticLogger.logger.e('[CommentWidget.updateLikeState()] ${result.exception}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +91,11 @@ class CommentWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  comment.displayName,
+                  widget.comment.commentDto.displayName,
                   style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: const Color(0xff767676)),
                 ),
                 Text(
-                  DateFormat('yyyy.MM.dd').format(comment.date.toDate()),
+                  DateFormat('yyyy.MM.dd').format(widget.comment.commentDto.date.toDate()),
                   style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
                 )
               ],
@@ -47,10 +103,12 @@ class CommentWidget extends StatelessWidget {
             const Expanded(child: SizedBox()),
             Builder(
                 builder: (context){
-                  if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.uid == comment.uid){
+                  if(FirebaseAuth.instance.currentUser != null &&
+                     FirebaseAuth.instance.currentUser!.uid == widget.comment.commentDto.uid
+                  ){
                     return TextButton(
-                        onPressed: () async {
-                          await CommentService().delete(noticeId, comment.commentId);
+                        onPressed: () {
+                          Get.find<CommentViewWidgetController>(tag: widget.noticeId).deleteComment(widget.comment.commentId);
                         },
                         child: const Text('삭제')
                     );
@@ -68,7 +126,8 @@ class CommentWidget extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: 2.w),
           child: Text(
-            comment.content,
+            //comment.commentDto.content,
+            widget.comment.toMap().toString(),
             style: TextStyle(
               fontSize: 10.sp,
               fontWeight: FontWeight.normal,
@@ -80,20 +139,36 @@ class CommentWidget extends StatelessWidget {
           children: [
             CommentIconButton(
               imagePath: NoticePageImages.comment.good,
-              content: '300',
-              onTap: () {
-                //Get.find<CommentService>().likeComment(noticeId, comment.commentId);
+              content: like.toString(),
+              onTap: () async {
+                if(likeState == 1){
+                  updateLikeState(0);
+                }
+                else{
+                  updateLikeState(1);
+                }
               },
+              color: likeState == 1 ? Theme.of(context).primaryColor : null,
             ),
             CommentIconButton(
               imagePath: NoticePageImages.comment.bad,
-              content: '134',
-              onTap: () {},
+              content: dislike.toString(),
+              onTap: () async {
+                if(likeState == -1){
+                  updateLikeState(0);
+                }
+                else{
+                  updateLikeState(-1);
+                }
+              },
+              color: likeState == -1 ? Theme.of(context).primaryColor : null,
             ),
             CommentIconButton(
               imagePath: NoticePageImages.comment.reply,
               content: '댓글 3',
-              onTap: () {},
+              onTap: () {
+
+              },
             ),
           ],
         )
@@ -103,11 +178,12 @@ class CommentWidget extends StatelessWidget {
 }
 
 class CommentIconButton extends StatelessWidget {
-  const CommentIconButton({super.key, required this.content, required this.onTap, required this.imagePath});
+  const CommentIconButton({super.key, required this.content, required this.onTap, required this.imagePath, this.color});
 
   final String content;
   final Function onTap;
   final String imagePath;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +197,7 @@ class CommentIconButton extends StatelessWidget {
               imagePath,
               width: 9.5.sp,
               height: 9.5.sp,
+              color: color,
             ),
           ),
           SizedBox(
