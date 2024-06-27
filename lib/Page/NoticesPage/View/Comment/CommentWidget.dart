@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
@@ -27,6 +28,9 @@ class _CommentWidgetState extends State<CommentWidget> {
   late int like;
   late int dislike;
 
+  DateTime? lastClickTime;
+  static const cooldownDuration = Duration(seconds: 2); // 2 seconds cooldown
+
   @override
   void initState() {
     // TODO: implement initState
@@ -37,34 +41,46 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 
   Future<void> updateLikeState(int newLikeState) async {
+    final now = DateTime.now();
+    if (lastClickTime != null && now.difference(lastClickTime!) < cooldownDuration) {
+      Get.snackbar(
+        'Warning',
+        '잠시후 다시 시도해 주세요.',
+        duration: const Duration(milliseconds: 2000),
+        //backgroundColor: Theme.of(context).primaryColor
+        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.5),
+        snackPosition: SnackPosition.TOP
+      );
+      return;
+    }
+
+    lastClickTime = now;
+
     int previousLikeState = likeState;
     int likeChange = 0;
     int dislikeChange = 0;
 
-    Result result = await commentService.updateLikeStatus(widget.noticeId, widget.comment.commentId,newLikeState);
+    Result result = await commentService.updateLikeStatus(widget.noticeId, widget.comment.commentId, newLikeState);
 
-    if(result.isSuccess){
-      if(newLikeState == 1){
+    if (result.isSuccess) {
+      if (newLikeState == 1) {
         likeChange = 1;
-        if(previousLikeState == 1) return;
-        if(previousLikeState == -1) dislikeChange = -1;
-      }
-      else if(newLikeState == -1){
+        if (previousLikeState == 1) return;
+        if (previousLikeState == -1) dislikeChange = -1;
+      } else if (newLikeState == -1) {
         dislikeChange = 1;
-        if(previousLikeState == 1) likeChange = -1;
-        if(previousLikeState == -1) return;
-      }
-      else{
-        if(previousLikeState == 1) likeChange = -1;
-        if(previousLikeState == -1) dislikeChange = -1;
+        if (previousLikeState == 1) likeChange = -1;
+        if (previousLikeState == -1) return;
+      } else {
+        if (previousLikeState == 1) likeChange = -1;
+        if (previousLikeState == -1) dislikeChange = -1;
       }
 
       likeState = newLikeState;
       like += likeChange;
       dislike += dislikeChange;
       setState(() {});
-    }
-    else{
+    } else {
       StaticLogger.logger.e('[CommentWidget.updateLikeState()] ${result.exception}');
     }
   }
