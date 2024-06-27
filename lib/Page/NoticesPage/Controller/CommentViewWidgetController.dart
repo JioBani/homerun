@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.dart';
 import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
 
 import 'CommentLoader.dart';
@@ -8,10 +10,10 @@ class CommentViewWidgetController extends GetxController{
   final String noticeId;
   CommentService commentService = CommentService();
 
-  Stream<QuerySnapshot>? snapshotStream;
-
   late final CommentLoader resendLoader;
   late final CommentLoader popularityLoader;
+
+  String? replyTarget;
 
   
   //#1. 인기순
@@ -39,16 +41,55 @@ class CommentViewWidgetController extends GetxController{
   }
 
   Future<void> uploadComment(String content) async {
-    await commentService.uploadComment(content, noticeId);
+    if(replyTarget == null){
+      await commentService.uploadComment(content, noticeId);
+    }
+    else{
+      await commentService.uploadComment(content, noticeId ,replyTarget: replyTarget);
+      try{
+        var replyController = Get.find<ReplyCommentWidgetController>(
+            tag: ReplyCommentWidgetController.makeTag(
+                noticeId,
+                replyTarget!
+            )
+        );
+
+        replyController.load();
+      }catch(e){
+
+      }
+    }
+
     resendLoader.load();
     popularityLoader.load();
   }
 
-  Future<void> deleteComment(String commentId)async {
-    await commentService.delete(noticeId , commentId);
+  Future<void> deleteComment(String commentId , String? replyTarget)async {
+    await commentService.delete(noticeId , commentId , replyTarget: replyTarget);
     //TODO 적절하게 load하도록 변경
     resendLoader.load();
     popularityLoader.load();
+
+    if(replyTarget != null){
+      try{
+        var replyController = Get.find<ReplyCommentWidgetController>(
+            tag: ReplyCommentWidgetController.makeTag(
+                noticeId,
+                replyTarget!
+            )
+        );
+
+        replyController.load();
+      }catch(e){
+
+      }
+    }
+
+  }
+
+  void setReplyMode(String? commentId){
+    replyTarget = commentId;
+    StaticLogger.logger.i('set reply : $commentId');
   }
 
 }
