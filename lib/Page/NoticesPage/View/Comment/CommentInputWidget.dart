@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
@@ -126,7 +127,13 @@ class _CommentInputFormWidgetState extends State<CommentInputFormWidget> {
                   Get.find<CommentViewWidgetController>(tag: widget.noticeId).uploadComment(textEditingController.text);
                 }
                 else{
-
+                  Get.snackbar(
+                      '알림',
+                      '내용을 입력해주세요.',
+                      duration: const Duration(milliseconds: 2000),
+                      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                      snackPosition: SnackPosition.TOP
+                  );
                 }
               },
               child: Container(
