@@ -6,7 +6,6 @@ import 'package:homerun/View/GuidePage/GuidePage.dart';
 import 'package:homerun/View/HomePage/home_page.dart';
 import 'package:homerun/View/HousingInformationPage/HousingInformationPage.dart';
 import 'package:homerun/View/SaleInfomation/SaleInfomationPage.dart';
-import 'package:homerun/NotUsed/test.dart';
 
 import 'AssessmentPage/AssessmentPage.dart';
 import 'MyPage/MyPage.dart';

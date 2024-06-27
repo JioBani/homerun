@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:homerun/Style/Images.dart';
-import 'package:homerun/View/KakaoLogin/KakaoLoginPage.dart';
 
 class ExtraGuideWidget extends StatelessWidget {
   const ExtraGuideWidget({super.key, required this.name, required this.description});
@@ -41,7 +40,9 @@ class ExtraGuideWidget extends StatelessWidget {
                         child: Image.asset(Images.homeTemp),
                       ),
                     ),
-                    onTap: ()=>{Get.to(KakaoLoginPage(title: "gd"))},
+                    onTap: ()=>{
+                      //Get.to(KakaoLoginPage(title: "gd"))
+                    },
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 10.w),
