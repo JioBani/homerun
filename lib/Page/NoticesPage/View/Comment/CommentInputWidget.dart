@@ -95,6 +95,7 @@ class CommentInputFormWidget extends StatefulWidget {
 class _CommentInputFormWidgetState extends State<CommentInputFormWidget> {
   final CommentService commentService = CommentService();
   final TextEditingController textEditingController = TextEditingController();
+  static const String hintText = '서로 곱고 아름다운 말을 사용해주세요 :-)';
 
   @override
   Widget build(BuildContext context) {
@@ -122,10 +123,6 @@ class _CommentInputFormWidgetState extends State<CommentInputFormWidget> {
             InkWell(
               onTap: () async {
                 if(textEditingController.text.isNotEmpty){
-                  // Result result = await commentService.uploadComment(textEditingController.text, widget.noticeId);
-                  // if(result.isSuccess){
-                  //   Get.find<CommentViewWidgetController>(tag: widget.noticeId).loadCommentsByPopularity();
-                  // }
                   Get.find<CommentViewWidgetController>(tag: widget.noticeId).uploadComment(textEditingController.text);
                 }
                 else{
@@ -161,7 +158,7 @@ class _CommentInputFormWidgetState extends State<CommentInputFormWidget> {
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0x00FBFBFB),
-            hintText: '서로 곱고 아름다운 말을 사용해주세요 :-)',
+            hintText: hintText,
             hintStyle: TextStyle(color: const Color(0xFFD9D9D9) , fontSize: 11.sp),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6.r),
