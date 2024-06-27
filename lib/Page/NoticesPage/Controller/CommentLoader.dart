@@ -26,11 +26,7 @@ class CommentLoader{
         action: () => query.get()
     );
 
-    if(response.isSuccess){      
-      List<CommentDto> commentDtoList = (response.response!.docs.map((e) =>
-          CommentDto.fromMap(e.data() as Map<String , dynamic>))
-      ).toList();
-
+    if(response.isSuccess){
       String? uid = FirebaseAuth.instance.currentUser?.uid;
 
       comments = await Future.wait(response.response!.docs.map((e) => getComment(e , uid)));
