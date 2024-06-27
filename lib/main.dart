@@ -3,7 +3,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Service/Auth/SignInService.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/MaterialTheme.dart';
@@ -29,7 +29,7 @@ void main() async {
   );
 
   FirebaseFirestoreService.init();
-  Get.put(SignInService());
+  Get.put(AuthService());
 
   runApp(const MyApp());
 }

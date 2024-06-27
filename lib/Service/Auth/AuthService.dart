@@ -8,25 +8,25 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/ApiResponse.dart';
 import 'package:homerun/Service/Auth/HttpError.dart';
-import 'package:homerun/Service/Auth/KakaoSignInService.dart';
-import 'package:homerun/Service/Auth/NaverSignInService.dart';
+import 'package:homerun/Service/Auth/KakaoLoginService.dart';
+import 'package:homerun/Service/Auth/NaverLoginService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:http/http.dart' as http;
 
-class SignInServiceException implements Exception{
+class AuthServiceException implements Exception{
   String message;
 
-  SignInServiceException(this.message);
+  AuthServiceException(this.message);
 }
 
-class ApplicationUnauthorizedException extends SignInServiceException{
+class ApplicationUnauthorizedException extends AuthServiceException{
   ApplicationUnauthorizedException()
       : super('Application is not logged in.');
 }
 
-class UnknownUserInfoException extends SignInServiceException{
+class UnknownUserInfoException extends AuthServiceException{
   UnknownUserInfoException({String message = 'Unknown user info.'})
       : super(message);
 }
@@ -39,10 +39,10 @@ enum SignInState{
   loading,
 }
 
-class SignInService extends GetxService{
+class AuthService extends GetxService{
 
-  KakaoSignInService kakaoSignInService = KakaoSignInService();
-  NaverSignInService naverSignInService = NaverSignInService();
+  KakaoLoginService kakaoLoginService = KakaoLoginService();
+  NaverLoginService naverLoginService = NaverLoginService();
 
   Rx<UserDto?> userDto = Rx(null);
   Rx<DocumentSnapshot?> userSnapshot = Rx(null);
@@ -61,11 +61,11 @@ class SignInService extends GetxService{
       ApiResponse<String> tokenResponse;
 
       if(socialProvider == SocialProvider.kakao){
-        var (kakao.OAuthToken token , kakao.User user) = await kakaoSignInService.signIn();
+        var (kakao.OAuthToken token , kakao.User user) = await kakaoLoginService.signIn();
         tokenResponse = await getCustomTokenByKakao(user , token.accessToken);
       }
       else if(socialProvider == SocialProvider.naver){
-        NaverLoginResult naverLoginResult = await naverSignInService.signIn();
+        NaverLoginResult naverLoginResult = await naverLoginService.signIn();
         tokenResponse = await getCustomTokenByNaver(naverLoginResult);
       }
       else{
@@ -188,12 +188,12 @@ class SignInService extends GetxService{
   }
 
   Future<String> getKakaoAccessToken() async {
-    var (kakao.OAuthToken token , kakao.User user) = await kakaoSignInService.signIn();
+    var (kakao.OAuthToken token , kakao.User user) = await kakaoLoginService.signIn();
     return token.accessToken;
   }
 
   Future<String> getNaverAccessToken() async {
-    NaverLoginResult naverLoginResult = await naverSignInService.signIn();
+    NaverLoginResult naverLoginResult = await naverLoginService.signIn();
     return (await FlutterNaverLogin.currentAccessToken).accessToken;
   }
 
@@ -205,5 +205,4 @@ class SignInService extends GetxService{
       return userDto.value!;
     }
   }
-
 }

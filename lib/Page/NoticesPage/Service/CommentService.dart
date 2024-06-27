@@ -5,14 +5,14 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/FirebaseResponse.dart';
 import 'package:homerun/Page/NoticesPage/Model/CommentDto.dart';
-import 'package:homerun/Service/Auth/SignInService.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 
 class CommentService{
 
   Future<Result> uploadComment(String content, String noticeId , {String? replyTarget}) async {
 
-    var signInService = Get.find<SignInService>();
+    var signInService = Get.find<AuthService>();
 
     try{
       UserDto userDto = signInService.getUser();
@@ -111,7 +111,7 @@ class CommentService{
   }
 
   Future<void> like(String noticeId , String commentId) async{
-    String userId = Get.find<SignInService>().getUser().uid;
+    String userId = Get.find<AuthService>().getUser().uid;
 
     final commentRef = FirebaseFirestore.instance
         .collection('notice_comment')
@@ -142,7 +142,7 @@ class CommentService{
         throw ArgumentError('likeValue must be either 1 (like), -1 (dislike), or 0 (neutral)');
       }
 
-      String userId = Get.find<SignInService>().getUser().uid;
+      String userId = Get.find<AuthService>().getUser().uid;
 
       final commentRef = FirebaseFirestore.instance
           .collection('notice_comment')
