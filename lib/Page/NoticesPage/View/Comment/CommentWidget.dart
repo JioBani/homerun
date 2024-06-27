@@ -3,20 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
 import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
+import 'package:homerun/Page/NoticesPage/View/Comment/ReplyCommentListWidget.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/TestImages.dart';
 import 'package:intl/intl.dart';
 
 class CommentWidget extends StatefulWidget {
-  const CommentWidget({super.key, required this.comment, required this.noticeId});
+  const CommentWidget({super.key, required this.comment, required this.noticeId, this.replyTarget});
 
   final Comment comment;
   final String noticeId;
+  final String? replyTarget;
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -27,9 +28,12 @@ class _CommentWidgetState extends State<CommentWidget> {
   late int likeState;
   late int like;
   late int dislike;
+  bool isReplyOpen = false;
 
   DateTime? lastClickTime;
   static const cooldownDuration = Duration(seconds: 2); // 2 seconds cooldown
+
+  late final CommentViewWidgetController commentViewWidgetController;
 
   @override
   void initState() {
@@ -37,6 +41,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     likeState = widget.comment.likeState;
     like = widget.comment.commentDto.like;
     dislike = widget.comment.commentDto.dislike;
+    commentViewWidgetController = Get.find<CommentViewWidgetController>(tag: widget.noticeId);
     super.initState();
   }
 
@@ -90,51 +95,56 @@ class _CommentWidgetState extends State<CommentWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(30.w),
-              child: Image.asset(
-                TestImages.ashe_43,
-                width: 30.w,
-                height: 30.w,
-              ),
-            ),
-            SizedBox(
-              width: 6.w,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.comment.commentDto.displayName,
-                  style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: const Color(0xff767676)),
+        InkWell(
+          onTap: (){
+            Get.find<CommentViewWidgetController>(tag: widget.noticeId).setReplyMode(widget.comment.commentId);
+          },
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(30.w),
+                child: Image.asset(
+                  TestImages.ashe_43,
+                  width: 30.w,
+                  height: 30.w,
                 ),
-                Text(
-                  DateFormat('yyyy.MM.dd').format(widget.comment.commentDto.date.toDate()),
-                  style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
-                )
-              ],
-            ),
-            const Expanded(child: SizedBox()),
-            Builder(
-                builder: (context){
-                  if(FirebaseAuth.instance.currentUser != null &&
-                     FirebaseAuth.instance.currentUser!.uid == widget.comment.commentDto.uid
-                  ){
-                    return TextButton(
-                        onPressed: () {
-                          Get.find<CommentViewWidgetController>(tag: widget.noticeId).deleteComment(widget.comment.commentId);
-                        },
-                        child: const Text('삭제')
-                    );
+              ),
+              SizedBox(
+                width: 6.w,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.comment.commentDto.displayName,
+                    style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: const Color(0xff767676)),
+                  ),
+                  Text(
+                    DateFormat('yyyy.MM.dd').format(widget.comment.commentDto.date.toDate()),
+                    style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
+                  )
+                ],
+              ),
+              const Expanded(child: SizedBox()),
+              Builder(
+                  builder: (context){
+                    if(FirebaseAuth.instance.currentUser != null &&
+                       FirebaseAuth.instance.currentUser!.uid == widget.comment.commentDto.uid
+                    ){
+                      return TextButton(
+                          onPressed: () {
+                            commentViewWidgetController.deleteComment(widget.comment.commentId , widget.replyTarget);
+                          },
+                          child: const Text('삭제')
+                      );
+                    }
+                    else{
+                      return const SizedBox();
+                    }
                   }
-                  else{
-                    return const SizedBox();
-                  }
-                }
-            )
-          ],
+              )
+            ],
+          ),
         ),
         SizedBox(
           height: 7.w,
@@ -182,11 +192,29 @@ class _CommentWidgetState extends State<CommentWidget> {
             CommentIconButton(
               imagePath: NoticePageImages.comment.reply,
               content: '댓글 3',
+              color: isReplyOpen ? Theme.of(context).primaryColor : null,
               onTap: () {
+                isReplyOpen = !isReplyOpen;
+                setState(() {
 
+                });
               },
             ),
+
           ],
+        ),
+        Builder(
+            builder: (context){
+              if(isReplyOpen && widget.replyTarget == null){
+                return Padding(
+                  padding: EdgeInsets.only(left: 20.w),
+                  child: ReplyCommentListWidget(noticeId: widget.noticeId,comment: widget.comment,),
+                );
+              }
+              else{
+                return const SizedBox();
+              }
+            }
         )
       ],
     );
