@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Controller/LoginController.dart';
+import 'package:homerun/Unused/LoginController.dart';
 import 'package:homerun/DataDev/DataDevPage.dart';
 import 'package:homerun/Page/Test/View/TestPage.dart';
 import 'package:homerun/Style/Palette.dart';
-import 'package:homerun/Service/LoginService.dart';
+import 'package:homerun/Unused/LoginService.dart';
 import 'package:homerun/Style/ShadowPalette.dart';
 import 'package:homerun/View/DubleTapExitWidget.dart';
 import 'package:homerun/View/MyPage/ExtraActionWidget.dart';
@@ -16,7 +16,7 @@ import 'package:homerun/View/MyPage/ScrapPage/ScrapPage.dart';
 import 'package:homerun/View/MyPage/inquiryPage/inquiryPage.dart';
 import 'package:homerun/View/buttom_nav.dart';
 
-import 'BeforeLoginViewWidget.dart';
+import '../../Unused/BeforeLoginViewWidget.dart';
 import 'NotificationPage/NotificationPage.dart';
 
 class MyPage extends StatefulWidget {
@@ -27,7 +27,7 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  final LoginController loginController = Get.put(LoginController());
+  //final LoginController loginController = Get.put(LoginController());
 
   final double iconSize = 14.w;
 
@@ -89,7 +89,7 @@ class _MyPageState extends State<MyPage> {
                       hintText: '서버 주소'
                   ),
                   onFieldSubmitted: (value){
-                    LoginService.instance.firebaseAuthDataSource.setUrl(value);
+                    //LoginService.instance.firebaseAuthDataSource.setUrl(value);
                     ScaffoldMessenger.of(context).showSnackBar(
                       //SnackBar 구현하는법 context는 위에 BuildContext에 있는 객체를 그대로 가져오면 됨.
                         SnackBar(
