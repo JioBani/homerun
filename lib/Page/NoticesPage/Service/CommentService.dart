@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
@@ -11,7 +9,8 @@ import 'package:homerun/Service/Auth/SignInService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 
 class CommentService{
-  Future<Result> uploadComment(String content, String noticeId) async {
+
+  Future<Result> uploadComment(String content, String noticeId , {String? replyTarget}) async {
 
     var signInService = Get.find<SignInService>();
 
@@ -22,8 +21,22 @@ class CommentService{
         throw UnknownUserInfoException(message:  'Unknown display name.');
       }
 
+      CollectionReference ref;
+
+      if(replyTarget == null){
+        ref = FirebaseFirestore.instance.collection('notice_comment').doc(noticeId).collection('free');
+      }
+      else{
+        ref = FirebaseFirestore.instance
+            .collection('notice_comment')
+            .doc(noticeId)
+            .collection('free')
+            .doc(replyTarget)
+            .collection('reply');
+      }
+
       var res = await FirebaseResponse.handleRequest<dynamic>(
-          action: ()=> FirebaseFirestore.instance.collection('notice_comment').doc(noticeId).collection('free').add(
+          action: ()=> ref.add(
               CommentDto(
                   displayName: userDto.displayName!,
                   date: Timestamp.now(),
@@ -57,10 +70,25 @@ class CommentService{
     }
   }
 
-  Future<void> delete(String noticeId , String commentId) async {
+  Future<void> delete(String noticeId , String commentId , {String? replyTarget}) async {
+
+    DocumentReference ref;
+
+    if(replyTarget == null){
+      ref = FirebaseFirestore.instance.collection('notice_comment').doc(noticeId).collection('free').doc(commentId);
+    }
+    else{
+      ref = FirebaseFirestore.instance
+          .collection('notice_comment')
+          .doc(noticeId)
+          .collection('free')
+          .doc(replyTarget)
+          .collection('reply')
+          .doc(commentId);
+    }
 
     var res = await FirebaseResponse.handleRequest<dynamic>(
-        action: FirebaseFirestore.instance.collection('notice_comment').doc(noticeId).collection('free').doc(commentId).delete
+        action: ref.delete
     );
 
     if(res.isSuccess){
