@@ -86,7 +86,7 @@ class SiteReviewListItemWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "내집은언제",
+                  siteReview.writer,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 11.sp
@@ -99,7 +99,7 @@ class SiteReviewListItemWidget extends StatelessWidget {
                     ),
                     SizedBox(width: 3.w,),
                     Text(
-                      "조회수 3,254",
+                      "조회수 ${siteReview.view}",
                       style: TextStyle(
                         fontSize: 8.sp,
                         color: Color(0xff767676)
