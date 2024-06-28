@@ -13,7 +13,7 @@ class SiteReviewWidgetController extends GetxController{
   SiteReviewWidgetController({required this.noticeId});
 
 
-  Future<void> loadReviews() async {
+  Future<void> loadThumbnailReviews() async {
     reviews = [];
     loadingState.value = LoadingState.loading;
     try{
