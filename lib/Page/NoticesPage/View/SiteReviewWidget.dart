@@ -48,7 +48,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
                   height: 185.w,
                   child: PageView.builder(
                       controller: _pageController,
-                      itemCount: controller.reviews!.length,
+                      itemCount: controller.reviews!.length <= controller.maxThumbnailCount ? controller.reviews!.length : controller.maxThumbnailCount + 1,
                       onPageChanged: (index) {
                         setState(() {
                           _currentIndex = index;
@@ -59,11 +59,20 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
                         return TweenAnimationBuilder(
                             tween: Tween(begin: scale, end: scale),
                             duration: const Duration(milliseconds: 350),
-                            child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: ThumbnailWidget(siteReview: controller.reviews![index],)
+                            child: Builder(
+                              builder: (context) {
+                                if(index == controller.maxThumbnailCount){
+                                  return const ShowAllButtonWidget();
+                                }
+                                else{
+                                  return Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: ThumbnailWidget(siteReview: controller.reviews![index],)
+                                  );
+                                }
+                              }
                             ),
                             builder: (context, double value, child) {
                               return Transform.scale(
@@ -198,4 +207,40 @@ class _ThumbnailWidgetState extends State<ThumbnailWidget> with AutomaticKeepAli
     );
   }
 }
+
+class ShowAllButtonWidget extends StatelessWidget {
+  const ShowAllButtonWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center ,
+        children: [
+          Container(
+            width: 30.w,
+            height: 30.w,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30.w),
+              border: Border.all(color: const Color(0xffD9D9D9))
+            ),
+            child: Icon(
+                Icons.arrow_forward_ios_rounded,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+          SizedBox(height: 5.w,),
+          Text(
+            '전체보기',
+            style: TextStyle(
+              fontSize: 11.sp,
+              color: const Color(0xff565555)
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 
