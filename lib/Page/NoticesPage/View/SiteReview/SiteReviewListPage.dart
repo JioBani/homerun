@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 
 class SiteReviewListPage extends StatelessWidget {
-  const SiteReviewListPage({super.key});
-
+  const SiteReviewListPage({super.key, required this.announcement});
+  final APTAnnouncement announcement;
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +11,13 @@ class SiteReviewListPage extends StatelessWidget {
       appBar:AppBar(
         elevation: 0,
         centerTitle: true,
-        title: Text("gd"),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("gd"),
+          ],
+        ),
       ),
       body: SafeArea(
         child: Column(

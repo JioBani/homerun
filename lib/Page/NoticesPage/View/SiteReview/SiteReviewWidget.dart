@@ -65,7 +65,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
                             child: Builder(
                               builder: (context) {
                                 if(index == controller.maxThumbnailCount){
-                                  return const ShowAllButtonWidget();
+                                  return ShowAllButtonWidget(announcement: widget.aptAnnouncement,);
                                 }
                                 else{
                                   return Container(
@@ -212,13 +212,14 @@ class _ThumbnailWidgetState extends State<ThumbnailWidget> with AutomaticKeepAli
 }
 
 class ShowAllButtonWidget extends StatelessWidget {
-  const ShowAllButtonWidget({super.key});
+  const ShowAllButtonWidget({super.key, required this.announcement});
+  final APTAnnouncement announcement;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Get.to(const SiteReviewListPage());
+        Get.to(SiteReviewListPage(announcement: announcement,));
       },
       child: Center(
         child: Column(
