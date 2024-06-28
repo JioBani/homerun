@@ -8,6 +8,7 @@ class SiteReviewWidgetController extends GetxController{
   List<SiteReview>? reviews;
   Rx<LoadingState> loadingState = Rx(LoadingState.before);
   final String noticeId;
+  final int maxThumbnailCount = 3;
 
   SiteReviewWidgetController({required this.noticeId});
 
@@ -16,7 +17,12 @@ class SiteReviewWidgetController extends GetxController{
     reviews = [];
     loadingState.value = LoadingState.loading;
     try{
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('site_review').doc('test').collection('review').get();
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('site_review')
+          .doc('test')
+          .collection('review')
+          .limit(5)
+          .get();
       reviews = querySnapshot.docs.map((doc) => SiteReview.fromMap(doc.data() as Map<String, dynamic>)).toList();
       loadingState.value = LoadingState.success;
     }catch(e ,s){
