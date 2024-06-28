@@ -26,7 +26,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
 
   @override
   void initState() {
-    siteReviewWidgetController.loadReviews();
+    siteReviewWidgetController.loadThumbnailReviews();
     super.initState();
   }
 
