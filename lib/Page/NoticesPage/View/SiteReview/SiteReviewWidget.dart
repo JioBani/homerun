@@ -8,6 +8,7 @@ import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/NoticesPage/Controller/SiteReviewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
+import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewListPage.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -213,31 +214,36 @@ class ShowAllButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center ,
-        children: [
-          Container(
-            width: 30.w,
-            height: 30.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30.w),
-              border: Border.all(color: const Color(0xffD9D9D9))
+    return InkWell(
+      onTap: (){
+        Get.to(const SiteReviewListPage());
+      },
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center ,
+          children: [
+            Container(
+              width: 30.w,
+              height: 30.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30.w),
+                border: Border.all(color: const Color(0xffD9D9D9))
+              ),
+              child: Icon(
+                  Icons.arrow_forward_ios_rounded,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
-            child: Icon(
-                Icons.arrow_forward_ios_rounded,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-          SizedBox(height: 5.w,),
-          Text(
-            '전체보기',
-            style: TextStyle(
-              fontSize: 11.sp,
-              color: const Color(0xff565555)
-            ),
-          )
-        ],
+            SizedBox(height: 5.w,),
+            Text(
+              '전체보기',
+              style: TextStyle(
+                fontSize: 11.sp,
+                color: const Color(0xff565555)
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
