@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Widget/FireStorageImageList.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
+import 'package:homerun/Page/NoticesPage/View/Comment/CommentViewWIdget.dart';
 import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
-import 'package:homerun/Page/NoticesPage/View/SiteReviewWidget.dart';
+import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewWidget.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
@@ -124,10 +126,11 @@ class _AdNoticePageState extends State<AdNoticePage> {
                 fit: BoxFit.fitHeight,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(25.w, 30.w, 25.w, 0),
-              child: const FireStorageImageColum(path: "housing_notices/2024000001",),
-            ),
+            // //TODO 개발중에 렉 줄이기 위해서 임시로 해제
+            // // Padding(
+            // //   padding: EdgeInsets.fromLTRB(25.w, 30.w, 25.w, 0),
+            // //   child: const FireStorageImageColum(path: "housing_notices/2024000001",),
+            // // ),
             Padding(
               padding: EdgeInsets.fromLTRB(25.w, 10.w, 25.w, 10.w),
               child: Column(
@@ -188,17 +191,22 @@ class _AdNoticePageState extends State<AdNoticePage> {
                   height: 13.sp,
                 ),
                 SizedBox(width: 2.w,),
-                Text(
-                  "${widget.announcement.houseName} 현장리뷰",
-                  style: TextStyle(
+                Expanded( //TODO 텍스트가 오버플로우 될때 어떻게 표현할지
+                  child: Text(
+                    "${widget.announcement.houseName} 현장리뷰",
+                    style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.secondary
+                      color: Theme.of(context).colorScheme.secondary,
+                      overflow: TextOverflow.ellipsis
+                    ),
                   ),
                 ),
               ],
             ),
-            SiteReviewWidget(noticeId: 'test')
+            SiteReviewWidget(noticeId: 'test', aptAnnouncement: widget.announcement,),
+            SizedBox(height: 24.w,),
+            CommentViewWidget(noticeId: widget.announcement.publicAnnouncementNumber!)
           ],
         ),
       ),
