@@ -9,12 +9,14 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/NoticesPage/Controller/SiteReviewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
 import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewListPage.dart';
+import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SiteReviewWidget extends StatefulWidget {
-  const SiteReviewWidget({super.key, required this.noticeId});
+  const SiteReviewWidget({super.key, required this.noticeId, required this.aptAnnouncement});
   final String noticeId;
+  final APTAnnouncement aptAnnouncement;
 
   @override
   State<SiteReviewWidget> createState() => _SiteReviewWidgetState();
