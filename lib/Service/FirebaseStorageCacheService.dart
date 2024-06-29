@@ -7,7 +7,6 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'FileDataService.dart';
 import 'package:http/http.dart' as http;
 
-
 class FirebaseStorageCacheService{
   static final storageRef = FirebaseStorage.instance.ref();
 
@@ -52,7 +51,8 @@ class FirebaseStorageCacheService{
 
   }
 
-  static Future<Uint8List?> getAsset(String path) async {
+  //TODO get모드
+  static Future<Uint8List?> getAsset(String path, {bool onlySaveMemory = false}) async {
     String cachePath = "firebase_storage/$path";
 
     if (_assetCache.containsKey(cachePath)) {
@@ -95,14 +95,17 @@ class FirebaseStorageCacheService{
           return null;
         }
 
-        bool success = await _saveCache(cachePath , fileData);
+        //#. onlySaveMemory
+        if(!onlySaveMemory){
+          bool success = await _saveCache(cachePath , fileData);
+          if(success){
+            //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 성공 : $cachePath");
+          }
+          else{
+            StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 실패 : $cachePath");
+          }
+        }
 
-        if(success){
-          //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 성공 : $cachePath");
-        }
-        else{
-          StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 실패 : $cachePath");
-        }
         _addAssetMemoryCache(cachePath , fileData);
         return fileData;
       }
@@ -139,8 +142,8 @@ class FirebaseStorageCacheService{
     return null;
   }
 
-  static Future<ImageProvider?> getImage(String path) async {
-    Uint8List? memoryData = await getAsset(path);
+  static Future<ImageProvider?> getImage(String path, {bool onlySaveMemory = false}) async {
+    Uint8List? memoryData = await getAsset(path , onlySaveMemory: onlySaveMemory);
     if(memoryData != null){
       return Image.memory(memoryData).image;
     }
