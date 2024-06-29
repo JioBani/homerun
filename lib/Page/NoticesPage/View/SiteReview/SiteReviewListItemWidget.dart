@@ -40,6 +40,7 @@ class _SiteReviewListItemWidgetState extends State<SiteReviewListItemWidget> {
                     fit: BoxFit.fitHeight,
                     width: 145.w,
                     height: 180.w,
+                    onlySaveMemory: true,
                   ),
                 ],
               )
