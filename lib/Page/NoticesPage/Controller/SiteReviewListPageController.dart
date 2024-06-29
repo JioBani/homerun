@@ -11,11 +11,18 @@ class SiteReviewListPageController extends GetxController{
 
   SiteReviewListPageController({required this.noticeId});
 
+
+  @override
+  onInit(){
+    super.onInit();
+    loadSiteReviews();
+  }
+
   //TODO 리뷰가 수백개면 어캄?
   Future<void> loadSiteReviews()async {
     loadingState.value = LoadingState.loading;
     try{
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('site_reivew').doc(noticeId).collection('review').get();
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('site_review').doc(noticeId).collection('review').get();
       siteReviews = querySnapshot.docs.map((review) =>
           SiteReview.fromMap(review.data() as Map<String , dynamic> , review.id)
       ).toList();
