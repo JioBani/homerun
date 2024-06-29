@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:homerun/Service/FirebaseStorageCacheService.dart';
 
+/// [onlySaveMemory] : 웹에서는 값에 상관없이 항상 [CachedNetworkImage]를 사용
 class FireStorageImage extends StatefulWidget {
   const FireStorageImage({
     super.key,
@@ -12,13 +13,17 @@ class FireStorageImage extends StatefulWidget {
     this.fit,
     this.width,
     this.height,
-    this.loadingWidget
+    this.loadingWidget,
+    this.onlySaveMemory = false,
+    this.timeOut = const Duration(seconds: 10)
   });
   final String path;
   final BoxFit? fit;
   final double? width;
   final double? height;
   final Widget? loadingWidget;
+  final bool onlySaveMemory; ///웹에서는 값에 상관없이 항상 [CachedNetworkImage]를 사용
+  final Duration timeOut;
 
   @override
   State<FireStorageImage> createState() => _FireStorageImageState();
@@ -31,7 +36,9 @@ class _FireStorageImageState extends State<FireStorageImage> {
         builder: (context) {
           if(!kIsWeb){
             return FutureBuilder(
-                future: FirebaseStorageCacheService.getImage(widget.path).timeout(const Duration(seconds: 10)),
+                future: FirebaseStorageCacheService.getImage(
+                    widget.path , onlySaveMemory: widget.onlySaveMemory
+                ).timeout(widget.timeOut),
                 builder: (context , snapshot){
                   if(snapshot.hasData){
                     return Image(
