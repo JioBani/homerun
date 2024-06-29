@@ -6,10 +6,8 @@ class SiteReviewWritePageController extends GetxController{
   RxList<XFile> images = RxList([]);
 
   Future<void> addImage() async {
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      images.add(XFile(pickedFile.path));
-    }
+    final List<XFile> pickedFile = await picker.pickMultiImage();
+    images.addAll(pickedFile);
   }
 
   void removeImage(int index){
