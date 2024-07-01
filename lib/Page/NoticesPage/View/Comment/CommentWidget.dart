@@ -2,15 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
 import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/ReplyCommentListWidget.dart';
+import 'package:homerun/Service/Auth/UserDto.dart';
+import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/TestImages.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CommentWidget extends StatefulWidget {
   const CommentWidget({super.key, required this.comment, required this.noticeId, this.replyTarget});
@@ -29,6 +33,8 @@ class _CommentWidgetState extends State<CommentWidget> {
   late int like;
   late int dislike;
   bool isReplyOpen = false;
+  UserDto? userDto;
+  LoadingState loadingState = LoadingState.before;
 
   DateTime? lastClickTime;
   static const cooldownDuration = Duration(seconds: 2); // 2 seconds cooldown
@@ -38,11 +44,26 @@ class _CommentWidgetState extends State<CommentWidget> {
   @override
   void initState() {
     // TODO: implement initState
+    getUser();
     likeState = widget.comment.likeState;
     like = widget.comment.commentDto.like;
     dislike = widget.comment.commentDto.dislike;
     commentViewWidgetController = Get.find<CommentViewWidgetController>(tag: widget.noticeId);
     super.initState();
+  }
+
+  Future<void> getUser() async {
+    loadingState = LoadingState.loading;
+    setState(() {});
+    Result<UserDto> userResult = await FirebaseFirestoreService.instance.getUser(widget.comment.commentDto.uid);
+    if(userResult.isSuccess){
+      userDto = userResult.result!;
+      loadingState = LoadingState.success;
+    }
+    else{
+      loadingState = LoadingState.fail;
+    }
+    setState(() {});
   }
 
   Future<void> updateLikeState(int newLikeState) async {
@@ -92,50 +113,126 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        InkWell(
-          onTap: (){
-            Get.find<CommentViewWidgetController>(tag: widget.noticeId).setReplyMode(widget.comment.commentId);
-          },
-          child: Row(
+    return Builder(
+      builder: (context) {
+        if(loadingState == LoadingState.success){
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(30.w),
-                child: Image.asset(
-                  TestImages.ashe_43,
-                  width: 30.w,
-                  height: 30.w,
+              InkWell(
+                onTap: (){
+                  Get.find<CommentViewWidgetController>(tag: widget.noticeId).setReplyMode(widget.comment.commentId);
+                },
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30.w),
+                      child: Image.asset(
+                        TestImages.ashe_43,
+                        width: 30.w,
+                        height: 30.w,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 6.w,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          loadingState == LoadingState.success ? userDto!.displayName! : "",
+                          style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: const Color(0xff767676)),
+                        ),
+                        Text(
+                          DateFormat('yyyy.MM.dd').format(widget.comment.commentDto.date.toDate()),
+                          style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
+                        )
+                      ],
+                    ),
+                    const Expanded(child: SizedBox()),
+                    Builder(
+                        builder: (context){
+                          if(FirebaseAuth.instance.currentUser != null &&
+                              FirebaseAuth.instance.currentUser!.uid == widget.comment.commentDto.uid
+                          ){
+                            return TextButton(
+                                onPressed: () {
+                                  commentViewWidgetController.deleteComment(widget.comment.commentId , widget.replyTarget);
+                                },
+                                child: const Text('삭제')
+                            );
+                          }
+                          else{
+                            return const SizedBox();
+                          }
+                        }
+                    )
+                  ],
                 ),
               ),
               SizedBox(
-                width: 6.w,
+                height: 7.w,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.comment.commentDto.displayName,
-                    style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: const Color(0xff767676)),
+              Padding(
+                padding: EdgeInsets.only(left: 2.w),
+                child: Text(
+                  //comment.commentDto.content,
+                  widget.comment.toMap().toString(),
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.normal,
                   ),
-                  Text(
-                    DateFormat('yyyy.MM.dd').format(widget.comment.commentDto.date.toDate()),
-                    style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
-                  )
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CommentIconButton(
+                    imagePath: NoticePageImages.comment.good,
+                    content: like.toString(),
+                    onTap: () async {
+                      if(likeState == 1){
+                        updateLikeState(0);
+                      }
+                      else{
+                        updateLikeState(1);
+                      }
+                    },
+                    color: likeState == 1 ? Theme.of(context).primaryColor : null,
+                  ),
+                  CommentIconButton(
+                    imagePath: NoticePageImages.comment.bad,
+                    content: dislike.toString(),
+                    onTap: () async {
+                      if(likeState == -1){
+                        updateLikeState(0);
+                      }
+                      else{
+                        updateLikeState(-1);
+                      }
+                    },
+                    color: likeState == -1 ? Theme.of(context).primaryColor : null,
+                  ),
+                  CommentIconButton(
+                    imagePath: NoticePageImages.comment.reply,
+                    content: '댓글 3',
+                    color: isReplyOpen ? Theme.of(context).primaryColor : null,
+                    onTap: () {
+                      isReplyOpen = !isReplyOpen;
+                      setState(() {
+
+                      });
+                    },
+                  ),
+
                 ],
               ),
-              const Expanded(child: SizedBox()),
               Builder(
                   builder: (context){
-                    if(FirebaseAuth.instance.currentUser != null &&
-                       FirebaseAuth.instance.currentUser!.uid == widget.comment.commentDto.uid
-                    ){
-                      return TextButton(
-                          onPressed: () {
-                            commentViewWidgetController.deleteComment(widget.comment.commentId , widget.replyTarget);
-                          },
-                          child: const Text('삭제')
+                    if(isReplyOpen && widget.replyTarget == null){
+                      return Padding(
+                        padding: EdgeInsets.only(left: 20.w),
+                        child: ReplyCommentListWidget(noticeId: widget.noticeId,comment: widget.comment,),
                       );
                     }
                     else{
@@ -144,79 +241,13 @@ class _CommentWidgetState extends State<CommentWidget> {
                   }
               )
             ],
-          ),
-        ),
-        SizedBox(
-          height: 7.w,
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 2.w),
-          child: Text(
-            //comment.commentDto.content,
-            widget.comment.toMap().toString(),
-            style: TextStyle(
-              fontSize: 10.sp,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            CommentIconButton(
-              imagePath: NoticePageImages.comment.good,
-              content: like.toString(),
-              onTap: () async {
-                if(likeState == 1){
-                  updateLikeState(0);
-                }
-                else{
-                  updateLikeState(1);
-                }
-              },
-              color: likeState == 1 ? Theme.of(context).primaryColor : null,
-            ),
-            CommentIconButton(
-              imagePath: NoticePageImages.comment.bad,
-              content: dislike.toString(),
-              onTap: () async {
-                if(likeState == -1){
-                  updateLikeState(0);
-                }
-                else{
-                  updateLikeState(-1);
-                }
-              },
-              color: likeState == -1 ? Theme.of(context).primaryColor : null,
-            ),
-            CommentIconButton(
-              imagePath: NoticePageImages.comment.reply,
-              content: '댓글 3',
-              color: isReplyOpen ? Theme.of(context).primaryColor : null,
-              onTap: () {
-                isReplyOpen = !isReplyOpen;
-                setState(() {
+          );
+        }
+        else{
+          return const LoadingPlaceHolder();
+        }
 
-                });
-              },
-            ),
-
-          ],
-        ),
-        Builder(
-            builder: (context){
-              if(isReplyOpen && widget.replyTarget == null){
-                return Padding(
-                  padding: EdgeInsets.only(left: 20.w),
-                  child: ReplyCommentListWidget(noticeId: widget.noticeId,comment: widget.comment,),
-                );
-              }
-              else{
-                return const SizedBox();
-              }
-            }
-        )
-      ],
+      }
     );
   }
 }
@@ -264,3 +295,94 @@ class CommentIconButton extends StatelessWidget {
     );
   }
 }
+
+class LoadingPlaceHolder extends StatelessWidget {
+  const LoadingPlaceHolder({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 30.w,
+                height: 30.w,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(30.w),
+                ),
+              ),
+              SizedBox(
+                width: 6.w,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 50.w,
+                    height: 11.sp,
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(1.r),
+                    ),
+                  ),
+                  SizedBox(height:  5.w),
+                  Container(
+                    width: 70.w,
+                    height: 10.sp,
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(1.r),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 7.w,
+          ),
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.only(right: 50.w),
+            height: 10.sp,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(1.r),
+            ),
+          ),
+          SizedBox(
+            height: 7.w,
+          ),
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.only(right: 20.w),
+            height: 10.sp,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(1.r),
+            ),
+          ),
+          SizedBox(
+            height: 7.w,
+          ),
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.only(right: 30.w),
+            height: 10.sp,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(1.r),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
