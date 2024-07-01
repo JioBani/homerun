@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/FirebaseResponse.dart';
 import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
 import 'package:homerun/Page/NoticesPage/Model/CommentDto.dart';
@@ -13,6 +14,7 @@ class CommentLoader{
   List<Comment> comments = [];
   LoadingState loadingState = LoadingState.before;
   Query query;
+  List<DocumentSnapshot> commentSnapshotList = [];
 
   CommentLoader({
     required this.controller,
@@ -29,7 +31,7 @@ class CommentLoader{
     if(response.isSuccess){
       String? uid = FirebaseAuth.instance.currentUser?.uid;
 
-      comments = await Future.wait(response.response!.docs.map((e) => getComment(e , uid)));
+      comments = await Future.wait(response.response!.docs.map((e) => _getComment(e , uid)));
 
       StaticLogger.logger.i('[CommentViewWidgetController.loadComments()] 댓글 가져오기 성공 :${response.exception} ${response.response!.docs.length}');
       loadingState = LoadingState.success;
@@ -43,7 +45,7 @@ class CommentLoader{
     }
   }
 
-  Future<Comment> getComment(DocumentSnapshot doc, String? uid) async {
+  Future<Comment> _getComment(DocumentSnapshot doc, String? uid) async {
     try{
       int likeState;
 
@@ -79,4 +81,57 @@ class CommentLoader{
     }
   }
 
+  Future<void> getNextComments(int index , {bool reset = false}) async{
+
+    if(reset){
+      commentSnapshotList = [];
+      comments = [];
+    }
+
+    FirebaseResponse<QuerySnapshot> response;
+
+    if(commentSnapshotList.isEmpty){
+      response = await FirebaseResponse.handleRequest<QuerySnapshot>(
+          action: () => query.limit(index).get()
+      );
+    }
+    else{
+      response = await FirebaseResponse.handleRequest<QuerySnapshot>(
+          action: () => query.startAfterDocument(commentSnapshotList.last).limit(index).get()
+      );
+    }
+
+    if(!response.isSuccess){
+      loadingState = LoadingState.fail;
+      controller.update();
+      return;
+    }
+
+    if(response.response!.docs.isEmpty){
+      loadingState = LoadingState.noMoreData;
+      controller.update();
+      return;
+    }
+
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+    try{
+      List<Comment> newComments = await Future.wait(
+          response.response!.docs.map((e) => _getComment(e , uid))
+      );
+
+      comments.addAll(newComments);
+      commentSnapshotList.addAll(response.response!.docs);
+
+      loadingState = LoadingState.success;
+      controller.update();
+      return;
+    }catch(e,s){
+      StaticLogger.logger.e('[CommentLoader.getNextComments()] $e\n$s');
+      loadingState = LoadingState.fail;
+      controller.update();
+      return;
+    }
+
+  }
 }
