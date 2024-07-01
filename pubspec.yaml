@@ -67,7 +67,7 @@ dependencies:
   flutter_naver_login :
   firebase_app_check: ^0.3.0+1
   image_picker: ^1.1.2
-
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
