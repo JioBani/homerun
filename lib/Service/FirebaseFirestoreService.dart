@@ -3,11 +3,13 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/Firebase/FirestorePagination.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
 import 'package:homerun/Model/Assessment/Condition.dart';
 import 'package:homerun/Model/Assessment/Conditioninfo.dart';
 import 'package:homerun/Model/NewsData.dart';
 import 'package:homerun/Model/NotificationData.dart';
+import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Vocabulary/VocabularyList.dart';
 
 //TODO
@@ -46,6 +48,9 @@ class FirebaseFirestoreService{
     FirebaseFirestore.instance.collection('assessment').doc('assessments').collection('data');
   final CollectionReference _conditionCollection =
     FirebaseFirestore.instance.collection('assessment').doc('conditions').collection('data');
+
+  //#. 유저
+  final CollectionReference _userCollection = FirebaseFirestore.instance.collection('users');
 
 
   static FirebaseFirestoreService? _instance;
@@ -100,6 +105,22 @@ class FirebaseFirestoreService{
   static void init(){
     _instance ??= FirebaseFirestoreService._();
   }
+
+  //#. 유저
+  Future<Result<UserDto>> getUser(String uid) async {
+    try{
+      DocumentSnapshot documentSnapshot = await _userCollection.doc(uid).get();
+
+      if(documentSnapshot.data() == null){
+        throw Exception('유저가 존재하지 않음 : $uid');
+      }
+      return Result<UserDto>.fromSuccess(result: UserDto.fromMap(documentSnapshot.data() as Map<String , dynamic>));
+    }catch(e , s){
+      StaticLogger.logger.e('[FirebaseFirestoreService.getUser()] $e\n$s');
+      return Result.fromFailure(e, s);
+    }
+  }
+
 
   //#. 일반
   Future<List<NotificationData>?> getNotificationData(int n) async {
