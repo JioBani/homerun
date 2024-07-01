@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
@@ -144,7 +145,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: const Color(0xff767676)),
                         ),
                         Text(
-                          DateFormat('yyyy.MM.dd').format(widget.comment.commentDto.date.toDate()),
+                          TimeFormatter.formatTimeDifference(widget.comment.commentDto.date.toDate()),
                           style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
                         )
                       ],
