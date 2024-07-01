@@ -2,5 +2,6 @@ enum LoadingState{
   before,
   loading,
   success,
-  fail
+  fail,
+  noMoreData
 }
