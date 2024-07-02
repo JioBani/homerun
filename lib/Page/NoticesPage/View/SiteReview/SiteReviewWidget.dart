@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
@@ -38,9 +40,9 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GetX<SiteReviewWidgetController>(
+        GetBuilder<SiteReviewWidgetController>(
             builder: (controller) {
-              if(controller.loadingState.value == LoadingState.loading){
+              if(controller.loadingState == LoadingState.loading){
                 return SizedBox(
                   height: 185.w,
                   width: double.infinity,
@@ -51,7 +53,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
                   height: 185.w,
                   child: PageView.builder(
                       controller: _pageController,
-                      itemCount: controller.reviews!.length <= controller.maxThumbnailCount ? controller.reviews!.length : controller.maxThumbnailCount + 1,
+                      itemCount: controller.thumbnailWidgetCount,
                       onPageChanged: (index) {
                         setState(() {
                           _currentIndex = index;
@@ -89,11 +91,11 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
             }
         ),
         SizedBox(height: 10.w,),
-        GetX<SiteReviewWidgetController>(
+        GetBuilder<SiteReviewWidgetController>(
             builder: (controller) {
               return SmoothPageIndicator(
                 controller: _pageController,  // PageController
-                count: controller.loadingState.value != LoadingState.success ? 0 : controller.reviews?.length ?? 0,
+                count: controller.thumbnailWidgetCount,
                 effect:  ExpandingDotsEffect(
                     spacing: 3.w,
                     radius: 6.w,
