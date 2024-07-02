@@ -5,7 +5,6 @@ import 'package:homerun/Common/Firebase/FirestorePagination.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Model/Assessment/AssessmentQuestion.dart';
-import 'package:homerun/Model/Assessment/Condition.dart';
 import 'package:homerun/Model/Assessment/Conditioninfo.dart';
 import 'package:homerun/Model/NewsData.dart';
 import 'package:homerun/Model/NotificationData.dart';
@@ -114,7 +113,7 @@ class FirebaseFirestoreService{
       if(documentSnapshot.data() == null){
         throw Exception('유저가 존재하지 않음 : $uid');
       }
-      return Result<UserDto>.fromSuccess(result: UserDto.fromMap(documentSnapshot.data() as Map<String , dynamic>));
+      return Result<UserDto>.fromSuccess(content: UserDto.fromMap(documentSnapshot.data() as Map<String , dynamic>));
     }catch(e , s){
       StaticLogger.logger.e('[FirebaseFirestoreService.getUser()] $e\n$s');
       return Result.fromFailure(e, s);

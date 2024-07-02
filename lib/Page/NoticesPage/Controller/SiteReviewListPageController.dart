@@ -26,7 +26,7 @@ class SiteReviewListPageController extends GetxController{
 
     Result<List<SiteReview>> result = await siteReviewService.getSiteReviews(noticeId);
     if(result.isSuccess){
-      siteReviews = result.result!;
+      siteReviews = result.content!;
       loadingState.value = LoadingState.success;
     }
     else{

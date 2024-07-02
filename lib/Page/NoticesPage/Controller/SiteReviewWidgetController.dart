@@ -22,7 +22,7 @@ class SiteReviewWidgetController extends GetxController{
     Result<List<SiteReview>> result = await siteReviewService.getSiteReviews(noticeId , index: maxThumbnailCount);
 
     if(result.isSuccess){
-      reviews = result.result;
+      reviews = result.content;
       thumbnailWidgetCount = reviews!.length < maxThumbnailCount ? reviews!.length : maxThumbnailCount + 1;
       loadingState = LoadingState.success;
       update();
