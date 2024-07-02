@@ -1,44 +1,34 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
+import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
 
 class ReplyCommentWidgetController extends GetxController{
   final String noticeId;
   final String targetCommentId;
-  late final CollectionReference reference;
   List<Comment> replyList = [];
   Rx<LoadingState> loadingState = Rx(LoadingState.before);
   static String makeTag(String noticeId, String targetCommentId) => "$noticeId/$targetCommentId";
 
-  ReplyCommentWidgetController({required this.noticeId , required this.targetCommentId}){
-    reference = FirebaseFirestore.instance
-        .collection('notice_comment')
-        .doc(noticeId)
-        .collection('free')
-        .doc(targetCommentId)
-        .collection('reply');
-  }
+  ReplyCommentWidgetController({required this.noticeId , required this.targetCommentId});
 
   Future<void> load() async {
-    try{
-      loadingState.value = LoadingState.loading;
 
-      QuerySnapshot querySnapshot = await reference
-          .orderBy('date' , descending: true)
-          .limit(3)
-          .get();
+    Result<List<Comment>> result = await CommentService.instance.getComments(
+      noticeId: noticeId,
+      orderBy: SortOrder.latest,
+      type: CommentType.free,
+      replyTarget: targetCommentId,
+    );
 
-      replyList = querySnapshot.docs.map((e) => Comment.fromMap(
-        e.id ,
-        e.data() as Map<String , dynamic> ,
-        0,
-        e
-      )).toList();
+    if(result.isSuccess){
+      replyList = result.content!;
       loadingState.value = LoadingState.success;
-    }catch(e){
-      StaticLogger.logger.e('[ReplyCommentWidgetController.load()] $e');
+    }
+    else{
+      StaticLogger.logger.e('[ReplyCommentWidgetController.load()] ${result.exception}');
       loadingState.value = LoadingState.fail;
     }
   }
