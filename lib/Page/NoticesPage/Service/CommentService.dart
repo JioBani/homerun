@@ -52,14 +52,15 @@ class CommentService{
     required SortOrder orderBy,
     required CommentType type,
     int? index,
-    String? replyTarget
+    String? replyTarget,
+    DocumentSnapshot? startAfter
   }) async {
     //_getComment에서 시간이 얼마나 걸릴지 알 수 없기 때문에 Result.handleFuture 사용 x
     try{
       Query query = _commentCollection.doc(noticeId).collection(type.name);
 
-      if(index != null){
-        query = _commentCollection.limit(index);
+      if(replyTarget != null){
+        query = _commentCollection.doc(noticeId).collection(type.name).doc(replyTarget).collection('reply');
       }
 
       if(orderBy == SortOrder.latest){
@@ -68,6 +69,15 @@ class CommentService{
       else{
         query.orderBy('like',descending: true);
       }
+
+      if(startAfter != null){
+        query = query.startAfterDocument(startAfter);
+      }
+
+      if(index != null){
+        query = query.limit(index);
+      }
+
 
 
       //#. 좋아요 싫어요 상태를 불러오기 위해 uid 가져오기
@@ -106,17 +116,19 @@ class CommentService{
       CommentDto commentDto = CommentDto.fromMap(doc.data() as Map<String, dynamic>);
 
       return Comment(
-          commentId: doc.id,
-          commentDto: commentDto,
-          likeState: likeState
+        commentId: doc.id,
+        commentDto: commentDto,
+        likeState: likeState,
+        snapshot: doc
       );
     }
     catch (e) {
       StaticLogger.logger.e('[CommentLoader.getComment()] ${doc.id} : $e');
       return Comment(
-          commentId: doc.id,
-          commentDto: CommentDto.fromMap(doc.data() as Map<String, dynamic>),
-          likeState: 0
+        commentId: doc.id,
+        commentDto: CommentDto.fromMap(doc.data() as Map<String, dynamic>),
+        likeState: 0,
+        snapshot: null
       );
     }
   }
