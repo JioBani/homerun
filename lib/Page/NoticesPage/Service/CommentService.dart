@@ -1,14 +1,125 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/FirebaseResponse.dart';
+import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
 import 'package:homerun/Page/NoticesPage/Model/CommentDto.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 
+enum SortOrder{
+  likes,  // 조회순
+  latest
+}
+
+enum CommentType{
+  free,
+  eligibility
+}
+
+extension CommentTypeExtension on CommentType{
+  String get name {
+    switch (this) {
+      case CommentType.free:
+        return 'free';
+      case CommentType.eligibility:
+        return 'eligibility';
+      default:
+        throw UnimplementedError('Unexpected CommentType: $this');
+    }
+  }
+}
+
 class CommentService{
+  
+  final CollectionReference _commentCollection = FirebaseFirestore.instance.collection('notice_comment');
+
+  static CommentService? _instance;
+
+  CommentService._();
+
+  static CommentService get instance {
+    // 이미 인스턴스가 생성된 경우, 해당 인스턴스를 반환합니다.
+    _instance ??= CommentService._();
+    return _instance!;
+  }
+
+  Future<Result<List<Comment>>> getComments({
+    required String noticeId,
+    required SortOrder orderBy,
+    required CommentType type,
+    int? index,
+    String? replyTarget
+  }) async {
+    //_getComment에서 시간이 얼마나 걸릴지 알 수 없기 때문에 Result.handleFuture 사용 x
+    try{
+      Query query = _commentCollection.doc(noticeId).collection(type.name);
+
+      if(index != null){
+        query = _commentCollection.limit(index);
+      }
+
+      if(orderBy == SortOrder.latest){
+        query.orderBy('date',descending: true);
+      }
+      else{
+        query.orderBy('like',descending: true);
+      }
+
+
+      //#. 좋아요 싫어요 상태를 불러오기 위해 uid 가져오기
+      String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+      QuerySnapshot querySnapshot = await query.get();
+
+      List<Comment> comments = await Future.wait(querySnapshot.docs.map((e) => _getComment(e , uid)));
+
+      return Result<List<Comment>>.fromSuccess(content : comments);
+    }catch(e,s){
+      StaticLogger.logger.e('[CommentService.getComments()] $e\n$s');
+      return Result.fromFailure(e, s);
+    }
+
+  }
+
+  Future<Comment> _getComment(DocumentSnapshot doc, String? uid) async {
+    try {
+      int likeState;
+
+      if (uid != null) {
+        DocumentSnapshot likeDoc = await doc.reference.collection('likes').doc(uid).get();
+
+        if (likeDoc.exists) {
+          likeState = likeDoc['value'] as int;
+        }
+        else {
+          likeState = 0;
+        }
+      }
+      else {
+        likeState = 0;
+      }
+
+      CommentDto commentDto = CommentDto.fromMap(doc.data() as Map<String, dynamic>);
+
+      return Comment(
+          commentId: doc.id,
+          commentDto: commentDto,
+          likeState: likeState
+      );
+    }
+    catch (e) {
+      StaticLogger.logger.e('[CommentLoader.getComment()] ${doc.id} : $e');
+      return Comment(
+          commentId: doc.id,
+          commentDto: CommentDto.fromMap(doc.data() as Map<String, dynamic>),
+          likeState: 0
+      );
+    }
+  }
 
   Future<Result> uploadComment(String content, String noticeId , {String? replyTarget}) async {
 
