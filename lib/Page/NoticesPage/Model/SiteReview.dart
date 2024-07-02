@@ -1,3 +1,6 @@
+import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
+import 'package:homerun/Service/FirebaseStorageService.dart';
+
 class SiteReview {
   String id;
   String noticeId;
@@ -55,6 +58,26 @@ class SiteReview {
       view: map['view'],
       imagesRefPath: map['imagesRefPath'],
       thumbnailRefPath: map['thumbnailRefPath'],
+    );
+  }
+
+  factory SiteReview.fromWriteDto({
+    required SiteReviewWriteDto writeDto,
+    required String uid,
+  }) {
+
+    String imageRefPath = FirebaseStorageService.getSiteImagePath(writeDto.noticeId);
+    String thumbnailRefPath = "$imageRefPath/${writeDto.thumbnail}";
+
+    return SiteReview(
+      id : '',
+      noticeId: writeDto.noticeId,
+      title: writeDto.title,
+      content: writeDto.content,
+      writer: uid,
+      view: 0,
+      imagesRefPath:imageRefPath,
+      thumbnailRefPath: thumbnailRefPath,
     );
   }
 
