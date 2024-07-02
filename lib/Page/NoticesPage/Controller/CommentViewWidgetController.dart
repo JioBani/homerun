@@ -12,7 +12,7 @@ class CommentViewWidgetController extends GetxController{
 
 
   final String noticeId;
-  CommentService commentService = CommentService();
+  CommentService commentService = CommentService.instance;
 
   late final CommentLoader resendLoader;
   late final CommentLoader popularityLoader;
