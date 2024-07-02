@@ -2,14 +2,14 @@ import 'package:homerun/Common/StaticLogger.dart';
 
 class Result<T>{
   bool isSuccess;
-  T? result;
+  T? content;
   Object? exception;
   StackTrace? stackTrace;
 
-  Result({required this.isSuccess, this.result , this.exception, this.stackTrace});
+  Result({required this.isSuccess, this.content , this.exception, this.stackTrace});
 
-  factory Result.fromSuccess({T? result}){
-    return Result(isSuccess: true,result: result);
+  factory Result.fromSuccess({T? content}){
+    return Result(isSuccess: true,content: content);
   }
 
   factory Result.fromFailure(Object? exception, StackTrace? stackTrace){
@@ -20,7 +20,7 @@ class Result<T>{
     required T Function() action,
   }) async {
     try {
-      return Result<T>.fromSuccess(result: action());
+      return Result<T>.fromSuccess(content: action());
 
     } catch (e , s) {
       StaticLogger.logger.e('[ApiResponse.handleExceptions()] $e\n$s');
@@ -33,7 +33,7 @@ class Result<T>{
     Duration timeout = const Duration(seconds: 5), //TODO 적절한 시간으로 수정
   }) async {
     try {
-      return Result<T>.fromSuccess(result: await action().timeout(timeout));
+      return Result<T>.fromSuccess(content: await action().timeout(timeout));
 
     } catch (e , s) {
       StaticLogger.logger.e('[ApiResponse.handleExceptions()] $e\n$s');
