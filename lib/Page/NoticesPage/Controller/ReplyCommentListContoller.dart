@@ -30,7 +30,12 @@ class ReplyCommentWidgetController extends GetxController{
           .limit(3)
           .get();
 
-      replyList = querySnapshot.docs.map((e) => Comment.fromMap(e.id , e.data() as Map<String , dynamic> , 0)).toList();
+      replyList = querySnapshot.docs.map((e) => Comment.fromMap(
+        e.id ,
+        e.data() as Map<String , dynamic> ,
+        0,
+        e
+      )).toList();
       loadingState.value = LoadingState.success;
     }catch(e){
       StaticLogger.logger.e('[ReplyCommentWidgetController.load()] $e');
