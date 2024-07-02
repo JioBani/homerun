@@ -7,6 +7,10 @@ import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
 import 'CommentLoader.dart';
 
 class CommentViewWidgetController extends GetxController{
+  static const int initCommentNum = 3;
+  static const int loadCommentNum = 5;
+
+
   final String noticeId;
   CommentService commentService = CommentService();
 
@@ -36,7 +40,6 @@ class CommentViewWidgetController extends GetxController{
             .doc(noticeId)
             .collection('free')
             .orderBy('like' , descending: true)
-            .limit(3)
     );
   }
 
@@ -60,15 +63,15 @@ class CommentViewWidgetController extends GetxController{
       }
     }
 
-    resendLoader.load();
-    popularityLoader.load();
+    resendLoader.getNextComments(initCommentNum , reset: true);
+    popularityLoader.getNextComments(initCommentNum , reset: true);
   }
 
   Future<void> deleteComment(String commentId , String? replyTarget)async {
     await commentService.delete(noticeId , commentId , replyTarget: replyTarget);
     //TODO 적절하게 load하도록 변경
-    resendLoader.load();
-    popularityLoader.load();
+    resendLoader.getNextComments(initCommentNum , reset: true);
+    popularityLoader.getNextComments(initCommentNum , reset: true);
 
     if(replyTarget != null){
       try{
