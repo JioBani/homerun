@@ -23,7 +23,7 @@ class SiteReviewWidgetController extends GetxController{
           .collection('review')
           .limit(5)
           .get();
-      reviews = querySnapshot.docs.map((doc) => SiteReview.fromMap(doc.data() as Map<String, dynamic>)).toList();
+      reviews = querySnapshot.docs.map((doc) => SiteReview.fromMap(doc.data() as Map<String, dynamic>, doc.id)).toList();
       loadingState.value = LoadingState.success;
     }catch(e ,s){
       StaticLogger.logger.e("[SiteReviewWidgetController.loadReviews()] $e\n$s");
