@@ -14,14 +14,12 @@ class CommentLoader{
   CommentViewWidgetController controller;
   List<Comment> comments = [];
   LoadingState loadingState = LoadingState.before;
-  Query query;
   List<DocumentSnapshot> commentSnapshotList = [];
   CommentService commentService = CommentService.instance;
   String noticeId;
 
   CommentLoader({
     required this.controller,
-    required this.query,
     required this.noticeId,
   });
 

@@ -26,20 +26,12 @@ class CommentViewWidgetController extends GetxController{
   CommentViewWidgetController({required this.noticeId}){
     resendLoader = CommentLoader(
         controller: this,
-        query: FirebaseFirestore.instance
-            .collection('notice_comment')
-            .doc(noticeId)
-            .collection('free')
-            .orderBy('date' , descending: true)
+        noticeId: noticeId
     );
 
     popularityLoader = CommentLoader(
         controller: this,
-        query: FirebaseFirestore.instance
-            .collection('notice_comment')
-            .doc(noticeId)
-            .collection('free')
-            .orderBy('like' , descending: true)
+        noticeId: noticeId
     );
   }
 
@@ -78,7 +70,7 @@ class CommentViewWidgetController extends GetxController{
         var replyController = Get.find<ReplyCommentWidgetController>(
             tag: ReplyCommentWidgetController.makeTag(
                 noticeId,
-                replyTarget!
+                replyTarget
             )
         );
 
