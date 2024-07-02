@@ -2,13 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
+import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
 
 class SiteReviewWidgetController extends GetxController{
   List<SiteReview>? reviews;
   Rx<LoadingState> loadingState = Rx(LoadingState.before);
   final String noticeId;
   final int maxThumbnailCount = 3;
+  final SiteReviewService siteReviewService = SiteReviewService();
 
   SiteReviewWidgetController({required this.noticeId});
 
@@ -16,19 +19,18 @@ class SiteReviewWidgetController extends GetxController{
   Future<void> loadThumbnailReviews() async {
     reviews = [];
     loadingState.value = LoadingState.loading;
-    try{
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('site_review')
-          .doc('test')
-          .collection('review')
-          .limit(5)
-          .get();
-      reviews = querySnapshot.docs.map((doc) => SiteReview.fromMap(doc.data() as Map<String, dynamic>, doc.id)).toList();
+
+    Result<List<SiteReview>> result = await siteReviewService.getSiteReviews(noticeId , index: 5);
+
+    if(result.isSuccess){
+      reviews = result.result;
       loadingState.value = LoadingState.success;
-    }catch(e ,s){
-      StaticLogger.logger.e("[SiteReviewWidgetController.loadReviews()] $e\n$s");
+    }
+    else{
       reviews = [];
       loadingState.value = LoadingState.fail;
     }
   }
+
+
 }
