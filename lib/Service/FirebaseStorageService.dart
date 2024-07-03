@@ -1,5 +1,5 @@
 class FirebaseStorageService{
-  static String getSiteImagePath(String noticeId){
-    return "site_review/$noticeId/";
+  static String getSiteImagePath(String noticeId , String docId){
+    return "site_review/$noticeId/$docId/";
   }
 }
