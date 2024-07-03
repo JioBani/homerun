@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:homerun/Service/FirebaseStorageCacheService.dart';
+import 'package:shimmer/shimmer.dart';
 
 /// [onlySaveMemory] : 웹에서는 값에 상관없이 항상 [CachedNetworkImage]를 사용
 class FireStorageImage extends StatefulWidget {
@@ -15,7 +16,8 @@ class FireStorageImage extends StatefulWidget {
     this.height,
     this.loadingWidget,
     this.onlySaveMemory = false,
-    this.timeOut = const Duration(seconds: 10)
+    this.timeOut = const Duration(seconds: 10),
+    this.shimmer = true
   });
   final String path;
   final BoxFit? fit;
@@ -24,6 +26,7 @@ class FireStorageImage extends StatefulWidget {
   final Widget? loadingWidget;
   final bool onlySaveMemory; ///웹에서는 값에 상관없이 항상 [CachedNetworkImage]를 사용
   final Duration timeOut;
+  final bool shimmer;
 
   @override
   State<FireStorageImage> createState() => _FireStorageImageState();
@@ -49,10 +52,36 @@ class _FireStorageImageState extends State<FireStorageImage> {
                     );
                   }
                   else if(snapshot.hasError){
-                    return const Text("이미지를 불러 올 수 없습니다.");
+                    if(widget.shimmer){
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          color: Colors.grey,
+                          width: widget.width,
+                          height: widget.height,
+                        ),
+                      );
+                    }
+                    else{
+                      return const Text("이미지를 불러 올 수 없습니다.");
+                    }
                   }
                   else{
-                    return widget.loadingWidget ?? const CupertinoActivityIndicator();
+                    if(widget.shimmer){
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          color: Colors.grey,
+                          width: widget.width,
+                          height: widget.height,
+                        ),
+                      );
+                    }
+                    else{
+                      return widget.loadingWidget ??  const CupertinoActivityIndicator();
+                    }
                   }
                 }
             );
@@ -69,10 +98,36 @@ class _FireStorageImageState extends State<FireStorageImage> {
                     );
                   }
                   else if(snapshot.hasError){
-                    return const Text("이미지를 불러 올 수 없습니다.");
+                    if(widget.shimmer){
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          color: Colors.grey,
+                          width: widget.width,
+                          height: widget.height,
+                        ),
+                      );
+                    }
+                    else{
+                      return const Text("이미지를 불러 올 수 없습니다.");
+                    }
                   }
                   else{
-                    return widget.loadingWidget ??  const CupertinoActivityIndicator();
+                    if(widget.shimmer){
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          color: Colors.grey,
+                          width: widget.width,
+                          height: widget.height,
+                        ),
+                      );
+                    }
+                    else{
+                      return widget.loadingWidget ??  const CupertinoActivityIndicator();
+                    }
                   }
                 }
             );
