@@ -9,8 +9,6 @@ class SiteReviewListPageController extends GetxController{
   final String noticeId;
   List<SiteReview> siteReviews = [];
   Rx<LoadingState> loadingState = Rx(LoadingState.before);
-  SiteReviewService siteReviewService = SiteReviewService();
-
   SiteReviewListPageController({required this.noticeId});
 
 
@@ -24,7 +22,7 @@ class SiteReviewListPageController extends GetxController{
   Future<void> loadSiteReviews()async {
     loadingState.value = LoadingState.loading;
 
-    Result<List<SiteReview>> result = await siteReviewService.getSiteReviews(noticeId);
+    Result<List<SiteReview>> result = await SiteReviewService.instance.getSiteReviews(noticeId);
     if(result.isSuccess){
       siteReviews = result.content!;
       loadingState.value = LoadingState.success;
