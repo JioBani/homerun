@@ -3,11 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/NoticesPage/Controller/SiteReviewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
 import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewListPage.dart';
@@ -128,7 +125,6 @@ class _ThumbnailWidgetState extends State<ThumbnailWidget> with AutomaticKeepAli
   Future<void> _loadImagesPath() async {
     loadingState = LoadingState.loading;
     setState(() {});
-    StaticLogger.logger.i(widget.siteReview.title);
     final storageRef = FirebaseStorage.instance.ref().child(widget.siteReview.imagesRefPath);
     try{
       imagePaths = (await storageRef.listAll()).items.map((e) => e.fullPath).toList();
