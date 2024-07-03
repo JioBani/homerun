@@ -56,7 +56,7 @@ class _SiteReviewListPageState extends State<SiteReviewListPage> {
       ),
       body: SafeArea(
         child: GetX<SiteReviewListPageController>(
-          tag: 'test',
+          tag: widget.announcement.publicAnnouncementNumber ?? '',
           builder: (controller) {
             if(controller.loadingState.value == LoadingState.success){
               List<Widget> widgets = [];
