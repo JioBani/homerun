@@ -13,8 +13,7 @@ import 'package:homerun/Style/Images.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SiteReviewWidget extends StatefulWidget {
-  const SiteReviewWidget({super.key, required this.noticeId, required this.aptAnnouncement});
-  final String noticeId;
+  const SiteReviewWidget({super.key, required this.aptAnnouncement});
   final APTAnnouncement aptAnnouncement;
 
   @override
@@ -24,7 +23,9 @@ class SiteReviewWidget extends StatefulWidget {
 class _SiteReviewWidgetState extends State<SiteReviewWidget> {
   final PageController _pageController = PageController(viewportFraction: 1 / 3, initialPage: 0);
   int _currentIndex = 0;
-  late SiteReviewWidgetController siteReviewWidgetController = Get.put(SiteReviewWidgetController(noticeId: widget.noticeId));
+  late SiteReviewWidgetController siteReviewWidgetController = Get.put(SiteReviewWidgetController(
+      noticeId: widget.aptAnnouncement.publicAnnouncementNumber ?? ''
+  ));
 
   @override
   void initState() {

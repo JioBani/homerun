@@ -204,7 +204,7 @@ class _AdNoticePageState extends State<AdNoticePage> {
                 ),
               ],
             ),
-            SiteReviewWidget(noticeId: 'test', aptAnnouncement: widget.announcement,),
+            SiteReviewWidget(aptAnnouncement: widget.announcement,),
             SizedBox(height: 24.w,),
             CommentViewWidget(noticeId: widget.announcement.publicAnnouncementNumber!)
           ],
