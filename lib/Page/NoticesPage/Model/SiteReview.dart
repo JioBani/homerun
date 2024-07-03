@@ -64,10 +64,11 @@ class SiteReview {
   factory SiteReview.fromWriteDto({
     required SiteReviewWriteDto writeDto,
     required String uid,
+    required String docId,
   }) {
 
-    String imageRefPath = FirebaseStorageService.getSiteImagePath(writeDto.noticeId);
-    String thumbnailRefPath = "$imageRefPath/${writeDto.thumbnail}";
+    String imageRefPath = FirebaseStorageService.getSiteImagePath(writeDto.noticeId , docId);
+    String thumbnailRefPath = "$imageRefPath${writeDto.thumbnail}"; //imageRefPath가 /를 포함하고 있음
 
     return SiteReview(
       id : '',
@@ -76,7 +77,7 @@ class SiteReview {
       content: writeDto.content,
       writer: uid,
       view: 0,
-      imagesRefPath:imageRefPath,
+      imagesRefPath: imageRefPath,
       thumbnailRefPath: thumbnailRefPath,
     );
   }
