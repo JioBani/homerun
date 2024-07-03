@@ -20,8 +20,11 @@ class SiteReviewListPage extends StatefulWidget {
 class _SiteReviewListPageState extends State<SiteReviewListPage> {
   @override
   Widget build(BuildContext context) {
-    //Get.put(SiteReviewListPageController(noticeId: announcement.publicAnnouncementNumber!))
-    Get.put(SiteReviewListPageController(noticeId: 'test') , tag: 'test');
+    Get.put(SiteReviewListPageController(
+        noticeId: widget.announcement.publicAnnouncementNumber ?? ''
+       ),
+       tag: 'test'
+    );
     return Scaffold(
       appBar:AppBar(
         elevation: 0,
