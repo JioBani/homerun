@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
-import 'package:get/instance_manager.dart';
+import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Page/NoticesPage/Controller/SiteReviewListPageController.dart';
 import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewListItemWidget.dart';
+import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Style/Fonts.dart';
 
@@ -42,6 +42,14 @@ class _SiteReviewListPageState extends State<SiteReviewListPage> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Get.to(SiteReviewWritePage(noticeId: widget.announcement.publicAnnouncementNumber ?? '',));
+            },
+          )
+        ],
       ),
       body: SafeArea(
         child: GetX<SiteReviewListPageController>(
