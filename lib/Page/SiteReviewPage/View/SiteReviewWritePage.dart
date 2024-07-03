@@ -7,20 +7,25 @@ import 'package:homerun/Page/SiteReviewPage/View/ImageListWidget.dart';
 import 'package:homerun/Style/Fonts.dart';
 
 class SiteReviewWritePage extends StatefulWidget {
-  const SiteReviewWritePage({super.key});
-
-  static const Color subTitleColor = Color(0xff767676);
-  static const Color fillColor = Color(0xffFBFBFB);
-  static const Color borderColor = Color(0xffA4A4A6);
+  const SiteReviewWritePage({super.key, required this.noticeId});
+  final String noticeId;
 
   @override
   State<SiteReviewWritePage> createState() => _SiteReviewWritePageState();
 }
 
 class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
+
+  static const Color subTitleColor = Color(0xff767676);
+  static const Color fillColor = Color(0xffFBFBFB);
+  static const Color borderColor = Color(0xffA4A4A6);
+
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController contentController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    var controller = Get.put(SiteReviewWritePageController());
+    var controller = Get.put(SiteReviewWritePageController(noticeId: widget.noticeId));
     return Scaffold(
       appBar:AppBar(
         elevation: 0,
@@ -44,14 +49,14 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
         actions: [
           TextButton(
             onPressed: () {
-              controller.addImage();
+
             },
             child: Text(
               "임시저장",
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
-                color: SiteReviewWritePage.subTitleColor
+                color: subTitleColor
               ),
             ),
           )
@@ -63,6 +68,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const ImageListWidget(),
               Padding(
                 padding: EdgeInsets.only(left: 2.w),
                 child: Text(
@@ -70,12 +76,13 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                   style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
-                      color: SiteReviewWritePage.subTitleColor
+                      color: subTitleColor
                   ),
                 ),
               ),
               SizedBox(height: 9.w,),
               CustomTextFormField(
+                controller: titleController,
                 hintText: "제목을 입력해주세요",
                 maxLines: 1,
               ),
@@ -87,13 +94,14 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                   style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
-                      color: SiteReviewWritePage.subTitleColor
+                      color: subTitleColor
                   ),
                 ),
               ),
               SizedBox(height: 9.w,),
-              Expanded(
+               Expanded(
                 child: CustomTextFormField(
+                  controller: contentController,
                   hintText: "리뷰 내용을 작성해주세요.",
                   maxLines: 30,
                 ),
@@ -106,34 +114,39 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                     width: 135.w,
                     height: 30.w,
                     decoration: BoxDecoration(
-                      color: SiteReviewWritePage.fillColor,
+                      color: fillColor,
                       borderRadius: BorderRadius.circular(5.r),
-                      border: Border.all(color: SiteReviewWritePage.borderColor)
+                      border: Border.all(color: borderColor)
                     ),
                     child: Center(
                       child: Text(
                         "파일업로드",
                         style: TextStyle(
-                          color: SiteReviewWritePage.subTitleColor,
+                          color: subTitleColor,
                           fontSize: 15.sp
                         ),
                       ),
                     ),
                   ),
-                  Container(
-                    width: 135.w,
-                    height: 30.w,
-                    decoration: BoxDecoration(
-                        color: SiteReviewWritePage.fillColor,
-                        borderRadius: BorderRadius.circular(5.r),
-                        border: Border.all(color: SiteReviewWritePage.borderColor)
-                    ),
-                    child: Center(
-                      child: Text(
-                        "파일업로드",
-                        style: TextStyle(
-                            color: SiteReviewWritePage.subTitleColor,
-                            fontSize: 15.sp
+                  InkWell(
+                    onTap: (){
+                      controller.addImage();
+                    },
+                    child: Container(
+                      width: 135.w,
+                      height: 30.w,
+                      decoration: BoxDecoration(
+                          color: fillColor,
+                          borderRadius: BorderRadius.circular(5.r),
+                          border: Border.all(color: borderColor)
+                      ),
+                      child: Center(
+                        child: Text(
+                          "파일업로드",
+                          style: TextStyle(
+                              color: subTitleColor,
+                              fontSize: 15.sp
+                          ),
                         ),
                       ),
                     ),
@@ -141,25 +154,29 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                 ],
               ),
               SizedBox(height: 14.w,),
-              Container(
-                width: double.infinity,
-                height: 30.w,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(5.r),
-                ),
-                child: Center(
-                  child: Text(
-                    "작성완료",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w600
+              InkWell(
+                onTap: (){
+                  controller.upload(titleController.text, contentController.text);
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 30.w,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(5.r),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "작성완료",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600
+                      ),
                     ),
                   ),
                 ),
               ),
-              ImageListWidget()
             ],
           ),
         ),
@@ -169,17 +186,18 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
 }
 
 class CustomTextFormField extends StatelessWidget {
-  const CustomTextFormField({super.key, required this.hintText, required this.maxLines});
+  const CustomTextFormField({super.key, required this.hintText, required this.maxLines, required this.controller});
 
   static const Color subTitleColor = Color(0xff767676);
   static const Color inputFillColor = Color(0xffFBFBFB);
   final String hintText;
   final int maxLines;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      //controller: textEditingController,
+      controller: controller,
       maxLines: maxLines,
       cursorColor: const Color(0xFF35C5F0),
       decoration: InputDecoration(
