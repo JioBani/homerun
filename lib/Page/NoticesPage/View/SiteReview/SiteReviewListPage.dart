@@ -23,7 +23,7 @@ class _SiteReviewListPageState extends State<SiteReviewListPage> {
     Get.put(SiteReviewListPageController(
         noticeId: widget.announcement.publicAnnouncementNumber ?? ''
        ),
-       tag: 'test'
+       tag: widget.announcement.publicAnnouncementNumber ?? ''
     );
     return Scaffold(
       appBar:AppBar(
