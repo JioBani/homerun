@@ -6,8 +6,11 @@ import 'package:image_picker/image_picker.dart';
 
 class SiteReviewWritePageController extends GetxController{
   final ImagePicker picker = ImagePicker();
+  final String noticeId;
   RxList<XFile> images = RxList([]);
   Rx<XFile?> thumbnailFile = Rx(null);
+
+  SiteReviewWritePageController({required this.noticeId});
 
   Future<void> addImage() async {
     final List<XFile> pickedFile = await picker.pickMultiImage();
@@ -32,12 +35,12 @@ class SiteReviewWritePageController extends GetxController{
     }
   }
 
-  Future<void> upload(){
+  Future<void> upload(String title, String content){
     return SiteReviewService.instance.write(
         SiteReviewWriteDto(
-            noticeId: 'test',
-            title: '테스트',
-            content: '컨텐츠',
+            noticeId: noticeId,
+            title: title,
+            content: content,
             thumbnail: thumbnailFile.value?.name ?? images.first.name
         ),
         images,
