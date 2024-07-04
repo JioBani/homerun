@@ -133,8 +133,8 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                   InkWell(
                     onTap: () async {
                       Result<void> result = await controller.addImage();
-                      if(!result.isSuccess && result.exception is OutOfImageSizeException){
-                        Get.snackbar('오류', '이미지의 크기는 10MB를 넘을 수 없습니다.');
+                      if(!result.isSuccess){
+                        Get.snackbar('오류', '이미지를 가져올 수 없습니다.');
                       }
                     },
                     child: Container(
