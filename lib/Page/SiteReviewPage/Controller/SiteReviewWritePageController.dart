@@ -27,7 +27,7 @@ class SiteReviewWritePageController extends GetxController{
           final List<XFile> pickedFile = await picker.pickMultiImage();
 
           images.addAll(pickedFile);
-          calculateTotalImageSize();
+          await calculateTotalImageSize();
           update();
         }
     );
