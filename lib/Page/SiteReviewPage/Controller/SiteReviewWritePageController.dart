@@ -58,7 +58,7 @@ class SiteReviewWritePageController extends GetxController{
       return Result<void>.fromFailure(OutOfImageSizeException(), StackTrace.current);
     }
 
-    return SiteReviewService.instance.write(
+    return SiteReviewService.instance.upload(
         SiteReviewWriteDto(
             noticeId: noticeId,
             title: title,

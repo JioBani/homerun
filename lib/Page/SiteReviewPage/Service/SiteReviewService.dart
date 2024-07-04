@@ -47,7 +47,7 @@ class SiteReviewService{
   }
 
   ///글 업로드
-  Future<Result<void>> write(
+  Future<Result<void>> upload(
       SiteReviewWriteDto siteReviewWriteDto,
       List<XFile> images,
       void Function(UploadState, String, Object?)? onProgress
