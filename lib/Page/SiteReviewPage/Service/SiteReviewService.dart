@@ -47,7 +47,7 @@ class SiteReviewService{
   }
 
   ///글 업로드
-  Future<void> write(
+  Future<Result<void>> write(
       SiteReviewWriteDto siteReviewWriteDto,
       List<XFile> images,
       void Function(UploadState, String, Object?)? onProgress
@@ -58,11 +58,11 @@ class SiteReviewService{
 
     try{
       userDto = Get.find<AuthService>().getUser();
-    }catch(e){
+    }catch(e , s){
       if(onProgress != null){
-        onProgress(UploadState.fail,'로그인이 되어 있지 않습니다.',null);
+        onProgress(UploadState.fail,'로그인이 되어 있지 않습니다.',e);
       }
-      return;
+      return Result<void>.fromFailure(e, s);
     }
 
 
@@ -75,11 +75,11 @@ class SiteReviewService{
       if(onProgress != null){
         onProgress(UploadState.progress,'문서 만들기 성공',null);
       }
-    }catch(e){
+    }catch(e,s){
       if(onProgress != null){
         onProgress(UploadState.fail,'문서 만들기 실패',e);
       }
-      return;
+      return Result<void>.fromFailure(e, s);
     }
 
     //#3. 리뷰 문서에 정보 저장하기
@@ -90,7 +90,7 @@ class SiteReviewService{
         onProgress(UploadState.progress,'문서 저장 성공',null);
       }
 
-    }catch(e1){
+    }catch(e1 , s){
       try{
         await _siteReviewCollection
             .doc(siteReviewWriteDto.noticeId)
@@ -104,7 +104,7 @@ class SiteReviewService{
       if(onProgress != null){
         onProgress(UploadState.fail,'문서 저장 실패',e1);
       }
-      return;
+      return Result<void>.fromFailure(e1, s);
     }
 
 
@@ -113,22 +113,31 @@ class SiteReviewService{
       images,siteReviewWriteDto.noticeId,documentReference.id,null
     );
 
-    if(onProgress != null){
-      int success = 0;
-      Object? e;
-      result.forEach((key, value) {
-        if(value.isSuccess) {
-          success++;
-        }
-        else{
-          e = value.exception;
-        }
-      });
+    //#4-1. 이미지 업로드 에러 처리
+    int success = 0;
+    Result<void>? lastError;
+    result.forEach((key, value) {
+      if(value.isSuccess) {
+        success++;
+      }
+      else{
+        lastError = value;
+      }
+    });
 
-      onProgress(success == result.length ? UploadState.success : UploadState.fail,
+    if(onProgress != null){
+      onProgress(
+          success == result.length ? UploadState.success : UploadState.fail,
           '업로드 : $success/${result.length}',
-          e
+          lastError?.exception
       );
+    }
+
+    if(success == result.length){
+      return Result<void>.fromSuccess();
+    }
+    else{
+      return lastError!;
     }
   }
 
