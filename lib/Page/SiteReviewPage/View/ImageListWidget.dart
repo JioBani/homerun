@@ -10,7 +10,7 @@ class ImageListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetX<SiteReviewWritePageController>(
+    return GetBuilder<SiteReviewWritePageController>(
         builder: (controller){
           if(controller.images.isNotEmpty){
             return Column(
@@ -32,6 +32,40 @@ class ImageListWidget extends StatelessWidget {
                       children: List.generate(controller.images.length, (index) => ImageListItem(index: index,))
                   ),
                 ),
+                SizedBox(height: 2.w,),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "(${controller.images.length}/10)",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).primaryColor,
+                          fontSize: 12.sp
+                        ),
+                      ),
+                      Text(
+                        "  ,  ",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 12.sp
+                        ),
+                      ),
+                      Text(
+                        "(${controller.imageSize.toStringAsFixed(2)}MB/10MB)",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 12.sp
+                        ),
+                      ),
+                    ],
+                  )
+                ),
+                SizedBox(height: 10.w,),
               ],
             );
           }
@@ -58,7 +92,7 @@ class ImageListItem extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5.r),
             border: Border.all(
-                color : const Color(0xffA4A4A6),
+                color: const Color(0xffA4A4A6) ,
                 width: 0.5.sp
             )
         ),
@@ -72,6 +106,20 @@ class ImageListItem extends StatelessWidget {
                 width: 70.w,
                 height: 70.w,
                 fit: BoxFit.cover,
+              ),
+            ),
+            InkWell(
+              onTap: (){
+                controller.setThumbnail(index);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.r),
+                    border: Border.all(
+                        color : controller.images[index] == controller.thumbnailFile.value ? Theme.of(context).primaryColor : const Color(0xffA4A4A6) ,
+                        width: controller.images[index] == controller.thumbnailFile.value ? 3.sp : 0.5.sp
+                    )
+                ),
               ),
             ),
             Padding(
