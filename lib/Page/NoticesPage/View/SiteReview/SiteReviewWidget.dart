@@ -7,7 +7,7 @@ import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Page/NoticesPage/Controller/SiteReviewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
-import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewListPage.dart';
+import 'package:homerun/Page/SiteReviewPage/View/SiteReviewListPage.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
