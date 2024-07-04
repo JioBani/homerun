@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
+import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewWritePageController.dart';
 import 'package:homerun/Page/SiteReviewPage/View/ImageListWidget.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Fonts.dart';
 
 class SiteReviewWritePage extends StatefulWidget {
@@ -129,8 +131,11 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                     ),
                   ),
                   InkWell(
-                    onTap: (){
-                      controller.addImage();
+                    onTap: () async {
+                      Result<void> result = await controller.addImage();
+                      if(!result.isSuccess && result.exception is OutOfImageSizeException){
+                        Get.snackbar('오류', '이미지의 크기는 10MB를 넘을 수 없습니다.');
+                      }
                     },
                     child: Container(
                       width: 135.w,
@@ -155,8 +160,23 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
               ),
               SizedBox(height: 14.w,),
               InkWell(
-                onTap: (){
-                  controller.upload(titleController.text, contentController.text);
+                onTap: () async {
+                  Result<void> result = await controller.upload(titleController.text, contentController.text);
+                  if(result.isSuccess){
+
+                  }
+                  else{
+                    if(result.exception is OutOfImageSizeException){
+                      Get.snackbar('오류', '이미지의 크기는 10MB를 넘을 수 없습니다.');
+                    }
+                    else if(result.exception is ApplicationUnauthorizedException){
+                      Get.snackbar('오류', '로그인이 필요합니다.'); //TODO 로그인 페이지랑 연결
+                    }
+                    else{
+                      Get.snackbar('오류', '업로드중 오류가 발생 했습니다.');
+                    }
+                    StaticLogger.logger.e(result.stackTrace);
+                  }
                 },
                 child: Container(
                   width: double.infinity,
