@@ -18,12 +18,16 @@ class CommentViewWidget extends StatefulWidget {
 
 class _CommentViewWidgetState extends State<CommentViewWidget> {
 
+  late final CommentViewWidgetController commentViewWidgetController;
+
   @override
   void initState() {
-    Get.put(
+    commentViewWidgetController = Get.put(
         tag:widget.noticeId,
         CommentViewWidgetController(noticeId: widget.noticeId)
-    ).resendLoader.load();
+    );
+
+    commentViewWidgetController.resendLoader.getNextComments(3, reset: true);
 
     // TODO: implement initState
     super.initState();
@@ -40,7 +44,9 @@ class _CommentViewWidgetState extends State<CommentViewWidget> {
           GetBuilder<CommentViewWidgetController>(
               tag: widget.noticeId,
               builder: (controller){
-                if(controller.resendLoader.loadingState == LoadingState.success){
+                if(controller.resendLoader.loadingState == LoadingState.success ||
+                   controller.resendLoader.loadingState == LoadingState.noMoreData
+                ){
                   return Column(
                     children: controller.resendLoader.comments.map(
                             (comment) => Padding(
@@ -51,10 +57,29 @@ class _CommentViewWidgetState extends State<CommentViewWidget> {
                   );
                 }
                 else{
-                  return const CupertinoActivityIndicator();
+                  return const SizedBox();
                 }
               }
-          )
+          ),
+          GetBuilder<CommentViewWidgetController>(
+              tag: widget.noticeId,
+              builder: (controller){
+                if(controller.resendLoader.loadingState == LoadingState.success){
+                  return TextButton(
+                      onPressed: (){
+                        commentViewWidgetController.resendLoader.getNextComments(2);
+                      },
+                      child: Text('더보기')
+                  );
+                }
+                else if(controller.resendLoader.loadingState == LoadingState.noMoreData){
+                  return Text("마지막 댓글 입니다.");
+                }
+                else{
+                  return Text("댓글을 불러 올 수 없습니다.");
+                }
+              }
+          ),
         ],
       ),
     );
