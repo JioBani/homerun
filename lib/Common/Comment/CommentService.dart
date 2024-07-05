@@ -10,6 +10,15 @@ import 'CommentDto.dart';
 
 class CommentService {
 
+  static CommentService? _instance;
+
+  CommentService._();
+
+  static CommentService get instance {
+    _instance ??= CommentService._();
+    return _instance!;
+  }
+
   Future<Result<List<Comment>>> getComments({
     required CollectionReference commentCollection,
     required String noticeId,
@@ -52,7 +61,7 @@ class CommentService {
     OrderType orderBy = OrderType.none,
     bool descending = true
   }){
-    Query query = commentCollection.orderBy(OrderType.date, descending: descending);
+    Query query = commentCollection.orderBy(OrderType.date.name, descending: descending);
 
     if (startAfter != null) {
       if(orderBy == OrderType.date){
