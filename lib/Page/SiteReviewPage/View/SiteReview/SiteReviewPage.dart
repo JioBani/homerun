@@ -1,6 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
+import 'package:homerun/Page/SiteReviewPage/Model/CommentDto.dart';
+import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/ImageSlideWidget.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Style/Palette.dart';
@@ -14,57 +18,60 @@ class SiteReviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar : AppBar(
+        surfaceTintColor: Colors.white,
+        leading: const Icon(Icons.arrow_back),
+        backgroundColor: Theme.of(context).colorScheme.background,
+        shadowColor: Colors.black.withOpacity(0.5),
+        shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(16.0)),
+        ),
+        title: Text(
+          siteReview.title,
+          style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: Icon(Icons.favorite_border),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: Icon(Icons.folder_open),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: Icon(Icons.share),
+          ),
+          SizedBox(width: 10.w,)
+        ],
+      ),
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              surfaceTintColor: Colors.white,
-              expandedHeight: 80.w,
-              leading: const Icon(Icons.arrow_back),
-              backgroundColor: Theme.of(context).colorScheme.background,
-              pinned: true,
-              shadowColor: Colors.black.withOpacity(0.5),
-              shape: const ContinuousRectangleBorder(
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(16.0)),
-              ),
-              title: Text(
-                siteReview.title,
-                style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 25.w),
+          child: ListView(
+            children: [
+              SizedBox(height: 25.w,),
+              ImageSlideWidget(siteReview: siteReview,),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  siteReview.content,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Palette.brightMode.mediumText,
+                  ),
                 ),
               ),
-              actions: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: Icon(Icons.favorite_border),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: Icon(Icons.folder_open),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: Icon(Icons.share),
-                ),
-                SizedBox(width: 10.w,)
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                background: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: ProfileWidget(userDto: userDto,)
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  SizedBox(height: 25.w,),
-                  ImageSlideWidget(siteReview: siteReview,)
-                ],
-              ),
-            )
-          ],
+              ProfileWidget(userDto: userDto,),
+              SizedBox(height: 5.w,),
+              Divider(thickness: 1.sp,),
+              CommentWidget(commentDto: CommentDto.test()),
+            ],
+          ),
         ),
       ),
     );
@@ -78,48 +85,58 @@ class ProfileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.only(left: 25.w),
-        child: SizedBox(
-          height: 40.w,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(30.w),
-                child: Image.asset(
-                  TestImages.ashe_43,
-                  width: 35.w,
-                  height: 35.w,
+      decoration: BoxDecoration(
+      ),
+      child: SizedBox(
+        height: 40.w,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(30.w),
+              child: Image.asset(
+                TestImages.ashe_43,
+                width: 35.w,
+                height: 35.w,
+              ),
+            ),
+            SizedBox(width: 7.w,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userDto.displayName ?? '알 수 없음',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                    color: Palette.brightMode.darkText
+                  ),
                 ),
-              ),
-              SizedBox(width: 7.w,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    userDto.displayName ?? '알 수 없음',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.sp,
-                      color: Palette.brightMode.darkText
-                    ),
+                Text(
+                  "2024.07.04",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12.sp,
+                    color: Palette.brightMode.mediumText
                   ),
-                  Text(
-                    "2024.07.04",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12.sp,
-                      color: Palette.brightMode.mediumText
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            Spacer(),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                "좋아요 5 · 조회 23",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Palette.brightMode.mediumText,
+                ),
+              )
+            ),
+            SizedBox(width: 5.w,)
+          ],
         ),
       ),
     );
