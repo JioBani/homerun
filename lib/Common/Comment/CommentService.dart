@@ -110,6 +110,48 @@ class CommentService {
     }
   }
 
+  Future<Result<Comment>> upload({
+    required CollectionReference commentCollection,
+    required String content,
+    bool hasLikes = false
+  }) {
+    return Result.handleFuture<Comment>(
+        action: () async {
+          UserDto? userDto = Get.find<AuthService>().getUser();
+
+          CommentDto commentDto;
+
+          if(hasLikes){
+            commentDto  = CommentDto(
+              uid: userDto.uid,
+              content: content,
+              date: Timestamp.now(),
+              like: 0,
+              dislike: 0,
+            );
+          }
+          else{
+            commentDto  = CommentDto(
+              uid: userDto.uid,
+              content: content,
+              date: Timestamp.now(),
+            );
+          }
+
+          DocumentReference docRef = await commentCollection.add(commentDto.toMap());
+
+          DocumentSnapshot doc = await docRef.get();
+
+          return Comment(
+            id: docRef.id,
+            commentDto: commentDto,
+            likeState: 0,
+            documentSnapshot: doc,
+          );
+        }
+    );
+  }
+
   Future<Result<void>> remove(Comment comment){
     return Result.handleFuture<void>(
       action : ()async{
