@@ -54,6 +54,17 @@ class CommentViewWidgetController extends GetxController{
     update();
   }
 
+  Future<Result<Comment>> upload(String content) async {
+    Result<Comment> result = await CommentService.instance.upload(
+      commentCollection: commentCollection,
+      content: content
+    );
+
+    update();
+
+    return result;
+  }
+
   Future<Result<void>> removeComment(Comment comment) async{
     Result<void> result = await CommentService.instance.remove(comment);
 
