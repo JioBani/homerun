@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
+import 'package:homerun/Page/SiteReviewPage/Model/CommentDto.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
@@ -188,6 +189,28 @@ class SiteReviewService{
     }
     return resultMap;
   }
+
+  Future<Result<void>> uploadComment(String content, String noticeId, String reviewId)=>
+      Result.handleFuture<void>(
+        action: () async {
+          CollectionReference commentRef = _siteReviewCollection.doc(noticeId)
+              .collection('review')
+              .doc(reviewId)
+              .collection('comment');
+
+          UserDto userDto = Get.find<AuthService>().getUser();
+
+          CommentDto commentDto = CommentDto(
+              date: Timestamp.now(),
+              content: content,
+              uid: userDto.uid,
+              noticeId: noticeId,
+              reviewId: reviewId
+          );
+
+          await commentRef.add(commentDto.toMap());
+        }
+    );
 }
 
 enum UploadState{
