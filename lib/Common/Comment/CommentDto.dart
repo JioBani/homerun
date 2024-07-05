@@ -9,8 +9,8 @@ class CommentDto {
 
   CommentDto({
     required this.date,
-    required this.like,
-    required this.dislike,
+    this.like,
+    this.dislike,
     required this.content,
     required this.uid
   });
