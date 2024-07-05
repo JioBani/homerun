@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
+import 'package:homerun/Page/SiteReviewPage/Model/Comment.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/CommentDto.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
@@ -211,6 +212,41 @@ class SiteReviewService{
           await commentRef.add(commentDto.toMap());
         }
     );
+
+  Future<Result<List<Comment>>> getComments({
+    required String noticeId,
+    required String reviewId,
+    required int index,
+    Comment? startAfter,
+  }){
+    return Result.handleFuture<List<Comment>>(
+        action: () async {
+          CollectionReference ref = _siteReviewCollection.doc(noticeId)
+              .collection('review')
+              .doc(reviewId)
+              .collection('comment');
+
+          Query query = ref.orderBy('date' , descending: true);
+
+          if(startAfter != null){
+            query = query.startAfter([startAfter.commentDto.date]);
+          }
+
+          query = query.limit(index);
+
+          QuerySnapshot querySnapshot = await query.get();
+
+          return querySnapshot.docs.map((doc) =>
+            Comment(
+                id: doc.id,
+                commentDto: CommentDto.fromMap(doc.data() as Map<String,dynamic>)
+            )
+          ).toList();
+        }
+    );
+
+  }
+
 }
 
 enum UploadState{
