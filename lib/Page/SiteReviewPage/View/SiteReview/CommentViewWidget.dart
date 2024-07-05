@@ -1,19 +1,58 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/Comment/CommentDto.dart';
+import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
+import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
+import 'package:homerun/Page/SiteReviewPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Style/TestImages.dart';
 
-class CommentWidget extends StatelessWidget {
-  const CommentWidget({super.key, required this.commentDto});
-  final CommentDto commentDto;
+class CommentViewWidget extends StatelessWidget {
+  const CommentViewWidget({super.key, required this.siteReview});
+  final SiteReview siteReview;
 
   @override
   Widget build(BuildContext context) {
+    Get.put(
+      CommentViewWidgetController(noticeId: siteReview.noticeId, reviewId: siteReview.id),
+      tag: CommentViewWidgetController.makeTag(siteReview.noticeId, siteReview.id)
+    );
+
+    return GetBuilder<CommentViewWidgetController>(
+        tag: CommentViewWidgetController.makeTag(siteReview.noticeId, siteReview.id),
+        builder: (controller){
+          if(controller.loadingState == LoadingState.success){
+            return Column(
+              children: controller.comments.map((comment) =>
+                  CommentWidget(comment: comment , siteReview: siteReview,)
+              ).toList(),
+            );
+          }
+          else{
+            return const SizedBox();
+          }
+        }
+    );
+  }
+}
+
+class CommentWidget extends StatelessWidget {
+  const CommentWidget({super.key, required this.comment, required this.siteReview});
+  final Comment comment;
+  final SiteReview siteReview;
+
+  @override
+  Widget build(BuildContext context) {
+
+    var controller = Get.find<CommentViewWidgetController>(
+        tag: CommentViewWidgetController.makeTag(siteReview.noticeId, siteReview.id)
+    );
+
     return Padding(
       padding: EdgeInsets.only(bottom: 30.w),
       child: Row(
@@ -41,14 +80,14 @@ class CommentWidget extends StatelessWidget {
                     Text(
                       "내집은언제",
                       style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Palette.brightMode.mediumText,
-                        fontSize: 14.sp
+                          fontWeight: FontWeight.w600,
+                          color: Palette.brightMode.mediumText,
+                          fontSize: 14.sp
                       ),
                     ),
                     SizedBox(width: 5.w,),
                     Text(
-                      TimeFormatter.formatTimeDifference(commentDto.date.toDate()),
+                      TimeFormatter.formatTimeDifference(comment.commentDto.date.toDate()),
                       style: TextStyle(
                           color: Palette.brightMode.mediumText,
                           fontSize: 12.sp
@@ -56,10 +95,11 @@ class CommentWidget extends StatelessWidget {
                     ),
                     const Spacer(),
                     Builder(builder: (context){
-                      if(Get.find<AuthService>().tryGetUser()?.uid == commentDto.uid){
+                      if(Get.find<AuthService>().tryGetUser()?.uid == comment.commentDto.uid){
                         return TextButton(
                             onPressed: (){
-
+                              controller.removeComment(comment);
+                              //controller.doUpdate();
                             },
                             child: const Text("삭제")
                         );
@@ -71,10 +111,10 @@ class CommentWidget extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  commentDto.content,
+                  comment.commentDto.content,
                   style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Palette.brightMode.darkText
+                      fontSize: 12.sp,
+                      color: Palette.brightMode.darkText
                   ),
                 )
               ],
@@ -85,3 +125,4 @@ class CommentWidget extends StatelessWidget {
     );
   }
 }
+
