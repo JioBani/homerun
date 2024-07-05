@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CommentDto {
-  final String displayName;
   final Timestamp date;
   final int? like;
   final int? dislike;
@@ -9,7 +8,6 @@ class CommentDto {
   final String uid;
 
   CommentDto({
-    required this.displayName,
     required this.date,
     required this.like,
     required this.dislike,
@@ -19,7 +17,6 @@ class CommentDto {
 
   factory CommentDto.fromMap(Map<String, dynamic> map) {
     return CommentDto(
-        displayName: map['displayName'],
         date: map['date'],
         like: map['like'],
         dislike: map['dislike'],
@@ -30,7 +27,6 @@ class CommentDto {
 
   factory CommentDto.error() {
     return CommentDto(
-        displayName: '',
         date: Timestamp.now(),
         like: null,
         dislike: null,
@@ -40,8 +36,7 @@ class CommentDto {
   }
 
   CommentDto.test()
-      : displayName = 'Test User',
-        date = Timestamp.now(),
+      : date = Timestamp.now(),
         like = 0,
         dislike = 0,
         content = '청년특공 어떻게 될까요? 부모님과 함께 살고 있는데도 가능할까요? 부린이라 모르는게 너무 많아요....ㅠ_ㅠ',
@@ -49,7 +44,6 @@ class CommentDto {
 
   Map<String, dynamic> toMap() {
     return {
-      'displayName': displayName,
       'date': date,
       'like': like,
       'dislike': dislike,
