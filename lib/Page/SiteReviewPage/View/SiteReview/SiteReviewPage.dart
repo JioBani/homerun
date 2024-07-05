@@ -84,60 +84,55 @@ class ProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-      ),
-      child: SizedBox(
-        height: 40.w,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(30.w),
-              child: Image.asset(
-                TestImages.ashe_43,
-                width: 35.w,
-                height: 35.w,
+    return SizedBox(
+      height: 40.w,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(30.w),
+            child: Image.asset(
+              TestImages.ashe_43,
+              width: 35.w,
+              height: 35.w,
+            ),
+          ),
+          SizedBox(width: 7.w,),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                userDto.displayName ?? '알 수 없음',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14.sp,
+                  color: Theme.of(context).primaryColor
+                ),
               ),
-            ),
-            SizedBox(width: 7.w,),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  userDto.displayName ?? '알 수 없음',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14.sp,
-                    color: Palette.brightMode.darkText
-                  ),
-                ),
-                Text(
-                  "2024.07.04",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12.sp,
-                    color: Palette.brightMode.mediumText
-                  ),
-                ),
-              ],
-            ),
-            Spacer(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(
-                "좋아요 5 · 조회 23",
+              Text(
+                "2024.07.04",
                 style: TextStyle(
                   fontSize: 12.sp,
-                  color: Palette.brightMode.mediumText,
+                  color: Palette.brightMode.mediumText
                 ),
-              )
-            ),
-            SizedBox(width: 5.w,)
-          ],
-        ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Text(
+              "좋아요 5 · 조회 23",
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: Palette.brightMode.mediumText,
+              ),
+            )
+          ),
+          SizedBox(width: 5.w,)
+        ],
       ),
     );
   }
