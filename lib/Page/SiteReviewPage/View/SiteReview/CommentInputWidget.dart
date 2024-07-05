@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:homerun/Common/Comment/Comment.dart';
+import 'package:homerun/Common/Widget/LoadingDialog.dart';
+import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
+import 'package:homerun/Page/SiteReviewPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Style/Palette.dart';
 
 class CommentInputWidget extends StatefulWidget {
-  const CommentInputWidget({super.key});
+  const CommentInputWidget({super.key, required this.siteReview});
+  final SiteReview siteReview;
 
   @override
   State<CommentInputWidget> createState() => _CommentInputWidgetState();
@@ -11,8 +18,11 @@ class CommentInputWidget extends StatefulWidget {
 
 class _CommentInputWidgetState extends State<CommentInputWidget> {
   final FocusNode _focusNode = FocusNode();
-
   int _maxLines = 1;
+  late final CommentViewWidgetController _commentViewWidgetController = Get.find<CommentViewWidgetController>(
+    tag: CommentViewWidgetController.makeTag(widget.siteReview.noticeId, widget.siteReview.id)
+  );
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -49,6 +59,7 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextFormField(
+            controller: _textEditingController,
             cursorColor: const Color(0xFF35C5F0),
             maxLines: _maxLines,
             focusNode: _focusNode,
@@ -83,8 +94,25 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
                       width: 50.w,
                       height: 25.w,
                       child: ElevatedButton(
-                        onPressed: (){
-                    
+                        onPressed: () async {
+                          if(_textEditingController.text.isEmpty){
+                            Get.snackbar('알림','내용을 입력해주세요.');
+                          }
+                          else{
+
+                            var (Result<Comment> result , bool isSuccess) = await LoadingDialog.showLoadingDialogWithFuture(
+                                context,
+                                _commentViewWidgetController.upload(_textEditingController.text)
+                            );
+
+                            if(result.isSuccess){
+                              Get.snackbar('알림','댓글을 달았습니다.');
+                              _focusNode.unfocus();
+                            }
+                            else{
+                              Get.snackbar('오류','댓글 업로드에 실패했습니다.');
+                            }
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,
