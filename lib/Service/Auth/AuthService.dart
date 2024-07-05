@@ -205,4 +205,8 @@ class AuthService extends GetxService{
       return userDto.value!;
     }
   }
+
+  UserDto? tryGetUser(){
+    return userDto.value;
+  }
 }
