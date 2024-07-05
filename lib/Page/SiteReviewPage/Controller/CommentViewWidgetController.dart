@@ -15,6 +15,7 @@ class CommentViewWidgetController extends GetxController{
   List<Comment> comments = [];
   final int commentNum = 3;
   late final CollectionReference commentCollection ;
+  bool isUploading = false;
 
   static makeTag(String noticeId, String reviewId){
     return "$noticeId:$reviewId";
@@ -55,11 +56,18 @@ class CommentViewWidgetController extends GetxController{
   }
 
   Future<Result<Comment>> upload(String content) async {
+    if(isUploading){
+      return Result.fromFailure(DuplicateCommentException(), StackTrace.current);
+    }
+
+    isUploading = true;
+
     Result<Comment> result = await CommentService.instance.upload(
       commentCollection: commentCollection,
       content: content
     );
 
+    isUploading = false;
     update();
 
     return result;
@@ -84,5 +92,25 @@ class CommentViewWidgetController extends GetxController{
     update();
 
     return result;
+  }
+}
+
+class CommentUploadException implements Exception {
+  final String message;
+
+  CommentUploadException(this.message);
+
+  @override
+  String toString() {
+    return "CommentUploadException: $message";
+  }
+}
+
+class DuplicateCommentException extends CommentUploadException{
+  DuplicateCommentException() : super("댓글 작성을 중복해서 시도하였습니다.");
+
+  @override
+  String toString() {
+    return "DuplicateCommentException: $message";
   }
 }

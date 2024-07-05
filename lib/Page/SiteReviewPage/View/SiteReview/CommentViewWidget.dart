@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
-import 'package:homerun/Common/Comment/CommentDto.dart';
 import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/CommentViewWidgetController.dart';
@@ -23,20 +21,36 @@ class CommentViewWidget extends StatelessWidget {
       tag: CommentViewWidgetController.makeTag(siteReview.noticeId, siteReview.id)
     );
 
-    return GetBuilder<CommentViewWidgetController>(
-        tag: CommentViewWidgetController.makeTag(siteReview.noticeId, siteReview.id),
-        builder: (controller){
-          if(controller.loadingState == LoadingState.success){
-            return Column(
-              children: controller.comments.map((comment) =>
-                  CommentWidget(comment: comment , siteReview: siteReview,)
-              ).toList(),
-            );
-          }
-          else{
-            return const SizedBox();
-          }
-        }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.w),
+          child: Text(
+            "댓글",
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w700,
+              color: Colors.black
+            ),
+          ),
+        ),
+        GetBuilder<CommentViewWidgetController>(
+            tag: CommentViewWidgetController.makeTag(siteReview.noticeId, siteReview.id),
+            builder: (controller){
+              if(controller.loadingState == LoadingState.success){
+                return Column(
+                  children: controller.comments.map((comment) =>
+                      CommentWidget(comment: comment , siteReview: siteReview,)
+                  ).toList(),
+                );
+              }
+              else{
+                return const SizedBox();
+              }
+            }
+        ),
+      ],
     );
   }
 }
@@ -96,12 +110,18 @@ class CommentWidget extends StatelessWidget {
                     const Spacer(),
                     Builder(builder: (context){
                       if(Get.find<AuthService>().tryGetUser()?.uid == comment.commentDto.uid){
-                        return TextButton(
-                            onPressed: (){
-                              controller.removeComment(comment);
-                              //controller.doUpdate();
-                            },
-                            child: const Text("삭제")
+                        return InkWell(
+                          onTap: (){
+                            controller.removeComment(comment);
+                            //controller.doUpdate();
+                          },
+                          child: Text(
+                            "삭제",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          )
                         );
                       }
                       else{
