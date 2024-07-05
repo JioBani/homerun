@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homerun/Page/SiteReviewPage/Model/CommentDto.dart';
+import 'package:get/get.dart';
+import 'package:homerun/Common/Comment/CommentDto.dart';
+import 'package:homerun/Common/TimeFormatter.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Style/TestImages.dart';
 
@@ -11,8 +14,8 @@ class CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
+    return Padding(
+      padding: EdgeInsets.only(bottom: 30.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -30,40 +33,51 @@ class CommentWidget extends StatelessWidget {
           ),
           SizedBox(width: 8.w,),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "내집은언제",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Palette.brightMode.mediumText,
-                          fontSize: 14.sp
-                        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "내집은언제",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Palette.brightMode.mediumText,
+                        fontSize: 14.sp
                       ),
-                      SizedBox(width: 5.w,),
-                      Text(
-                        "2024.04.16",
-                        style: TextStyle(
-                            color: Palette.brightMode.mediumText,
-                            fontSize: 12.sp
-                        ),
-                      )
-                    ],
-                  ),
-                  Text(
-                      "청년특공 어떻게 될까요? 부모님과 함께 살고 있는데도 가능할까요? 부린이라 모르는게 너무 많아요....ㅠ_ㅠ청년특공 어떻게 될까요? 부모님과 함께 살고 있는데도 가능할까요? 부린이라 모르는게 너무 많아요....ㅠ_ㅠ청년특공 어떻게 될까요? 부모님과 함께 살고 있는데도 가능할까요? 부린이라 모르는게 너무 많아요....ㅠ_ㅠ",
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Palette.brightMode.darkText
                     ),
-                  )
-                ],
-              ),
+                    SizedBox(width: 5.w,),
+                    Text(
+                      TimeFormatter.formatTimeDifference(commentDto.date.toDate()),
+                      style: TextStyle(
+                          color: Palette.brightMode.mediumText,
+                          fontSize: 12.sp
+                      ),
+                    ),
+                    const Spacer(),
+                    Builder(builder: (context){
+                      if(Get.find<AuthService>().tryGetUser()?.uid == commentDto.uid){
+                        return TextButton(
+                            onPressed: (){
+
+                            },
+                            child: const Text("삭제")
+                        );
+                      }
+                      else{
+                        return const SizedBox();
+                      }
+                    })
+                  ],
+                ),
+                Text(
+                  commentDto.content,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Palette.brightMode.darkText
+                  ),
+                )
+              ],
             ),
           ),
         ],
