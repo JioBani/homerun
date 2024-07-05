@@ -36,8 +36,6 @@ class CommentViewWidgetController extends GetxController{
 
     Result<List<Comment>> result = await CommentService.instance.getComments(
         commentCollection: commentCollection,
-        noticeId: noticeId,
-        reviewId: reviewId,
         index: commentNum,
         orderBy: OrderType.date,
         startAfter: comments.isEmpty ? null : comments.last

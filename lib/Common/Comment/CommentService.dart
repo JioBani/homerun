@@ -19,10 +19,10 @@ class CommentService {
     return _instance!;
   }
 
+
+
   Future<Result<List<Comment>>> getComments({
     required CollectionReference commentCollection,
-    required String noticeId,
-    required String reviewId,
     int? index,
     Comment? startAfter,
     OrderType orderBy = OrderType.none,
@@ -34,8 +34,6 @@ class CommentService {
           //#1. 쿼리 만들기
           Query query = _makeQuery(
             commentCollection: commentCollection,
-            noticeId: noticeId,
-            reviewId: reviewId,
             index: index,
             startAfter: startAfter,
             orderBy: orderBy,
@@ -54,8 +52,6 @@ class CommentService {
 
   Query _makeQuery({
     required CollectionReference commentCollection,
-    required String noticeId,
-    required String reviewId,
     int? index,
     Comment? startAfter,
     OrderType orderBy = OrderType.none,
@@ -103,9 +99,10 @@ class CommentService {
 
     try{
       return Comment(
-          id: doc.id,
-          commentDto: CommentDto.fromMap(doc.data() as Map<String, dynamic>),
-          likeState: likeState
+        id: doc.id,
+        commentDto: CommentDto.fromMap(doc.data() as Map<String, dynamic>),
+        likeState: likeState,
+        documentSnapshot: doc
       );
     }catch(e , s){
       StaticLogger.logger.e('[CommentService._makeComment() $e\n$s]');
@@ -113,6 +110,17 @@ class CommentService {
     }
   }
 
+  Future<Result<void>> remove(Comment comment){
+    return Result.handleFuture<void>(
+      action : ()async{
+        if(Get.find<AuthService>().getUser().uid != comment.commentDto.uid){
+          throw NotOwnerException();
+        }
+
+        await comment.documentSnapshot!.reference.delete();
+      }
+    );
+  }
 
 }
 
@@ -150,5 +158,20 @@ abstract class CommentServiceException implements Exception{
 
 class InvalidOrderTypeException extends CommentServiceException implements Exception {
   InvalidOrderTypeException(Object? order) : super('Unexpected OrderType: $order');
+
+  @override
+  String toString() {
+    return "InvalidOrderTypeException: $message";
+  }
 }
+
+class NotOwnerException extends CommentServiceException {
+  NotOwnerException() : super('User is not the owner of this comment');
+
+  @override
+  String toString() {
+    return "NotOwnerException: $message";
+  }
+}
+
 
