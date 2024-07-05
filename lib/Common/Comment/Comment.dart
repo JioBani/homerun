@@ -6,23 +6,26 @@ class Comment {
   final String id;
   final CommentDto commentDto;
   final int? likeState;
+  final DocumentSnapshot? documentSnapshot;
 
   Comment({
     required this.id,
     required this.commentDto,
     required this.likeState,
+    required this.documentSnapshot,
   });
 
   factory Comment.fromMap(
       String id ,
       Map<String, dynamic> map,
       int likeState,
-      DocumentSnapshot snapshot,
+      DocumentSnapshot documentSnapshot,
       ) {
     return Comment(
-        id: id,
-        commentDto: CommentDto.fromMap(map),
-        likeState: likeState,
+      id: id,
+      commentDto: CommentDto.fromMap(map),
+      likeState: likeState,
+      documentSnapshot: documentSnapshot
     );
   }
 
@@ -31,13 +34,15 @@ class Comment {
       id: 'error',
       commentDto: CommentDto.error(),
       likeState: null,
+      documentSnapshot: null
     );
   }
 
   Comment.test()
       : id = 'test',
         commentDto = CommentDto.test(),
-        likeState = 0;
+        likeState = 0,
+        documentSnapshot = null;
 
 
 
