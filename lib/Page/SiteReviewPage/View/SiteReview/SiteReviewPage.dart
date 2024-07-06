@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
-import 'package:homerun/Page/SiteReviewPage/Model/CommentDto.dart';
-import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentWidget.dart';
+import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentInputWidget.dart';
+import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentViewWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/ImageSlideWidget.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Style/TestImages.dart';
 
-class SiteReviewPage extends StatelessWidget {
+class SiteReviewPage extends StatefulWidget {
   const SiteReviewPage({super.key, required this.siteReview, required this.userDto});
   final SiteReview siteReview;
   final UserDto userDto;
+
+  @override
+  State<SiteReviewPage> createState() => _SiteReviewPageState();
+}
+
+class _SiteReviewPageState extends State<SiteReviewPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,7 @@ class SiteReviewPage extends StatelessWidget {
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(16.0)),
         ),
         title: Text(
-          siteReview.title,
+          widget.siteReview.title,
           style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w600
@@ -48,32 +54,40 @@ class SiteReviewPage extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25.w),
-          child: ListView(
-            children: [
-              SizedBox(height: 25.w,),
-              ImageSlideWidget(siteReview: siteReview,),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  siteReview.content,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Palette.brightMode.mediumText,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25.w),
+              child: ListView(
+                children: [
+                  SizedBox(height: 25.w,),
+                  ImageSlideWidget(siteReview: widget.siteReview,),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      widget.siteReview.content,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Palette.brightMode.mediumText,
+                      ),
+                    ),
                   ),
-                ),
+                  ProfileWidget(userDto: widget.userDto,),
+                  SizedBox(height: 5.w,),
+                  Divider(thickness: 1.sp,),
+                  CommentViewWidget(siteReview: widget.siteReview),
+                  SizedBox(height: 50.w,)
+                ],
               ),
-              ProfileWidget(userDto: userDto,),
-              SizedBox(height: 5.w,),
-              Divider(thickness: 1.sp,),
-              CommentWidget(commentDto: CommentDto.test()),
-            ],
-          ),
+            ),
+            CommentInputWidget(siteReview: widget.siteReview,)
+          ],
         ),
       ),
     );
   }
+
 }
 
 class ProfileWidget extends StatelessWidget {
