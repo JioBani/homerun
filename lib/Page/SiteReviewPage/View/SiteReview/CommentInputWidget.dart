@@ -19,13 +19,16 @@ class CommentInputWidget extends StatefulWidget {
 class _CommentInputWidgetState extends State<CommentInputWidget> {
   final FocusNode _focusNode = FocusNode();
   int _maxLines = 1;
-  late final CommentViewWidgetController _commentViewWidgetController = Get.find<CommentViewWidgetController>(
-    tag: CommentViewWidgetController.makeTag(widget.siteReview.noticeId, widget.siteReview.id)
-  );
+  late final CommentViewWidgetController _commentViewWidgetController;
   final TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
+    _commentViewWidgetController = Get.put(
+        CommentViewWidgetController(noticeId: widget.siteReview.noticeId, reviewId: widget.siteReview.id),
+        tag: CommentViewWidgetController.makeTag(widget.siteReview.noticeId, widget.siteReview.id)
+    );
+
     super.initState();
     _focusNode.addListener(() {
       setState(() {
@@ -99,18 +102,19 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
                             Get.snackbar('알림','내용을 입력해주세요.');
                           }
                           else{
-
-                            var (Result<Comment> result , bool isSuccess) = await LoadingDialog.showLoadingDialogWithFuture(
-                                context,
-                                _commentViewWidgetController.upload(_textEditingController.text)
-                            );
+                            Result<Comment> result = await _commentViewWidgetController.upload(_textEditingController.text);
 
                             if(result.isSuccess){
                               Get.snackbar('알림','댓글을 달았습니다.');
                               _focusNode.unfocus();
                             }
                             else{
-                              Get.snackbar('오류','댓글 업로드에 실패했습니다.');
+                              if(result.exception is DuplicateCommentException){
+                                Get.snackbar('오류',"이미 댓글이 업로드 중입니다..");
+                              }
+                              else{
+                                Get.snackbar('오류','댓글 업로드에 실패했습니다.');
+                              }
                             }
                           }
                         },
