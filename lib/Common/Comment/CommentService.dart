@@ -19,8 +19,7 @@ class CommentService {
     return _instance!;
   }
 
-
-
+  //#. 댓글 가져오기
   Future<Result<List<Comment>>> getComments({
     required CollectionReference commentCollection,
     int? index,
@@ -110,6 +109,7 @@ class CommentService {
     }
   }
 
+  //#. 댓글 업로드
   Future<Result<Comment>> upload({
     required CollectionReference commentCollection,
     required String content,
@@ -155,7 +155,8 @@ class CommentService {
     );
   }
 
-  Future<Result<void>> remove(Comment comment){
+  //#. 댓글 삭제
+  Future<Result<void>> delete(Comment comment){
     return Result.handleFuture<void>(
       action : ()async{
         if(Get.find<AuthService>().getUser().uid != comment.commentDto.uid){

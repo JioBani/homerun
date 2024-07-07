@@ -74,7 +74,7 @@ class CommentViewWidgetController extends GetxController{
   }
 
   Future<Result<void>> removeComment(Comment comment) async{
-    Result<void> result = await CommentService.instance.remove(comment);
+    Result<void> result = await CommentService.instance.delete(comment);
 
     if(result.isSuccess){
       comments.remove(comment);
