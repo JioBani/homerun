@@ -10,8 +10,8 @@ import 'package:homerun/Common/model/Result.dart';
 import 'CommentLoader.dart';
 
 class CommentViewWidgetController extends GetxController{
-  static const int initCommentNum = 1;
-  static const int loadCommentNum = 1;
+  static const int initCommentNum = 2;
+  static const int loadCommentNum = 3;
 
   late final Map<NoticeCommentType , Map<OrderType , CommentLoader>> commentLoaders;
 
@@ -80,36 +80,13 @@ class CommentViewWidgetController extends GetxController{
       );
     }
 
-    commentLoaders.forEach((type, map)
-      {
-        map.forEach((order, loader) {
-          loader.getComments(initCommentNum , reset: true);
-        });
-      }
-    );
+    reload();
   }
 
-  Future<void> deleteComment(String commentId , String? replyTarget)async {
-    // await commentService.delete(noticeId , commentId , replyTarget: replyTarget);
-    // //TODO 적절하게 load하도록 변경
-    // resendLoader.getNextComments(initCommentNum , reset: true);
-    // popularityLoader.getNextComments(initCommentNum , reset: true);
-    //
-    // if(replyTarget != null){
-    //   try{
-    //     var replyController = Get.find<ReplyCommentWidgetController>(
-    //         tag: ReplyCommentWidgetController.makeTag(
-    //             noticeId,
-    //             replyTarget
-    //         )
-    //     );
-    //
-    //     replyController.load();
-    //   }catch(e){
-    //
-    //   }
-    // }
-
+  Future<Result<void>> deleteComment(Comment comment)async {
+    Result<void> result = await CommentService.instance.delete(comment);
+    await reload();
+    return result;
   }
 
   void setReplyMode(Comment? comment){
@@ -133,6 +110,15 @@ class CommentViewWidgetController extends GetxController{
 
   Future<Result<LikeState>> updateLikeState(Comment comment , int newLikeValue){
     return CommentService.instance.updateLikeStatus(comment, newLikeValue);
+  }
+
+  Future<void> reload(){
+    return Future.wait([
+      commentLoaders[NoticeCommentType.free]![OrderType.date]!.reload(),
+      commentLoaders[NoticeCommentType.free]![OrderType.likes]!.reload(),
+      commentLoaders[NoticeCommentType.eligibility]![OrderType.date]!.reload(),
+      commentLoaders[NoticeCommentType.eligibility]![OrderType.likes]!.reload(),
+    ]);
   }
 
 }
