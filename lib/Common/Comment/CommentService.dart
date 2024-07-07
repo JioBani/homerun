@@ -25,7 +25,7 @@ class CommentService {
     required CollectionReference commentCollection,
     int? index,
     Comment? startAfter,
-    OrderType orderBy = OrderType.none,
+    required OrderType orderBy,
     bool descending = true
   }) {
     return Result.handleFuture<List<Comment>>(
@@ -67,7 +67,7 @@ class CommentService {
         query = query.startAfter([startAfter.commentDto.like]);
       }
       else{
-        throw InvalidOrderTypeException(startAfter);
+        throw InvalidOrderTypeException(orderBy);
       }
     }
 
@@ -106,14 +106,15 @@ class CommentService {
       );
     }catch(e , s){
       StaticLogger.logger.e('[CommentService._makeComment() $e\n$s]');
-      return Comment.error();
+      return Comment.error(doc);
     }
   }
 
   Future<Result<Comment>> upload({
     required CollectionReference commentCollection,
     required String content,
-    bool hasLikes = false
+    bool hasLikes = false,
+    DocumentReference? replyTarget
   }) {
     return Result.handleFuture<Comment>(
         action: () async {
@@ -128,6 +129,7 @@ class CommentService {
               date: Timestamp.now(),
               like: 0,
               dislike: 0,
+              replyTarget: replyTarget
             );
           }
           else{
@@ -135,6 +137,7 @@ class CommentService {
               uid: userDto.uid,
               content: content,
               date: Timestamp.now(),
+              replyTarget: replyTarget
             );
           }
 
@@ -176,13 +179,31 @@ extension OrderTypeExtension on OrderType{
   String get name {
     switch (this) {
       case OrderType.none:
-        return 'free';
+        return 'none';
       case OrderType.date:
         return 'date';
       case OrderType.likes:
         return 'likes';
       default:
         throw UnimplementedError('Unexpected CommentType: $this');
+    }
+  }
+}
+
+enum NoticeCommentType {
+  free,
+  eligibility,
+}
+
+extension NoticeCommentTypeExtension on NoticeCommentType{
+  String get name {
+    switch (this) {
+      case NoticeCommentType.free:
+        return 'free';
+      case NoticeCommentType.eligibility:
+        return 'eligibility';
+      default:
+        throw UnimplementedError('Unexpected NoticeCommentType: $this');
     }
   }
 }
