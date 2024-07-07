@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/Comment/CommentService.dart';
+import 'package:homerun/Common/Comment/Enums.dart';
 import 'package:homerun/Common/Comment/LikeState.dart';
 import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
 import 'package:homerun/Common/StaticLogger.dart';
