@@ -1,27 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Comment/Comment.dart';
+import 'package:homerun/Common/Comment/CommentService.dart';
+import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
-import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
 
 class ReplyCommentWidgetController extends GetxController{
   final String noticeId;
-  final String targetCommentId;
+  late final CollectionReference replyCollection;
   List<Comment> replyList = [];
   Rx<LoadingState> loadingState = Rx(LoadingState.before);
-  static String makeTag(String noticeId, String targetCommentId) => "$noticeId/$targetCommentId";
+  late final CollectionReference collectionReference;
 
-  ReplyCommentWidgetController({required this.noticeId , required this.targetCommentId});
+  ReplyCommentWidgetController({required this.noticeId , required DocumentReference replyRef}){
+    replyCollection = FirestoreReferences.getReplyCollection(replyRef);
+  }
+
+  static String makeTag(String noticeId, String targetCommentId) => "$noticeId/$targetCommentId";
 
   Future<void> load() async {
 
     Result<List<Comment>> result = await CommentService.instance.getComments(
-      noticeId: noticeId,
-      orderBy: SortOrder.latest,
-      type: CommentType.free,
-      replyTarget: targetCommentId,
+      commentCollection: replyCollection,
+      orderBy: OrderType.date,
     );
+
 
     if(result.isSuccess){
       replyList = result.content!;
