@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.dart';
-import 'package:homerun/Page/NoticesPage/Model/Comment.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentWidget.dart';
 
 class ReplyCommentListWidget extends StatefulWidget {
@@ -20,13 +20,12 @@ class _ReplyCommentListWidgetState extends State<ReplyCommentListWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     Get.put(
         ReplyCommentWidgetController(
             noticeId: widget.noticeId,
-            targetCommentId: widget.comment.commentId
+            replyRef: widget.comment.documentSnapshot.reference
         ),
-        tag: "${widget.noticeId}/${widget.comment.commentId}"
+        tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.comment.id)
     ).load();
     super.initState();
   }
@@ -34,7 +33,7 @@ class _ReplyCommentListWidgetState extends State<ReplyCommentListWidget> {
   @override
   Widget build(BuildContext context) {
     return GetX<ReplyCommentWidgetController>(
-        tag: "${widget.noticeId}/${widget.comment.commentId}",
+        tag: "${widget.noticeId}/${widget.comment.id}",
         builder: (controller) {
           if(controller.loadingState.value == LoadingState.success){
             return Column(
@@ -42,7 +41,7 @@ class _ReplyCommentListWidgetState extends State<ReplyCommentListWidget> {
                   CommentWidget(
                     comment: reply,
                     noticeId: widget.noticeId ,
-                    replyTarget: widget.comment.commentId,
+                    replyTarget: widget.comment.id,
                   )
               ).toList(),
             );
