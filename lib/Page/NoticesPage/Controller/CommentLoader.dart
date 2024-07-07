@@ -61,8 +61,10 @@ class CommentLoader{
     }
   }
 
-  Future<Result<List<Comment>>> reload(){
-    return getComments(comments.length , reset:true);
+  Future<void> reload() async {
+    if(comments.isNotEmpty){
+      await getComments(comments.length , reset:true);
+    }
   }
 
 }
