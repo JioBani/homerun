@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/Comment/CommentService.dart';
+import 'package:homerun/Common/Comment/Enums.dart';
 import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
@@ -58,6 +59,10 @@ class CommentLoader{
       controller.update();
       return result;
     }
+  }
+
+  Future<Result<List<Comment>>> reload(){
+    return getComments(comments.length , reset:true);
   }
 
 }
