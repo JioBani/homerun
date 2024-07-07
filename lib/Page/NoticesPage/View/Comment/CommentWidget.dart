@@ -162,7 +162,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                   padding: EdgeInsets.only(left: 2.w),
                   child: Text(
                     //comment.commentDto.content,
-                    widget.comment.toMap().toString(),
+                    widget.comment.commentDto.content,
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.normal,
