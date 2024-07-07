@@ -142,7 +142,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                             ){
                               return TextButton(
                                   onPressed: () {
-                                    commentViewWidgetController.deleteComment(widget.comment.id , widget.replyTarget);
+                                    commentViewWidgetController.deleteComment(widget.comment);
                                   },
                                   child: const Text('삭제')
                               );
