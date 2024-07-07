@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Comment/CommentService.dart';
 import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Page/NoticesPage/Controller/CommentLoader.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
-
 import 'CommentInputWidget.dart';
 import 'CommentWidget.dart';
 
@@ -27,7 +28,9 @@ class _CommentViewWidgetState extends State<CommentViewWidget> {
         CommentViewWidgetController(noticeId: widget.noticeId)
     );
 
-    commentViewWidgetController.resendLoader.getNextComments(3, reset: true);
+    commentViewWidgetController.loadComment(NoticeCommentType.free, OrderType.date).then((value) => {
+      StaticLogger.logger.i(value.isSuccess)
+    });
 
     // TODO: implement initState
     super.initState();
@@ -44,11 +47,12 @@ class _CommentViewWidgetState extends State<CommentViewWidget> {
           GetBuilder<CommentViewWidgetController>(
               tag: widget.noticeId,
               builder: (controller){
-                if(controller.resendLoader.loadingState == LoadingState.success ||
-                   controller.resendLoader.loadingState == LoadingState.noMoreData
+                CommentLoader commentLoader =  commentViewWidgetController.getCommentLoader(NoticeCommentType.free, OrderType.date);
+                if(commentLoader.loadingState == LoadingState.success ||
+                    commentLoader.loadingState == LoadingState.noMoreData
                 ){
                   return Column(
-                    children: controller.resendLoader.comments.map(
+                    children: commentLoader.comments.map(
                             (comment) => Padding(
                             padding: EdgeInsets.symmetric(vertical: 5.w),
                             child: CommentWidget(comment: comment, noticeId: widget.noticeId,)
@@ -64,15 +68,16 @@ class _CommentViewWidgetState extends State<CommentViewWidget> {
           GetBuilder<CommentViewWidgetController>(
               tag: widget.noticeId,
               builder: (controller){
-                if(controller.resendLoader.loadingState == LoadingState.success){
+                CommentLoader commentLoader =  commentViewWidgetController.getCommentLoader(NoticeCommentType.free, OrderType.date);
+                if(commentLoader.loadingState == LoadingState.success){
                   return TextButton(
                       onPressed: (){
-                        commentViewWidgetController.resendLoader.getNextComments(2);
+                        commentLoader.getComments(2);
                       },
                       child: Text('더보기')
                   );
                 }
-                else if(controller.resendLoader.loadingState == LoadingState.noMoreData){
+                else if(commentLoader.loadingState == LoadingState.noMoreData){
                   return Text("마지막 댓글 입니다.");
                 }
                 else{
