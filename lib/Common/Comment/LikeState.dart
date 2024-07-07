@@ -1,11 +1,11 @@
 class LikeState{
   final int likeState;
-  final int like;
-  final int dislike;
+  final int likeChange;
+  final int dislikeChange;
 
   LikeState({
     required this.likeState,
-    required this.like,
-    required this.dislike,
+    required this.likeChange,
+    required this.dislikeChange,
   });
 }
