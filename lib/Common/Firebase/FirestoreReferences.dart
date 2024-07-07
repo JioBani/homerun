@@ -9,4 +9,15 @@ class FirestoreReferences{
         .doc(reviewId)
         .collection('comment');
   }
+
+  static CollectionReference getNoticeComment(String noticeId, String type){
+    return FirebaseFirestore.instance
+        .collection('notice_comment')
+        .doc(noticeId)
+        .collection(type);
+  }
+
+  static CollectionReference getReplyCollection(DocumentReference replyRef){
+    return replyRef.collection('reply');
+  }
 }
