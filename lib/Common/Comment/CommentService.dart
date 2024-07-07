@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/instance_manager.dart';
+import 'package:homerun/Common/Comment/Enums.dart';
+import 'package:homerun/Common/Comment/Exceptions.dart';
 import 'package:homerun/Common/Comment/LikeState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
@@ -164,7 +166,7 @@ class CommentService {
           throw NotOwnerException();
         }
 
-        await comment.documentSnapshot!.reference.delete();
+        await comment.documentSnapshot.reference.delete();
       }
     );
   }
@@ -222,74 +224,6 @@ class CommentService {
         );
       }
     );
-  }
-}
-
-enum OrderType {
-  none,
-  date,
-  likes
-}
-
-extension OrderTypeExtension on OrderType{
-  String get name {
-    switch (this) {
-      case OrderType.none:
-        return 'none';
-      case OrderType.date:
-        return 'date';
-      case OrderType.likes:
-        return 'likes';
-      default:
-        throw UnimplementedError('Unexpected CommentType: $this');
-    }
-  }
-}
-
-enum NoticeCommentType {
-  free,
-  eligibility,
-}
-
-extension NoticeCommentTypeExtension on NoticeCommentType{
-  String get name {
-    switch (this) {
-      case NoticeCommentType.free:
-        return 'free';
-      case NoticeCommentType.eligibility:
-        return 'eligibility';
-      default:
-        throw UnimplementedError('Unexpected NoticeCommentType: $this');
-    }
-  }
-}
-
-abstract class CommentServiceException implements Exception{
-  final String? message;
-
-  CommentServiceException(this.message);
-
-  @override
-  String toString() {
-    return "$message";
-  }
-}
-
-class InvalidOrderTypeException extends CommentServiceException implements Exception {
-  InvalidOrderTypeException(Object? order) : super('Unexpected OrderType: $order');
-
-  @override
-  String toString() {
-    return "InvalidOrderTypeException: $message";
-  }
-}
-
-class NotOwnerException extends CommentServiceException {
-  NotOwnerException() : super('User is not the owner of this comment');
-
-  @override
-  String toString() {
-    return "NotOwnerException: $message";
   }
 }
 
