@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
-import 'package:homerun/Page/NoticesPage/Service/CommentService.dart';
 import 'package:homerun/Style/TestImages.dart';
 
 class CommentInputWidget extends StatefulWidget {
@@ -94,7 +92,6 @@ class CommentInputFormWidget extends StatefulWidget {
 }
 
 class _CommentInputFormWidgetState extends State<CommentInputFormWidget> {
-  final CommentService commentService = CommentService.instance;
   final TextEditingController textEditingController = TextEditingController();
   static const String hintText = '서로 곱고 아름다운 말을 사용해주세요 :-)';
 
