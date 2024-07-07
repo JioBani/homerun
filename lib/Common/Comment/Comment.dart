@@ -6,7 +6,7 @@ class Comment {
   final String id;
   final CommentDto commentDto;
   final int? likeState;
-  final DocumentSnapshot? documentSnapshot;
+  final DocumentSnapshot documentSnapshot;
 
   Comment({
     required this.id,
@@ -29,22 +29,14 @@ class Comment {
     );
   }
 
-  factory Comment.error(){
+  factory Comment.error(DocumentSnapshot documentSnapshot){
     return Comment(
       id: 'error',
       commentDto: CommentDto.error(),
       likeState: null,
-      documentSnapshot: null
+      documentSnapshot: documentSnapshot
     );
   }
-
-  Comment.test()
-      : id = 'test',
-        commentDto = CommentDto.test(),
-        likeState = 0,
-        documentSnapshot = null;
-
-
 
   Map<String, dynamic> toMap() {
     return {
