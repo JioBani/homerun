@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
+import 'package:homerun/Common/Comment/LikeState.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
@@ -65,48 +66,32 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 
   Future<void> updateLikeState(int newLikeState) async {
-    // final now = DateTime.now();
-    // if (lastClickTime != null && now.difference(lastClickTime!) < cooldownDuration) {
-    //   Get.snackbar(
-    //     'Warning',
-    //     '잠시후 다시 시도해 주세요.',
-    //     duration: const Duration(milliseconds: 2000),
-    //     //backgroundColor: Theme.of(context).primaryColor
-    //     backgroundColor: Theme.of(context).primaryColor.withOpacity(0.5),
-    //     snackPosition: SnackPosition.TOP
-    //   );
-    //   return;
-    // }
-    //
-    // lastClickTime = now;
-    //
-    // int previousLikeState = likeState;
-    // int likeChange = 0;
-    // int dislikeChange = 0;
-    //
-    // Result result = await commentService.updateLikeStatus(widget.noticeId, widget.comment.id, newLikeState);
-    //
-    // if (result.isSuccess) {
-    //   if (newLikeState == 1) {
-    //     likeChange = 1;
-    //     if (previousLikeState == 1) return;
-    //     if (previousLikeState == -1) dislikeChange = -1;
-    //   } else if (newLikeState == -1) {
-    //     dislikeChange = 1;
-    //     if (previousLikeState == 1) likeChange = -1;
-    //     if (previousLikeState == -1) return;
-    //   } else {
-    //     if (previousLikeState == 1) likeChange = -1;
-    //     if (previousLikeState == -1) dislikeChange = -1;
-    //   }
-    //
-    //   likeState = newLikeState;
-    //   like += likeChange;
-    //   dislike += dislikeChange;
-    //   setState(() {});
-    // } else {
-    //   StaticLogger.logger.e('[CommentWidget.updateLikeState()] ${result.exception}');
-    // }
+    final now = DateTime.now();
+    if (lastClickTime != null && now.difference(lastClickTime!) < cooldownDuration) {
+      Get.snackbar(
+        '오류',
+        '잠시후 다시 시도해 주세요.',
+        duration: const Duration(milliseconds: 2000),
+        //backgroundColor: Theme.of(context).primaryColor
+        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.5),
+        snackPosition: SnackPosition.TOP
+      );
+      return;
+    }
+
+    lastClickTime = now;
+
+
+    Result<LikeState> result = await commentViewWidgetController.updateLikeState(widget.comment, newLikeState);
+
+    if (result.isSuccess) {
+      likeState = result.content!.likeState;
+      like +=  result.content!.likeChange;
+      dislike +=  result.content!.dislikeChange;
+      setState(() {});
+    } else {
+      StaticLogger.logger.e('[CommentWidget.updateLikeState()] ${result.exception}');
+    }
   }
 
   @override
@@ -121,7 +106,7 @@ class _CommentWidgetState extends State<CommentWidget> {
               children: [
                 InkWell(
                   onTap: (){
-                    //Get.find<CommentViewWidgetController>(tag: widget.noticeId).setReplyMode(widget.comment);
+                    Get.find<CommentViewWidgetController>(tag: widget.noticeId).setReplyMode(widget.comment);
                   },
                   child: Row(
                     children: [

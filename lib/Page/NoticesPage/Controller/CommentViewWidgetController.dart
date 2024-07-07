@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/Comment/CommentService.dart';
+import 'package:homerun/Common/Comment/LikeState.dart';
 import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
@@ -127,6 +128,10 @@ class CommentViewWidgetController extends GetxController{
       throw Exception('OrderType이 올바르지 않습니다.');
     }
     return commentLoaders[commentType]![orderType]!;
+  }
+
+  Future<Result<LikeState>> updateLikeState(Comment comment , int newLikeValue){
+    return CommentService.instance.updateLikeStatus(comment, newLikeValue);
   }
 
 }

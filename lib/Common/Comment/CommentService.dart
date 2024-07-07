@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/instance_manager.dart';
+import 'package:homerun/Common/Comment/LikeState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
@@ -168,6 +169,60 @@ class CommentService {
     );
   }
 
+  //#. 좋아요 상태 변경
+  Future<Result<LikeState>> updateLikeStatus(Comment comment, int newLikeValue) async {
+   return Result.handleFuture<LikeState>(
+      action: () async {
+        if (newLikeValue != 1 && newLikeValue != -1 && newLikeValue != 0) {
+          throw ArgumentError('likeValue must be either 1 (like), -1 (dislike), or 0 (neutral)');
+        }
+
+        String userId = Get.find<AuthService>().getUser().uid;
+
+        final likeRef = comment.documentSnapshot.reference.collection('likes').doc(userId);
+
+        int likeChange = 0;
+        int dislikeChange = 0;
+
+        await FirebaseFirestore.instance.runTransaction((transaction) async {
+          final likeSnapshot = await transaction.get(likeRef);
+
+          int previousLikeValue = 0;
+          if (likeSnapshot.exists) {
+            previousLikeValue = likeSnapshot['value'];
+          }
+
+          if (previousLikeValue != newLikeValue) {
+            if (newLikeValue == 0) {
+              transaction.delete(likeRef);
+            } else {
+              transaction.set(likeRef, {
+                'value': newLikeValue,
+                'timestamp': FieldValue.serverTimestamp()
+              });
+            }
+
+
+            if (previousLikeValue == 1) likeChange -= 1;
+            if (previousLikeValue == -1) dislikeChange -= 1;
+            if (newLikeValue == 1) likeChange += 1;
+            if (newLikeValue == -1) dislikeChange += 1;
+
+            transaction.update(comment.documentSnapshot.reference, {
+              'like': FieldValue.increment(likeChange),
+              'dislike': FieldValue.increment(dislikeChange),
+            });
+          }
+        });
+
+        return LikeState(
+              likeState: newLikeValue,
+              likeChange: likeChange,
+              dislikeChange: dislikeChange
+        );
+      }
+    );
+  }
 }
 
 enum OrderType {
