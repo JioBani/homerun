@@ -183,7 +183,7 @@ class CommentService {
 
         String userId = Get.find<AuthService>().getUser().uid;
 
-        final likeRef = FirestoreReferences.getLikeDocument(comment.documentSnapshot.reference, userId);
+        final likeRef = FirestoreReferences.getCommentLikeDocument(comment.documentSnapshot.reference, userId);
 
         int likeChange = 0;
         int dislikeChange = 0;

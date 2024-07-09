@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//모든 firestore의 접근은 이 클래스의 메소드를 지나가야함
 class FirestoreReferences{
   static CollectionReference getSiteReviewComment(String noticeId, String reviewId){
     return FirebaseFirestore.instance
@@ -19,5 +20,9 @@ class FirestoreReferences{
 
   static CollectionReference getReplyCollection(DocumentReference replyRef){
     return replyRef.collection('reply');
+  }
+
+  static DocumentReference getCommentLikeDocument(DocumentReference commentRef , String userId){
+    return commentRef.collection('likes').doc(userId);
   }
 }
