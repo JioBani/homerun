@@ -130,24 +130,12 @@ class CommentViewWidgetController extends GetxController{
   }
 
   Future<Result<List<Comment>>> loadComment({bool reset = false}){
-    if(reset){
-      return showLoader.getComments(initCommentNum ,reset: reset);
+    if(showLoader.comments.isEmpty){
+      return showLoader.getComments(initCommentNum , reset: reset);
     }
     else{
-      if(showLoader.comments.isEmpty){
-        return showLoader.getComments(initCommentNum);
-      }
-      else{
-        return showLoader.getComments(loadCommentNum);
-      }
+      return showLoader.getComments(loadCommentNum , reset: reset);
     }
-  }
-
-  CommentLoader getCommentLoader(NoticeCommentType commentType, OrderType orderType){
-    if(orderType == OrderType.none){
-      throw Exception('OrderType이 올바르지 않습니다.');
-    }
-    return commentLoaders[commentType]![orderType]!;
   }
 
   Future<Result<LikeState>> updateLikeState(Comment comment , int newLikeValue){
