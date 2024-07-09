@@ -155,12 +155,7 @@ class CommentViewWidgetController extends GetxController{
   }
 
   Future<void> reload(){
-    return Future.wait([
-      commentLoaders[NoticeCommentType.free]![OrderType.date]!.reload(),
-      commentLoaders[NoticeCommentType.free]![OrderType.likes]!.reload(),
-      commentLoaders[NoticeCommentType.eligibility]![OrderType.date]!.reload(),
-      commentLoaders[NoticeCommentType.eligibility]![OrderType.likes]!.reload(),
-    ]);
+    return showLoader.reload();
   }
 
 }
