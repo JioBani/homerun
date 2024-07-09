@@ -101,7 +101,7 @@ class CommentViewWidgetController extends GetxController{
   Future<void> uploadComment(String content) async {
     if(replyTarget == null){
       await CommentService.instance.upload(
-        commentCollection: FirestoreReferences.getNoticeComment(noticeId, NoticeCommentType.free.name),
+        commentCollection: FirestoreReferences.getNoticeComment(noticeId, showLoader.commentType.name),
         content: content,
         hasLikes: true,
       );
