@@ -8,7 +8,6 @@ class CommentDto {
   final int? likes;
   final int? dislikes;
 
-
   CommentDto({
     required this.content,
     required this.uid,
@@ -20,22 +19,22 @@ class CommentDto {
 
   factory CommentDto.fromMap(Map<String, dynamic> map) {
     return CommentDto(
-        date: map['date'],
-        likes: map['likes'],
-        replyTarget: map['replyTarget'],
-        dislikes: map['dislikes'],
-        content: map['content'],
-        uid: map['uid']
+      date: map[CommentFields.date],
+      likes: map[CommentFields.likes],
+      replyTarget: map[CommentFields.replyTarget],
+      dislikes: map[CommentFields.dislikes],
+      content: map[CommentFields.content],
+      uid: map[CommentFields.uid],
     );
   }
 
   factory CommentDto.error() {
     return CommentDto(
-        date: Timestamp.now(),
-        likes: null,
-        dislikes: null,
-        content: '',
-        uid: ''
+      date: Timestamp.now(),
+      likes: null,
+      dislikes: null,
+      content: '',
+      uid: '',
     );
   }
 
@@ -49,12 +48,23 @@ class CommentDto {
 
   Map<String, dynamic> toMap() {
     return {
-      'content': content,
-      'uid' : uid,
-      'date': date,
-      'likes': likes,
-      'dislikes': dislikes,
-      'replyTarget' : replyTarget,
+      CommentFields.content: content,
+      CommentFields.uid: uid,
+      CommentFields.date: date,
+      CommentFields.likes: likes,
+      CommentFields.dislikes: dislikes,
+      CommentFields.replyTarget: replyTarget,
     };
   }
 }
+
+
+extension CommentFields on CommentDto {
+  static const String content = 'content';
+  static const String uid = 'uid';
+  static const String date = 'date';
+  static const String likes = 'likes';
+  static const String dislikes = 'dislikes';
+  static const String replyTarget = 'replyTarget';
+}
+
