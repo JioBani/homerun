@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/Comment/Enums.dart';
-import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Page/NoticesPage/Controller/CommentLoader.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
+import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabChildWidget.dart';
+import 'package:homerun/Style/Palette.dart';
 import 'CommentInputWidget.dart';
-import 'CommentWidget.dart';
 
 class CommentViewWidget extends StatefulWidget {
   const CommentViewWidget({super.key, required this.noticeId});
@@ -17,23 +14,27 @@ class CommentViewWidget extends StatefulWidget {
   State<CommentViewWidget> createState() => _CommentViewWidgetState();
 }
 
-class _CommentViewWidgetState extends State<CommentViewWidget> {
+class _CommentViewWidgetState extends State<CommentViewWidget> with TickerProviderStateMixin{
 
   late final CommentViewWidgetController commentViewWidgetController;
+  late final TabController _tabController;
 
   @override
   void initState() {
+    _tabController = TabController(length: 2, vsync: this);
+
     commentViewWidgetController = Get.put(
         tag:widget.noticeId,
-        CommentViewWidgetController(noticeId: widget.noticeId)
+        CommentViewWidgetController(noticeId: widget.noticeId,tabController: _tabController)
     );
 
-    commentViewWidgetController.loadComment(NoticeCommentType.free, OrderType.date).then((value) => {
-      StaticLogger.logger.i(value.isSuccess)
-    });
-
-    // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -42,49 +43,39 @@ class _CommentViewWidgetState extends State<CommentViewWidget> {
       padding: EdgeInsets.symmetric(horizontal: 30.w),
       child: Column(
         children: [
+          SizedBox(
+            height: 28.w,
+            child: TabBar(
+              indicatorSize: TabBarIndicatorSize.tab,
+              controller: _tabController,
+              indicator: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(5.r)),
+              ),
+              labelStyle: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+              ),
+              unselectedLabelStyle: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Palette.brightMode.mediumText
+              ),
+              tabs: const [
+                Tab(
+                  text: '청약자격 댓글',
+                ),
+
+                Tab(
+                  text: '자유 댓글',
+                ),
+              ],
+            ),
+          ),
           CommentInputWidget(noticeId: widget.noticeId),
           SizedBox(height: 20.w,),
-          GetBuilder<CommentViewWidgetController>(
-              tag: widget.noticeId,
-              builder: (controller){
-                CommentLoader commentLoader =  commentViewWidgetController.getCommentLoader(NoticeCommentType.free, OrderType.date);
-                if(commentLoader.loadingState == LoadingState.success ||
-                    commentLoader.loadingState == LoadingState.noMoreData
-                ){
-                  return Column(
-                    children: commentLoader.comments.map(
-                            (comment) => Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5.w),
-                            child: CommentWidget(comment: comment, noticeId: widget.noticeId,)
-                        )
-                    ).toList(),
-                  );
-                }
-                else{
-                  return const SizedBox();
-                }
-              }
-          ),
-          GetBuilder<CommentViewWidgetController>(
-              tag: widget.noticeId,
-              builder: (controller){
-                CommentLoader commentLoader =  commentViewWidgetController.getCommentLoader(NoticeCommentType.free, OrderType.date);
-                if(commentLoader.loadingState == LoadingState.success){
-                  return TextButton(
-                      onPressed: (){
-                        commentLoader.getComments(2);
-                      },
-                      child: Text('더보기')
-                  );
-                }
-                else if(commentLoader.loadingState == LoadingState.noMoreData){
-                  return Text("마지막 댓글 입니다.");
-                }
-                else{
-                  return Text("댓글을 불러 올 수 없습니다.");
-                }
-              }
-          ),
+          CommentTabChildWidget(noticeId: widget.noticeId,),
         ],
       ),
     );
