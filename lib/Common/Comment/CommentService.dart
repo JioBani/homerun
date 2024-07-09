@@ -59,14 +59,18 @@ class CommentService {
     OrderType orderBy = OrderType.none,
     bool descending = true
   }){
-    Query query = commentCollection.orderBy(OrderType.date.name, descending: descending);
+    Query query = commentCollection;
+
+    if(orderBy != OrderType.none){
+      query = query.orderBy(orderBy.name, descending: descending);
+    }
 
     if (startAfter != null) {
       if(orderBy == OrderType.date){
         query = query.startAfter([startAfter.commentDto.date]);
       }
       else if(orderBy == OrderType.likes){
-        query = query.startAfter([startAfter.commentDto.like]);
+        query = query.startAfter([startAfter.commentDto.likes]);
       }
       else{
         throw InvalidOrderTypeException(orderBy);
@@ -95,7 +99,7 @@ class CommentService {
     CommentDto commentDto = CommentDto.fromMap(doc.data() as Map<String, dynamic>);
 
     int? likeState;
-    if(uid!= null && commentDto.like != null){
+    if(uid!= null && commentDto.likes != null){
       likeState = await _getLikeState(doc,uid);
     }
 
@@ -130,8 +134,8 @@ class CommentService {
               uid: userDto.uid,
               content: content,
               date: Timestamp.now(),
-              like: 0,
-              dislike: 0,
+              likes: 0,
+              dislikes: 0,
               replyTarget: replyTarget
             );
           }

@@ -5,8 +5,8 @@ class CommentDto {
   final String uid;
   final Timestamp date;
   final DocumentReference? replyTarget;
-  final int? like;
-  final int? dislike;
+  final int? likes;
+  final int? dislikes;
 
 
   CommentDto({
@@ -14,16 +14,16 @@ class CommentDto {
     required this.uid,
     required this.date,
     this.replyTarget,
-    this.like,
-    this.dislike,
+    this.likes,
+    this.dislikes,
   });
 
   factory CommentDto.fromMap(Map<String, dynamic> map) {
     return CommentDto(
         date: map['date'],
-        like: map['like'],
+        likes: map['likes'],
         replyTarget: map['replyTarget'],
-        dislike: map['dislike'],
+        dislikes: map['dislikes'],
         content: map['content'],
         uid: map['uid']
     );
@@ -32,8 +32,8 @@ class CommentDto {
   factory CommentDto.error() {
     return CommentDto(
         date: Timestamp.now(),
-        like: null,
-        dislike: null,
+        likes: null,
+        dislikes: null,
         content: '',
         uid: ''
     );
@@ -41,8 +41,8 @@ class CommentDto {
 
   CommentDto.test()
       : date = Timestamp.now(),
-        like = 0,
-        dislike = 0,
+        likes = 0,
+        dislikes = 0,
         replyTarget = null,
         content = '청년특공 어떻게 될까요? 부모님과 함께 살고 있는데도 가능할까요? 부린이라 모르는게 너무 많아요....ㅠ_ㅠ',
         uid = 'test';
@@ -52,8 +52,8 @@ class CommentDto {
       'content': content,
       'uid' : uid,
       'date': date,
-      'like': like,
-      'dislike': dislike,
+      'likes': likes,
+      'dislikes': dislikes,
       'replyTarget' : replyTarget,
     };
   }

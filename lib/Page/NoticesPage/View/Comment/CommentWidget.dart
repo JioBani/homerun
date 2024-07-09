@@ -45,8 +45,8 @@ class _CommentWidgetState extends State<CommentWidget> {
     // TODO: implement initState
     getUser();
     likeState = widget.comment.likeState ?? 0;
-    like = widget.comment.commentDto.like ?? 0;
-    dislike = widget.comment.commentDto.dislike ?? 0;
+    like = widget.comment.commentDto.likes ?? 0;
+    dislike = widget.comment.commentDto.dislikes ?? 0;
     commentViewWidgetController = Get.find<CommentViewWidgetController>(tag: widget.noticeId);
     super.initState();
   }
