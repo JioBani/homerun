@@ -66,14 +66,11 @@ class CommentService {
     }
 
     if (startAfter != null) {
-      if(orderBy == OrderType.date){
-        query = query.startAfter([startAfter.commentDto.date]);
-      }
-      else if(orderBy == OrderType.likes){
-        query = query.startAfter([startAfter.commentDto.likes]);
+      if(orderBy == OrderType.none){
+        throw InvalidOrderTypeException(orderBy);
       }
       else{
-        throw InvalidOrderTypeException(orderBy);
+        query = query.startAfterDocument(startAfter.documentSnapshot);
       }
     }
 
