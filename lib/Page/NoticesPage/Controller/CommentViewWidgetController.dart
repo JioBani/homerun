@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/Comment/CommentService.dart';
 import 'package:homerun/Common/Comment/Enums.dart';
 import 'package:homerun/Common/Comment/LikeState.dart';
 import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
+import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 
@@ -15,15 +17,17 @@ class CommentViewWidgetController extends GetxController{
 
   late final Map<NoticeCommentType , Map<OrderType , CommentLoader>> commentLoaders;
 
-
   final String noticeId;
+  final TabController tabController;
+  late CommentLoader showLoader;
+
   Comment? replyTarget;
 
   
   //#1. 인기순
   //#2. 최신순
 
-  CommentViewWidgetController({required this.noticeId}){
+  CommentViewWidgetController({required this.noticeId, required this.tabController}){
     commentLoaders = {
       NoticeCommentType.free : {
         //#. 자유 - 최신
@@ -61,6 +65,37 @@ class CommentViewWidgetController extends GetxController{
         ),
       }
     };
+
+    showLoader = commentLoaders[NoticeCommentType.eligibility]![OrderType.likes]!;
+    loadComment(reset: true);
+  }
+
+  @override
+  onInit(){
+    tabController.addListener(onPageChange);
+    super.onInit();
+  }
+
+  @override
+  dispose(){
+    tabController.removeListener(onPageChange);
+    super.dispose();
+  }
+
+  void onPageChange(){
+    if(tabController.indexIsChanging){
+      if(tabController.index == 0){
+        showLoader = commentLoaders[NoticeCommentType.eligibility]![OrderType.likes]!;
+      }
+      else{
+        showLoader = commentLoaders[NoticeCommentType.free]![OrderType.likes]!;
+      }
+
+      if(showLoader.loadingState == LoadingState.before){
+        loadComment();
+      }
+      update();
+    }
   }
 
   Future<void> uploadComment(String content) async {
@@ -94,11 +129,18 @@ class CommentViewWidgetController extends GetxController{
     StaticLogger.logger.i('set reply : $comment');
   }
 
-  Future<Result<List<Comment>>> loadComment(NoticeCommentType commentType, OrderType orderType){
-    if(orderType == OrderType.none){
-      throw Exception('OrderType이 올바르지 않습니다.');
+  Future<Result<List<Comment>>> loadComment({bool reset = false}){
+    if(reset){
+      return showLoader.getComments(initCommentNum ,reset: reset);
     }
-    return commentLoaders[commentType]![orderType]!.getComments(initCommentNum);
+    else{
+      if(showLoader.comments.isEmpty){
+        return showLoader.getComments(initCommentNum);
+      }
+      else{
+        return showLoader.getComments(loadCommentNum);
+      }
+    }
   }
 
   CommentLoader getCommentLoader(NoticeCommentType commentType, OrderType orderType){
