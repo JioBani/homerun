@@ -3,6 +3,7 @@ import 'package:get/instance_manager.dart';
 import 'package:homerun/Common/Comment/Enums.dart';
 import 'package:homerun/Common/Comment/Exceptions.dart';
 import 'package:homerun/Common/Comment/LikeState.dart';
+import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
@@ -182,7 +183,7 @@ class CommentService {
 
         String userId = Get.find<AuthService>().getUser().uid;
 
-        final likeRef = comment.documentSnapshot.reference.collection('likes').doc(userId);
+        final likeRef = FirestoreReferences.getLikeDocument(comment.documentSnapshot.reference, userId);
 
         int likeChange = 0;
         int dislikeChange = 0;
@@ -192,7 +193,7 @@ class CommentService {
 
           int previousLikeValue = 0;
           if (likeSnapshot.exists) {
-            previousLikeValue = likeSnapshot['value'];
+            previousLikeValue = likeSnapshot[LikeFields.value];
           }
 
           if (previousLikeValue != newLikeValue) {
@@ -200,8 +201,8 @@ class CommentService {
               transaction.delete(likeRef);
             } else {
               transaction.set(likeRef, {
-                'value': newLikeValue,
-                'timestamp': FieldValue.serverTimestamp()
+                LikeFields.value: newLikeValue,
+                LikeFields.timestamp: FieldValue.serverTimestamp()
               });
             }
 
@@ -212,8 +213,8 @@ class CommentService {
             if (newLikeValue == -1) dislikeChange += 1;
 
             transaction.update(comment.documentSnapshot.reference, {
-              'like': FieldValue.increment(likeChange),
-              'dislike': FieldValue.increment(dislikeChange),
+              CommentFields.likes : FieldValue.increment(likeChange),
+              CommentFields.dislikes : FieldValue.increment(dislikeChange),
             });
           }
         });
@@ -226,6 +227,11 @@ class CommentService {
       }
     );
   }
+}
+
+class LikeFields{
+  static String value = 'value';
+  static String timestamp = 'timestamp';
 }
 
 
