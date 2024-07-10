@@ -49,6 +49,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     super.initState();
   }
 
+  //#. 위젯 재사용 때문에 데이터 초기화 필요
   @override
   void didUpdateWidget(CommentWidget oldWidget) {
     if(oldWidget.comment != widget.comment){
