@@ -36,19 +36,28 @@ class _CommentWidgetState extends State<CommentWidget> {
   LoadingState loadingState = LoadingState.before;
 
   DateTime? lastClickTime;
-  static const cooldownDuration = Duration(seconds: 2); // 2 seconds cooldown
+  static const cooldownDuration = Duration(seconds: 2);
 
   late final CommentViewWidgetController commentViewWidgetController;
 
   @override
   void initState() {
-    // TODO: implement initState
+    initData();
+    userDto = null;
     getUser();
-    likeState = widget.comment.likeState ?? 0;
-    likes = widget.comment.commentDto.likes ?? 0;
-    dislikes = widget.comment.commentDto.dislikes ?? 0;
     commentViewWidgetController = Get.find<CommentViewWidgetController>(tag: widget.noticeId);
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(CommentWidget oldWidget) {
+    if(oldWidget.comment != widget.comment){
+      initData();
+      userDto = null;
+      getUser();
+    }
+
+    super.didUpdateWidget(oldWidget);
   }
 
   Future<void> getUser() async {
@@ -92,6 +101,14 @@ class _CommentWidgetState extends State<CommentWidget> {
     } else {
       StaticLogger.logger.e('[CommentWidget.updateLikeState()] ${result.exception}');
     }
+  }
+
+  void initData(){
+    likeState = widget.comment.likeState ?? 0;
+    likes = widget.comment.commentDto.likes ?? 0;
+    dislikes = widget.comment.commentDto.dislikes ?? 0;
+    isReplyOpen = false;
+    loadingState = LoadingState.before;
   }
 
   @override
@@ -169,7 +186,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                       Padding(
                         padding: EdgeInsets.only(left: 2.w),
                         child: Text(
-                          //comment.commentDto.content,
                           widget.comment.commentDto.content,
                           style: TextStyle(
                             fontSize: 10.sp,
