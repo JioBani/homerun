@@ -29,8 +29,8 @@ class CommentWidget extends StatefulWidget {
 
 class _CommentWidgetState extends State<CommentWidget> {
   late int likeState;
-  late int like;
-  late int dislike;
+  late int likes;
+  late int dislikes;
   bool isReplyOpen = false;
   UserDto? userDto;
   LoadingState loadingState = LoadingState.before;
@@ -45,8 +45,8 @@ class _CommentWidgetState extends State<CommentWidget> {
     // TODO: implement initState
     getUser();
     likeState = widget.comment.likeState ?? 0;
-    like = widget.comment.commentDto.likes ?? 0;
-    dislike = widget.comment.commentDto.dislikes ?? 0;
+    likes = widget.comment.commentDto.likes ?? 0;
+    dislikes = widget.comment.commentDto.dislikes ?? 0;
     commentViewWidgetController = Get.find<CommentViewWidgetController>(tag: widget.noticeId);
     super.initState();
   }
@@ -86,8 +86,8 @@ class _CommentWidgetState extends State<CommentWidget> {
 
     if (result.isSuccess) {
       likeState = result.content!.likeState;
-      like +=  result.content!.likeChange;
-      dislike +=  result.content!.dislikeChange;
+      likes +=  result.content!.likeChange;
+      dislikes +=  result.content!.dislikeChange;
       setState(() {});
     } else {
       StaticLogger.logger.e('[CommentWidget.updateLikeState()] ${result.exception}');
@@ -182,7 +182,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         children: [
                           CommentIconButton(
                             imagePath: NoticePageImages.comment.good,
-                            content: like.toString(),
+                            content: likes.toString(),
                             onTap: () async {
                               if(likeState == 1){
                                 updateLikeState(0);
@@ -195,7 +195,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           ),
                           CommentIconButton(
                             imagePath: NoticePageImages.comment.bad,
-                            content: dislike.toString(),
+                            content: dislikes.toString(),
                             onTap: () async {
                               if(likeState == -1){
                                 updateLikeState(0);
