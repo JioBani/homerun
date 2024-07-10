@@ -8,6 +8,7 @@ import 'package:homerun/Common/Widget/FireStorageImageList.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
+import 'package:homerun/Page/NoticesPage/View/Comment/CommentSortWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabBarWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabChildWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentViewWIdget.dart';
@@ -244,6 +245,10 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 25.w),
         child: CommentTabBarWidget(tabController: commentTabController),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: CommentSortWidget(noticeId: widget.announcement.publicAnnouncementNumber!,),
       ),
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 25.w),
