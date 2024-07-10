@@ -35,4 +35,17 @@ extension OrderTypeExtension on OrderType{
         throw UnimplementedError('Unexpected CommentType: $this');
     }
   }
+
+  String get koreanName {
+    switch (this) {
+      case OrderType.none:
+        return '없음';
+      case OrderType.date:
+        return '최신순';
+      case OrderType.likes:
+        return '추천순';
+      default:
+        throw UnimplementedError('Unexpected CommentType: $this');
+    }
+  }
 }
