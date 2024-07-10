@@ -135,14 +135,23 @@ class CommentViewWidgetController extends GetxController{
         replyTarget: replyTarget!.documentSnapshot.reference
       );
     }
-    await reload();
+
+    if(result.isSuccess){
+      showLoader.addComment(result.content!);
+      update();
+    }
+
     return result;
   }
 
   Future<Result<void>> deleteComment(Comment comment)async {
     Result<void> result = await CommentService.instance.delete(comment);
-    await reload();
-    update();
+
+    if(result.isSuccess){
+      showLoader.deleteComment(comment);
+      update();
+    }
+
     return result;
   }
 
