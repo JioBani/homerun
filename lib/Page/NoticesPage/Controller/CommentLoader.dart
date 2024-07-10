@@ -77,4 +77,15 @@ class CommentLoader{
     return count;
   }
 
+  void addComment(Comment comment){
+    comments.insert(0, comment);
+    allCommentCount++;
+  }
+
+  void deleteComment(Comment comment){
+    if(comments.remove(comment)){
+      allCommentCount--;
+    }
+  }
+
 }
