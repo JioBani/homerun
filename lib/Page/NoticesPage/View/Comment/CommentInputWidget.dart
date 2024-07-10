@@ -7,6 +7,8 @@ import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Style/Palette.dart';
 
+import 'CommentSnackbar.dart';
+
 class CommentInputWidget extends StatefulWidget {
   const CommentInputWidget({super.key, required this.noticeId, required this.onFocus});
   final String noticeId;
@@ -90,12 +92,13 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
                             .uploadComment(textEditingController.text);
 
                         if(result.isSuccess){
-                          Get.snackbar('알림','댓글을 달았습니다.');
                           _focusNode.unfocus();
                         }
-                        else{
-                          Get.snackbar('오류','댓글 업로드에 실패했습니다.');
-                        }
+
+                        CommentSnackbar.show(
+                            result.isSuccess ? "알림" : "오류",
+                            result.isSuccess ? "댓글을 등록했습니다." : "댓글 등록에 실패했습니다."
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(

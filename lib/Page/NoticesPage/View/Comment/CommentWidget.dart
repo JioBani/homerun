@@ -9,6 +9,7 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
+import 'package:homerun/Page/NoticesPage/View/Comment/CommentSnackbar.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/ReplyCommentListWidget.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
@@ -160,8 +161,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                                     FirebaseAuth.instance.currentUser!.uid == widget.comment.commentDto.uid
                                 ){
                                   return InkWell(
-                                      onTap: () {
-                                        commentViewWidgetController.deleteComment(widget.comment);
+                                      onTap: () async {
+                                        Result<void> result = await commentViewWidgetController.deleteComment(widget.comment);
+                                        CommentSnackbar.show(
+                                            result.isSuccess ? "알림" : "오류",
+                                            result.isSuccess ? "댓글을 삭제했습니다." : "댓글 삭제에 실패했습니다."
+                                        );
                                       },
                                       child: Text(
                                         '삭제',
