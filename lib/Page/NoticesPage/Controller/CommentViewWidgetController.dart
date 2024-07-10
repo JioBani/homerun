@@ -20,6 +20,8 @@ class CommentViewWidgetController extends GetxController{
   final String noticeId;
   final TabController tabController;
   late CommentLoader showLoader;
+  late OrderType orderType;
+  late NoticeCommentType noticeCommentType;
 
   Comment? replyTarget;
 
@@ -66,7 +68,10 @@ class CommentViewWidgetController extends GetxController{
       }
     };
 
-    showLoader = commentLoaders[NoticeCommentType.eligibility]![OrderType.likes]!;
+    orderType = OrderType.likes;
+    noticeCommentType = NoticeCommentType.eligibility;
+
+    showLoader = commentLoaders[noticeCommentType]![orderType]!;
     loadComment(reset: true);
   }
 
@@ -85,11 +90,13 @@ class CommentViewWidgetController extends GetxController{
   void onPageChange(){
     if(tabController.indexIsChanging){
       if(tabController.index == 0){
-        showLoader = commentLoaders[NoticeCommentType.eligibility]![OrderType.likes]!;
+        noticeCommentType = NoticeCommentType.eligibility;
       }
       else{
-        showLoader = commentLoaders[NoticeCommentType.free]![OrderType.likes]!;
+        noticeCommentType = NoticeCommentType.free;
       }
+
+      showLoader = commentLoaders[noticeCommentType]![orderType]!;
 
       if(showLoader.loadingState == LoadingState.before){
         loadComment();
@@ -98,29 +105,44 @@ class CommentViewWidgetController extends GetxController{
     }
   }
 
-  Future<void> uploadComment(String content) async {
+  void setOrderType(OrderType? orderType){
+    if(orderType != null && orderType != OrderType.none){
+      this.orderType = orderType;
+      showLoader = commentLoaders[noticeCommentType]![this.orderType]!;
+
+      if(showLoader.loadingState == LoadingState.before){
+        loadComment();
+      }
+
+      update();
+    }
+  }
+
+  Future<Result<Comment>> uploadComment(String content) async {
+    Result<Comment> result;
     if(replyTarget == null){
-      await CommentService.instance.upload(
+      result = await CommentService.instance.upload(
         commentCollection: FirestoreReferences.getNoticeComment(noticeId, showLoader.commentType.name),
         content: content,
         hasLikes: true,
       );
     }
     else{
-      await CommentService.instance.upload(
-        commentCollection: replyTarget!.documentSnapshot.reference.collection('reply'),
+      result = await CommentService.instance.upload(
+        commentCollection: FirestoreReferences.getReplyCollection(replyTarget!.documentSnapshot.reference),
         content: content,
         hasLikes: true,
         replyTarget: replyTarget!.documentSnapshot.reference
       );
     }
-
-    reload();
+    await reload();
+    return result;
   }
 
   Future<Result<void>> deleteComment(Comment comment)async {
     Result<void> result = await CommentService.instance.delete(comment);
     await reload();
+    update();
     return result;
   }
 
