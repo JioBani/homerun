@@ -39,7 +39,7 @@ class _CommentSortWidgetState extends State<CommentSortWidget> {
             ),
           ],
         ),
-        Spacer(),
+        const Spacer(),
         SortDropDownButton(noticeId: widget.noticeId,),
       ],
     );
