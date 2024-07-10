@@ -227,6 +227,10 @@ class CommentService {
       }
     );
   }
+
+  Future<Result<int?>> getCommentCount(CollectionReference commentReference){
+    return Result.handleFuture<int?>(action: () async => (await commentReference.count().get()).count);
+  }
 }
 
 class LikeFields{
