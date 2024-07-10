@@ -15,6 +15,7 @@ class CommentLoader{
   late final CollectionReference collection;
   final NoticeCommentType commentType;
   final OrderType orderType;
+  int allCommentCount = 0;
 
   List<Comment> comments = [];
   LoadingState loadingState = LoadingState.before;
@@ -32,6 +33,7 @@ class CommentLoader{
     loadingState = LoadingState.loading;
     if(reset){
       comments = [];
+      await getCommentCount();
     }
 
     Result<List<Comment>> result = await CommentService.instance.getComments(
@@ -65,6 +67,14 @@ class CommentLoader{
     if(comments.isNotEmpty){
       await getComments(comments.length , reset:true);
     }
+  }
+
+  Future<Result<int?>> getCommentCount() async {
+    Result<int?> count = await CommentService.instance.getCommentCount(collection);
+    if(count.isSuccess){
+      allCommentCount = count.content ?? 0;
+    }
+    return count;
   }
 
 }
