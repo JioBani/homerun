@@ -247,11 +247,11 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         child: CommentTabBarWidget(tabController: commentTabController),
       ),
       Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        padding: EdgeInsets.fromLTRB(25.w, 5.w, 25.w, 0),
         child: CommentSortWidget(noticeId: widget.announcement.publicAnnouncementNumber!,),
       ),
       Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        padding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 5.w),
         child: CommentInputWidget(
           noticeId:  widget.announcement.publicAnnouncementNumber!,
           onFocus: (){scrollToCommentInput();},
