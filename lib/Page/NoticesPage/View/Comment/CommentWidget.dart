@@ -9,6 +9,7 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
+import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentSnackbar.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/ReplyCommentListWidget.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
@@ -17,12 +18,14 @@ import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/TestImages.dart';
 import 'package:shimmer/shimmer.dart';
 
+import 'CommentListViewPage.dart';
+
 class CommentWidget extends StatefulWidget {
   const CommentWidget({super.key, required this.comment, required this.noticeId, this.replyTarget});
 
   final Comment comment;
   final String noticeId;
-  final String? replyTarget;
+  final Comment? replyTarget;
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -115,9 +118,8 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: widget.replyTarget == null ? Theme.of(context).colorScheme.background : Colors.grey.shade300,
-      width: double.infinity,
+    return Padding(
+      padding: EdgeInsets.only(top: 5.w,bottom: 15.w),
       child: Builder(
         builder: (context) {
           if(loadingState == LoadingState.success){
@@ -162,7 +164,15 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 ){
                                   return InkWell(
                                       onTap: () async {
-                                        Result<void> result = await commentViewWidgetController.deleteComment(widget.comment);
+                                        Result<void> result;
+                                        if(widget.replyTarget == null){
+                                          result = await commentViewWidgetController.deleteComment(widget.comment);
+                                        }
+                                        else{
+                                          result = await Get.find<ReplyCommentWidgetController>(
+                                              tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
+                                              .delete(widget.comment);
+                                        }
                                         CommentSnackbar.show(
                                             result.isSuccess ? "알림" : "오류",
                                             result.isSuccess ? "댓글을 삭제했습니다." : "댓글 삭제에 실패했습니다."
@@ -228,25 +238,35 @@ class _CommentWidgetState extends State<CommentWidget> {
                             },
                             color: likeState == -1 ? Theme.of(context).primaryColor : null,
                           ),
-                          CommentIconButton(
-                            imagePath: NoticePageImages.comment.reply,
-                            content: '댓글 3',
-                            color: isReplyOpen ? Theme.of(context).primaryColor : null,
-                            onTap: () {
-                              isReplyOpen = !isReplyOpen;
-                              setState(() {
+                          Builder(
+                            builder: (context){
+                              if(widget.replyTarget == null){
+                                return CommentIconButton(
+                                  imagePath: NoticePageImages.comment.reply,
+                                  content: '댓글 3',
+                                  color: isReplyOpen ? Theme.of(context).primaryColor : null,
+                                  onTap: () {
+                                    if(widget.replyTarget == null){
+                                      setState(() {
+                                        isReplyOpen = !isReplyOpen;
+                                      });
+                                    }
+                                  },
+                                );
+                              }
+                              else{
+                                return SizedBox();
+                              }
+                            }
+                          )
 
-                              });
-                              //Get.to(CommentListViewPage());
-                            },
-                          ),
                         ],
                       ),
                       Builder(
                           builder: (context){
                             if(isReplyOpen && widget.replyTarget == null){
                               return Padding(
-                                padding: EdgeInsets.only(left: 20.w),
+                                padding: EdgeInsets.only(top: 10.w),
                                 child: ReplyCommentListWidget(noticeId: widget.noticeId,comment: widget.comment,),
                               );
                             }
