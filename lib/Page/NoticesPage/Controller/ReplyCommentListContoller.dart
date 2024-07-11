@@ -14,6 +14,7 @@ class ReplyCommentWidgetController extends GetxController{
   List<Comment> replyList = [];
   LoadingState loadingState = LoadingState.before;
   final Comment replyTarget;
+  static const int commentsPerLoad = 1;
 
   ReplyCommentWidgetController({required this.noticeId , required this.replyTarget}){
     replyCollection = FirestoreReferences.getReplyCollection(replyTarget.documentSnapshot.reference);
@@ -21,25 +22,39 @@ class ReplyCommentWidgetController extends GetxController{
 
   static String makeTag(String noticeId, String targetCommentId) => "$noticeId/$targetCommentId";
 
-  Future<void> load() async {
+  Future<Result> load({bool reset = false}) async {
     loadingState = LoadingState.loading;
     update();
+
+
+    if(reset){
+      replyList = [];
+    }
+
     Result<List<Comment>> result = await CommentService.instance.getComments(
       commentCollection: replyCollection,
       orderBy: OrderType.date,
-      descending: false
+      descending: false,
+      index: commentsPerLoad,
+      startAfter: replyList.isNotEmpty ? replyList.last : null
     );
 
 
     if(result.isSuccess){
-      replyList = result.content!;
-      loadingState = LoadingState.success;
+      replyList.addAll(result.content!);
+      if(result.content!.length != commentsPerLoad){
+        loadingState = LoadingState.noMoreData;
+      }
+      else{
+        loadingState = LoadingState.success;
+      }
     }
     else{
       StaticLogger.logger.e('[ReplyCommentWidgetController.load()] ${result.exception}');
       loadingState = LoadingState.fail;
     }
     update();
+    return result;
   }
 
   Future<Result<Comment>> upload(String content) async {
