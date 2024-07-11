@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.dart';
+import 'package:homerun/Page/NoticesPage/View/Comment/CommentInputWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentWidget.dart';
 
 class ReplyCommentListWidget extends StatefulWidget {
@@ -23,7 +25,7 @@ class _ReplyCommentListWidgetState extends State<ReplyCommentListWidget> {
     Get.put(
         ReplyCommentWidgetController(
             noticeId: widget.noticeId,
-            replyRef: widget.comment.documentSnapshot.reference
+            replyTarget: widget.comment
         ),
         tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.comment.id)
     ).load();
@@ -32,27 +34,32 @@ class _ReplyCommentListWidgetState extends State<ReplyCommentListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GetX<ReplyCommentWidgetController>(
-        tag: "${widget.noticeId}/${widget.comment.id}",
-        builder: (controller) {
-          if(controller.loadingState.value == LoadingState.success){
-            return Column(
-              children: controller.replyList.map((reply) =>
-                  CommentWidget(
-                    comment: reply,
-                    noticeId: widget.noticeId ,
-                    replyTarget: widget.comment.id,
-                  )
-              ).toList(),
-            );
-          }
-          else if(controller.loadingState.value == LoadingState.fail){
-            return const Text("댓글을 불러 올 수 없습니다.");
-          }
-          else{
-            return const CupertinoActivityIndicator();
-          }
-        }
+    return Column(
+      children: [
+        GetBuilder<ReplyCommentWidgetController>(
+            tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.comment.id),
+            builder: (controller) {
+              if(controller.loadingState == LoadingState.success){
+                return Column(
+                  children: controller.replyList.map((reply) =>
+                      CommentWidget(
+                        comment: reply,
+                        noticeId: widget.noticeId ,
+                        replyTarget: widget.comment,
+                      )
+                  ).toList(),
+                );
+              }
+              else if(controller.loadingState == LoadingState.fail){
+                return const Text("댓글을 불러 올 수 없습니다.");
+              }
+              else{
+                return const CupertinoActivityIndicator();
+              }
+            }
+        ),
+        CommentInputWidget(noticeId: widget.noticeId,onFocus: (){},replyTarget: widget.comment,),
+      ],
     );
   }
 }
