@@ -97,16 +97,22 @@ class CommentService {
     CommentDto commentDto = CommentDto.fromMap(doc.data() as Map<String, dynamic>);
 
     int? likeState;
+
     if(uid!= null && commentDto.likes != null){
       likeState = await _getLikeState(doc,uid);
     }
+
+    CollectionReference replyRef =  CommentReferences.getReplyCollection(doc.reference);
+    Result<int?> replyCountResult = await getCommentCount(replyRef);
+
+    int replyCount = replyCountResult.content ?? 0;
 
     try{
       return Comment(
         id: doc.id,
         commentDto: CommentDto.fromMap(doc.data() as Map<String, dynamic>),
         likeState: likeState,
-        replyCount: 0,
+        replyCount: replyCount,
         documentSnapshot: doc
       );
     }catch(e , s){
