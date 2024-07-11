@@ -5,7 +5,7 @@ import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/Comment/CommentService.dart';
 import 'package:homerun/Common/Comment/Enums.dart';
 import 'package:homerun/Common/Comment/LikeState.dart';
-import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
+import 'package:homerun/Common/Comment/CommentReferences.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
@@ -118,7 +118,7 @@ class CommentViewWidgetController extends GetxController{
 
   Future<Result<Comment>> uploadComment(String content) async {
     Result<Comment> result = await CommentService.instance.upload(
-      commentCollection: FirestoreReferences.getNoticeComment(noticeId, showLoader.commentType.name),
+      commentCollection: CommentReferences.getNoticeComment(noticeId, showLoader.commentType.name),
       content: content,
       hasLikes: true,
     );

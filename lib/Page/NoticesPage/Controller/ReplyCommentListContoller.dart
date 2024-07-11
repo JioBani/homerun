@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/Comment/CommentService.dart';
 import 'package:homerun/Common/Comment/Enums.dart';
-import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
+import 'package:homerun/Common/Comment/CommentReferences.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
@@ -17,7 +17,7 @@ class ReplyCommentWidgetController extends GetxController{
   static const int commentsPerLoad = 1;
 
   ReplyCommentWidgetController({required this.noticeId , required this.replyTarget}){
-    replyCollection = FirestoreReferences.getReplyCollection(replyTarget.documentSnapshot.reference);
+    replyCollection = CommentReferences.getReplyCollection(replyTarget.documentSnapshot.reference);
   }
 
   static String makeTag(String noticeId, String targetCommentId) => "$noticeId/$targetCommentId";

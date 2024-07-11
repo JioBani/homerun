@@ -3,7 +3,7 @@ import 'package:get/instance_manager.dart';
 import 'package:homerun/Common/Comment/Enums.dart';
 import 'package:homerun/Common/Comment/Exceptions.dart';
 import 'package:homerun/Common/Comment/LikeState.dart';
-import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
+import 'package:homerun/Common/Comment/CommentReferences.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
@@ -185,7 +185,7 @@ class CommentService {
 
         String userId = Get.find<AuthService>().getUser().uid;
 
-        final likeRef = FirestoreReferences.getCommentLikeDocument(comment.documentSnapshot.reference, userId);
+        final likeRef = CommentReferences.getCommentLikeDocument(comment.documentSnapshot.reference, userId);
 
         int likeChange = 0;
         int dislikeChange = 0;

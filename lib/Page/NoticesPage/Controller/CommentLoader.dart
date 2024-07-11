@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/Comment/CommentService.dart';
 import 'package:homerun/Common/Comment/Enums.dart';
-import 'package:homerun/Common/Firebase/FirestoreReferences.dart';
+import 'package:homerun/Common/Comment/CommentReferences.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
@@ -26,7 +26,7 @@ class CommentLoader{
     required this.commentType,
     required this.orderType,
   }){
-    collection = FirestoreReferences.getNoticeComment(noticeId,commentType.name);
+    collection = CommentReferences.getNoticeComment(noticeId,commentType.name);
   }
 
   Future<Result<List<Comment>>> getComments(int index, {bool reset = false}) async {
