@@ -12,30 +12,60 @@ class ReplyCommentWidgetController extends GetxController{
   final String noticeId;
   late final CollectionReference replyCollection;
   List<Comment> replyList = [];
-  Rx<LoadingState> loadingState = Rx(LoadingState.before);
-  late final CollectionReference collectionReference;
+  LoadingState loadingState = LoadingState.before;
+  final Comment replyTarget;
 
-  ReplyCommentWidgetController({required this.noticeId , required DocumentReference replyRef}){
-    replyCollection = FirestoreReferences.getReplyCollection(replyRef);
+  ReplyCommentWidgetController({required this.noticeId , required this.replyTarget}){
+    replyCollection = FirestoreReferences.getReplyCollection(replyTarget.documentSnapshot.reference);
   }
 
   static String makeTag(String noticeId, String targetCommentId) => "$noticeId/$targetCommentId";
 
   Future<void> load() async {
-
+    loadingState = LoadingState.loading;
+    update();
     Result<List<Comment>> result = await CommentService.instance.getComments(
       commentCollection: replyCollection,
       orderBy: OrderType.date,
+      descending: false
     );
 
 
     if(result.isSuccess){
       replyList = result.content!;
-      loadingState.value = LoadingState.success;
+      loadingState = LoadingState.success;
     }
     else{
       StaticLogger.logger.e('[ReplyCommentWidgetController.load()] ${result.exception}');
-      loadingState.value = LoadingState.fail;
+      loadingState = LoadingState.fail;
     }
+    update();
+  }
+
+  Future<Result<Comment>> upload(String content) async {
+    Result<Comment> result = await CommentService.instance.upload(
+      commentCollection: replyCollection,
+      content: content,
+      replyTarget: replyTarget.documentSnapshot.reference,
+      hasLikes: true,
+    );
+
+    if(result.isSuccess){
+      replyList.add(result.content!);
+      update();
+    }
+
+    return result;
+  }
+
+  Future<Result<void>> delete(Comment comment)async {
+    Result<void> result = await CommentService.instance.delete(comment);
+
+    if(result.isSuccess){
+      replyList.remove(comment);
+      update();
+    }
+
+    return result;
   }
 }
