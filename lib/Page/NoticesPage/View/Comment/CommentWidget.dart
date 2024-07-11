@@ -215,6 +215,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           CommentIconButton(
                             imagePath: NoticePageImages.comment.good,
                             content: likes.toString(),
+                            iconDistance: 2.w,
                             onTap: () async {
                               if(likeState == 1){
                                 updateLikeState(0);
@@ -228,6 +229,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           CommentIconButton(
                             imagePath: NoticePageImages.comment.bad,
                             content: dislikes.toString(),
+                            iconDistance: 2.w,
                             onTap: () async {
                               if(likeState == -1){
                                 updateLikeState(0);
@@ -243,8 +245,10 @@ class _CommentWidgetState extends State<CommentWidget> {
                               if(widget.replyTarget == null){
                                 return CommentIconButton(
                                   imagePath: NoticePageImages.comment.reply,
-                                  content: '댓글 3',
+                                  content: '대댓글 ${widget.comment.replyCount}',
                                   color: isReplyOpen ? Theme.of(context).primaryColor : null,
+                                  iconDistance: 4.w,
+                                  textTap: true,
                                   onTap: () {
                                     if(widget.replyTarget == null){
                                       setState(() {
@@ -291,44 +295,94 @@ class _CommentWidgetState extends State<CommentWidget> {
 }
 
 class CommentIconButton extends StatelessWidget {
-  const CommentIconButton({super.key, required this.content, required this.onTap, required this.imagePath, this.color});
+  const CommentIconButton({
+    super.key,
+    required this.content,
+    required this.onTap,
+    required this.imagePath,
+    this.color,
+    this.textTap = false,
+    this.iconDistance = 2
+  });
 
   final String content;
-  final Function onTap;
+  final void Function() onTap;
   final String imagePath;
   final Color? color;
+  final bool textTap;
+  final double iconDistance;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 45.w,
-      child: Row(
-        children: [
-          InkWell(
-            onTap: (){onTap();},
-            child: Image.asset(
-              imagePath,
-              width: 9.5.sp,
-              height: 9.5.sp,
-              color: color,
-            ),
-          ),
-          SizedBox(
-            width: 2.w,
-          ),
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                content, // Example text
-                style: TextStyle(
-                  fontSize: 9.sp,
-                ),
+      child: Builder(
+        builder: (context) {
+          if(textTap){
+            return InkWell(
+              onTap: onTap,
+              child: Row(
+                children: [
+                  Image.asset(
+                    imagePath,
+                    width: 9.5.sp,
+                    height: 9.5.sp,
+                    color: color,
+                  ),
+                  SizedBox(
+                    width: iconDistance,
+                  ),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        content, // Example text
+                        style: TextStyle(
+                          fontSize: 9.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-        ],
+            );
+          }
+          else{
+            return InkWell(
+              onTap: onTap,
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: onTap,
+                    child: Image.asset(
+                      imagePath,
+                      width: 9.5.sp,
+                      height: 9.5.sp,
+                      color: color,
+                    ),
+                  ),
+                  SizedBox(
+                    width: iconDistance,
+                  ),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        content, // Example text
+                        style: TextStyle(
+                          fontSize: 9.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+        }
       ),
     );
   }
