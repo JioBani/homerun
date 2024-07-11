@@ -294,6 +294,18 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 }
 
+/// `CommentIconButton`
+/// 댓글 위젯 아래의 아이콘 위젯입니다.
+///
+/// 필수 인자:
+/// - `content`: 버튼에 표시될 텍스트.
+/// - `onTap`: 버튼이 탭되었을 때 호출될 콜백 함수.
+/// - `imagePath`: 아이콘 이미지의 경로.
+///
+/// 선택적 인자:
+/// - `color`: 아이콘의 색상.
+/// - `textTap = false` : 텍스트도 탭 가능하게 할지 여부.
+/// - `iconDistance = 2`: 아이콘과 텍스트 사이의 거리.
 class CommentIconButton extends StatelessWidget {
   const CommentIconButton({
     super.key,
@@ -318,7 +330,7 @@ class CommentIconButton extends StatelessWidget {
       width: 45.w,
       child: Builder(
         builder: (context) {
-          if(textTap){
+          if (textTap) {
             return InkWell(
               onTap: onTap,
               child: Row(
@@ -337,7 +349,7 @@ class CommentIconButton extends StatelessWidget {
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        content, // Example text
+                        content,
                         style: TextStyle(
                           fontSize: 9.sp,
                         ),
@@ -347,8 +359,7 @@ class CommentIconButton extends StatelessWidget {
                 ],
               ),
             );
-          }
-          else{
+          } else {
             return InkWell(
               onTap: onTap,
               child: Row(
@@ -370,7 +381,7 @@ class CommentIconButton extends StatelessWidget {
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        content, // Example text
+                        content,
                         style: TextStyle(
                           fontSize: 9.sp,
                         ),
@@ -381,12 +392,12 @@ class CommentIconButton extends StatelessWidget {
               ),
             );
           }
-
-        }
+        },
       ),
     );
   }
 }
+
 
 class LoadingPlaceHolder extends StatelessWidget {
   const LoadingPlaceHolder({super.key});
