@@ -106,6 +106,7 @@ class CommentService {
         id: doc.id,
         commentDto: CommentDto.fromMap(doc.data() as Map<String, dynamic>),
         likeState: likeState,
+        replyCount: 0,
         documentSnapshot: doc
       );
     }catch(e , s){
@@ -154,6 +155,7 @@ class CommentService {
             id: docRef.id,
             commentDto: commentDto,
             likeState: 0,
+            replyCount: 0,
             documentSnapshot: doc,
           );
         }
