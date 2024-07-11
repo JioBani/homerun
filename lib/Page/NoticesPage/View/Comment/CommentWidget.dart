@@ -360,36 +360,33 @@ class CommentIconButton extends StatelessWidget {
               ),
             );
           } else {
-            return InkWell(
-              onTap: onTap,
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: onTap,
-                    child: Image.asset(
-                      imagePath,
-                      width: 9.5.sp,
-                      height: 9.5.sp,
-                      color: color,
-                    ),
+            return Row(
+              children: [
+                InkWell(
+                  onTap: onTap,
+                  child: Image.asset(
+                    imagePath,
+                    width: 9.5.sp,
+                    height: 9.5.sp,
+                    color: color,
                   ),
-                  SizedBox(
-                    width: iconDistance,
-                  ),
-                  Flexible(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        content,
-                        style: TextStyle(
-                          fontSize: 9.sp,
-                        ),
+                ),
+                SizedBox(
+                  width: iconDistance,
+                ),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      content,
+                      style: TextStyle(
+                        fontSize: 9.sp,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           }
         },
