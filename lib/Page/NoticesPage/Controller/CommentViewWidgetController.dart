@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
@@ -23,9 +24,6 @@ class CommentViewWidgetController extends GetxController{
   late OrderType orderType;
   late NoticeCommentType noticeCommentType;
 
-  Comment? replyTarget;
-
-  
   //#1. 인기순
   //#2. 최신순
 
@@ -119,22 +117,11 @@ class CommentViewWidgetController extends GetxController{
   }
 
   Future<Result<Comment>> uploadComment(String content) async {
-    Result<Comment> result;
-    if(replyTarget == null){
-      result = await CommentService.instance.upload(
-        commentCollection: FirestoreReferences.getNoticeComment(noticeId, showLoader.commentType.name),
-        content: content,
-        hasLikes: true,
-      );
-    }
-    else{
-      result = await CommentService.instance.upload(
-        commentCollection: FirestoreReferences.getReplyCollection(replyTarget!.documentSnapshot.reference),
-        content: content,
-        hasLikes: true,
-        replyTarget: replyTarget!.documentSnapshot.reference
-      );
-    }
+    Result<Comment> result = await CommentService.instance.upload(
+      commentCollection: FirestoreReferences.getNoticeComment(noticeId, showLoader.commentType.name),
+      content: content,
+      hasLikes: true,
+    );
 
     if(result.isSuccess){
       showLoader.addComment(result.content!);
@@ -153,11 +140,6 @@ class CommentViewWidgetController extends GetxController{
     }
 
     return result;
-  }
-
-  void setReplyMode(Comment? comment){
-    replyTarget = comment;
-    StaticLogger.logger.i('set reply : $comment');
   }
 
   Future<Result<List<Comment>>> loadComment({bool reset = false}){
