@@ -5,14 +5,16 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
+import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.dart';
 import 'package:homerun/Style/Palette.dart';
 
 import 'CommentSnackbar.dart';
 
 class CommentInputWidget extends StatefulWidget {
-  const CommentInputWidget({super.key, required this.noticeId, required this.onFocus});
+  const CommentInputWidget({super.key, required this.noticeId, required this.onFocus, this.replyTarget});
   final String noticeId;
   final void Function() onFocus;
+  final Comment? replyTarget;
 
   @override
   State<CommentInputWidget> createState() => _CommentInputWidgetState();
@@ -88,8 +90,18 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
                         Get.snackbar('알림','내용을 입력해주세요.');
                       }
                       else{
-                        Result<Comment> result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
-                            .uploadComment(textEditingController.text);
+
+                        Result<Comment> result;
+
+                        if(widget.replyTarget ==null){
+                          result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
+                              .uploadComment(textEditingController.text);
+                        }
+                        else{
+                          result = await Get.find<ReplyCommentWidgetController>(
+                              tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
+                              .upload(textEditingController.text);
+                        }
 
                         if(result.isSuccess){
                           _focusNode.unfocus();
