@@ -27,11 +27,11 @@ class CommentTabChildWidget extends StatelessWidget {
                     commentLoader.loadingState == LoadingState.noMoreData
                 ){
                   return Column(
-                    children: commentLoader.comments.map(
-                            (comment) => Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5.w),
-                            child: CommentWidget(comment: comment, noticeId: noticeId,)
-                        )
+                    children: commentLoader.comments.map((comment) =>
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5.w),
+                        child: CommentWidget(comment: comment, noticeId: noticeId,)
+                      )
                     ).toList(),
                   );
                 }
