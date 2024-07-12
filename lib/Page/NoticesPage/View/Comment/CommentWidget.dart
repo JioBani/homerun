@@ -184,6 +184,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                     isModify : true,
                                     startWithOpen: true,
                                     startString: widget.comment.commentDto.content,
+                                    maintainButtons: true,
                                     onPressClosed: (){
                                       setState(() {
                                         isModifyOpen = false;
