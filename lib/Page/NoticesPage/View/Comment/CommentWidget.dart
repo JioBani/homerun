@@ -10,6 +10,7 @@ import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.dart';
+import 'package:homerun/Page/NoticesPage/View/Comment/CommentDropdowmMenuWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentSnackbar.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/ReplyCommentListWidget.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
@@ -157,43 +158,11 @@ class _CommentWidgetState extends State<CommentWidget> {
                             style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
                           ),
                           const Spacer(),
-                          Builder(
-                              builder: (context){
-                                if(FirebaseAuth.instance.currentUser != null &&
-                                    FirebaseAuth.instance.currentUser!.uid == widget.comment.commentDto.uid
-                                ){
-                                  return InkWell(
-                                      onTap: () async {
-                                        Result<void> result;
-                                        if(widget.replyTarget == null){
-                                          result = await commentViewWidgetController.deleteComment(widget.comment);
-                                        }
-                                        else{
-                                          result = await Get.find<ReplyCommentWidgetController>(
-                                              tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
-                                              .delete(widget.comment);
-                                        }
-                                        CommentSnackbar.show(
-                                            result.isSuccess ? "알림" : "오류",
-                                            result.isSuccess ? "댓글을 삭제했습니다." : "댓글 삭제에 실패했습니다."
-                                        );
-                                      },
-                                      child: Text(
-                                        '삭제',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          color: Theme.of(context).primaryColor,
-                                          fontSize: 11.sp
-                                        ),
-                                      )
-                                  );
-                                }
-                                else{
-                                  return const SizedBox();
-                                }
-                              }
-                          ),
-                          SizedBox(width: 10.w,)
+                          CommentPopupMenuButtonWidget(
+                            noticeId: widget.noticeId,
+                            comment: widget.comment,
+                            replyTarget: widget.replyTarget,
+                          )
                         ],
                       ),
                       SizedBox(
@@ -278,10 +247,10 @@ class _CommentWidgetState extends State<CommentWidget> {
                               return const SizedBox();
                             }
                           }
-                      )
+                      ),
                     ],
                   ),
-                )
+                ),
               ],
             );
           }
