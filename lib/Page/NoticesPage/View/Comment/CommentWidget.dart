@@ -9,17 +9,14 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
-import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentDropdowmMenuWidget.dart';
-import 'package:homerun/Page/NoticesPage/View/Comment/CommentSnackbar.dart';
+import 'package:homerun/Page/NoticesPage/View/Comment/CommentInputWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/ReplyCommentListWidget.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/TestImages.dart';
 import 'package:shimmer/shimmer.dart';
-
-import 'CommentListViewPage.dart';
 
 class CommentWidget extends StatefulWidget {
   const CommentWidget({super.key, required this.comment, required this.noticeId, this.replyTarget});
@@ -37,6 +34,7 @@ class _CommentWidgetState extends State<CommentWidget> {
   late int likes;
   late int dislikes;
   bool isReplyOpen = false;
+  bool isModifyOpen = false;
   UserDto? userDto;
   LoadingState loadingState = LoadingState.before;
 
@@ -161,6 +159,11 @@ class _CommentWidgetState extends State<CommentWidget> {
                           CommentPopupMenuButtonWidget(
                             noticeId: widget.noticeId,
                             comment: widget.comment,
+                            onTapModify: (){
+                              setState(() {
+                                isModifyOpen = true;
+                              });
+                            },
                             replyTarget: widget.replyTarget,
                           )
                         ],
@@ -170,12 +173,36 @@ class _CommentWidgetState extends State<CommentWidget> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 2.w),
-                        child: Text(
-                          widget.comment.commentDto.content,
-                          style: TextStyle(
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.normal,
-                          ),
+                        child: Builder(
+                          builder: (context) {
+                            if(isModifyOpen){
+                              return Column(
+                                children: [
+                                  CommentInputWidget(
+                                    noticeId: widget.noticeId,
+                                    onFocus: (){},
+                                    isModify : true,
+                                    startWithOpen: true,
+                                    startString: widget.comment.commentDto.content,
+                                    onPressClosed: (){
+                                      setState(() {
+                                        isModifyOpen = false;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              );
+                            }
+                            else{
+                              return Text(
+                                widget.comment.commentDto.content,
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              );
+                            }
+                          }
                         ),
                       ),
                       Row(
@@ -363,7 +390,6 @@ class CommentIconButton extends StatelessWidget {
     );
   }
 }
-
 
 class LoadingPlaceHolder extends StatelessWidget {
   const LoadingPlaceHolder({super.key});
