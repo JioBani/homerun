@@ -9,9 +9,16 @@ import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.da
 import 'CommentSnackbar.dart';
 
 class CommentPopupMenuButtonWidget extends StatelessWidget {
-  const CommentPopupMenuButtonWidget({super.key,required this.noticeId ,required this.comment, this.replyTarget});
+  const CommentPopupMenuButtonWidget({
+    super.key,
+    required this.noticeId,
+    required this.comment,
+    required this.onTapModify,
+    this.replyTarget,
+  });
   final String noticeId;
   final Comment comment;
+  final void Function() onTapModify;
   final Comment? replyTarget;
 
   PopupMenuItem<String> buildMenuItem({
@@ -31,7 +38,6 @@ class CommentPopupMenuButtonWidget extends StatelessWidget {
           children: [
             Icon(
               icon,
-              //Icons.mode_edit_outline_outlined,
               size: 16.sp,
               color: color,
               weight: 0.1,
@@ -87,7 +93,7 @@ class CommentPopupMenuButtonWidget extends StatelessWidget {
             );
           }
           else if(result == "수정"){
-
+            onTapModify();
           }
         },
         itemBuilder: (BuildContext buildContext) {
