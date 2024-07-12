@@ -11,10 +11,24 @@ import 'package:homerun/Style/Palette.dart';
 import 'CommentSnackbar.dart';
 
 class CommentInputWidget extends StatefulWidget {
-  const CommentInputWidget({super.key, required this.noticeId, required this.onFocus, this.replyTarget});
+  const CommentInputWidget({
+    super.key,
+    required this.noticeId,
+    required this.onFocus,
+    this.replyTarget,
+    this.startString,
+    this.startWithOpen = false,
+    this.isModify = false,
+    this.onPressClosed,
+  });
+
   final String noticeId;
   final void Function() onFocus;
   final Comment? replyTarget;
+  final String? startString;
+  final bool startWithOpen;
+  final bool isModify;
+  final Function? onPressClosed;
 
   @override
   State<CommentInputWidget> createState() => _CommentInputWidgetState();
@@ -27,6 +41,9 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
   @override
   void initState() {
     _focusNode.addListener(_toggleOpen);
+    if(widget.startString != null){
+      textEditingController.text = widget.startString!;
+    }
     super.initState();
   }
 
@@ -54,6 +71,7 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
           cursorColor: const Color(0xFF35C5F0),
           maxLines: _focusNode.hasFocus ? 6 : 1,
           focusNode: _focusNode,
+          autofocus: widget.startWithOpen,
           keyboardType: TextInputType.multiline,
           decoration: InputDecoration(
             filled: true,
@@ -79,65 +97,143 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
           alignment: Alignment.centerRight,
           child: Builder(builder: (context){
             if(_focusNode.hasFocus){
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 3.w),
-                child: SizedBox(
-                  width: 50.w,
-                  height: 25.w,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if(textEditingController.text.isEmpty){
-                        Get.snackbar('알림','내용을 입력해주세요.');
-                      }
-                      else{
-
-                        Result<Comment> result;
-
-                        if(widget.replyTarget ==null){
-                          result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
-                              .uploadComment(textEditingController.text);
+              if(widget.isModify){
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomButtonWidget(
+                      text: "취소",
+                      width: 50.w,
+                      height: 25.w,
+                      onPressed: () {
+                        widget.onPressClosed?.call();
+                      },
+                    ),
+                    SizedBox(width: 5.w,),
+                    CustomButtonWidget(
+                      text: "등록",
+                      width: 50.w,
+                      height: 25.w,
+                      onPressed: () async {
+                        if(textEditingController.text.isEmpty){
+                          Get.snackbar('알림','내용을 입력해주세요.');
                         }
                         else{
-                          result = await Get.find<ReplyCommentWidgetController>(
-                              tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
-                              .upload(textEditingController.text);
-                        }
 
-                        if(result.isSuccess){
-                          _focusNode.unfocus();
-                        }
+                          Result<Comment> result;
 
-                        CommentSnackbar.show(
-                            result.isSuccess ? "알림" : "오류",
-                            result.isSuccess ? "댓글을 등록했습니다." : "댓글 등록에 실패했습니다."
-                        );
+                          if(widget.replyTarget ==null){
+                            result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
+                                .uploadComment(textEditingController.text);
+                          }
+                          else{
+                            result = await Get.find<ReplyCommentWidgetController>(
+                                tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
+                                .upload(textEditingController.text);
+                          }
+
+                          if(result.isSuccess){
+                            _focusNode.unfocus();
+                          }
+
+                          CommentSnackbar.show(
+                              result.isSuccess ? "알림" : "오류",
+                              result.isSuccess ? "댓글을 등록했습니다." : "댓글 등록에 실패했습니다."
+                          );
+                        }
+                      },
+                    )
+                  ],
+                );
+              }
+              else{
+                return CustomButtonWidget(
+                  text: "등록",
+                  width: 50.w,
+                  height: 25.w,
+                  onPressed: () async {
+                    if(textEditingController.text.isEmpty){
+                      Get.snackbar('알림','내용을 입력해주세요.');
+                    }
+                    else{
+
+                      Result<Comment> result;
+
+                      if(widget.replyTarget ==null){
+                        result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
+                            .uploadComment(textEditingController.text);
                       }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        shape:  RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3.r),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 0 , vertical: 0)
-                    ),
-                    child: Text(
-                      "등록",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12.sp
-                      ),
-                    ),
-                  ),
-                ),
-              );
+                      else{
+                        result = await Get.find<ReplyCommentWidgetController>(
+                            tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
+                            .upload(textEditingController.text);
+                      }
+
+                      if(result.isSuccess){
+                        _focusNode.unfocus();
+                      }
+
+                      CommentSnackbar.show(
+                          result.isSuccess ? "알림" : "오류",
+                          result.isSuccess ? "댓글을 등록했습니다." : "댓글 등록에 실패했습니다."
+                      );
+                    }
+                  },
+                );
+              }
             }
             else{
-              return SizedBox();
+              return const SizedBox();
             }
           }),
         )
       ],
+    );
+  }
+}
+
+class CustomButtonWidget extends StatelessWidget {
+  const CustomButtonWidget({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    required this.width,
+    required this.height
+  });
+
+  final String text;
+  final Function onPressed;
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 3.w),
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: ElevatedButton(
+          onPressed: () {
+            onPressed();
+          },
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).primaryColor,
+              shape:  RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(3.r),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 0 , vertical: 0)
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 12.sp
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
