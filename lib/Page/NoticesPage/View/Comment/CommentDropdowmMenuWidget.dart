@@ -14,6 +14,42 @@ class CommentPopupMenuButtonWidget extends StatelessWidget {
   final Comment comment;
   final Comment? replyTarget;
 
+  PopupMenuItem<String> buildMenuItem({
+    required String value,
+    required String name,
+    required IconData icon,
+    required Color color
+  }){
+    return PopupMenuItem<String>(
+      value: value,
+      padding: EdgeInsets.zero,
+      height: 32.h,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 6.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Icon(
+              icon,
+              //Icons.mode_edit_outline_outlined,
+              size: 16.sp,
+              color: color,
+              weight: 0.1,
+            ),
+            Text(
+              name,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
+                color: color
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return  SizedBox(
@@ -56,59 +92,18 @@ class CommentPopupMenuButtonWidget extends StatelessWidget {
         },
         itemBuilder: (BuildContext buildContext) {
           return [
-            PopupMenuItem(
+            buildMenuItem(
               value: "수정",
-              padding: EdgeInsets.zero,
-              height: 32.h,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Icon(
-                      Icons.mode_edit_outline_outlined,
-                      size: 16.sp,
-                      color: Colors.black,
-                      weight: 0.1,
-                    ),
-                    Text(
-                      "수정하기",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12.sp
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              name: "수정하기",
+              icon: Icons.mode_edit_outline_outlined,
+              color: Colors.black,
             ),
-            PopupMenuItem(
+            buildMenuItem(
               value: "삭제",
-              padding: EdgeInsets.zero,
-              height: 32.h,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Icon(
-                      Icons.delete_outlined,
-                      size: 16.sp,
-                      color: Colors.redAccent,
-                      weight: 0.1,
-                    ),
-                    Text(
-                      "삭제하기",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12.sp,
-                        color: Colors.redAccent,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
+              name: "삭제하기",
+              icon: Icons.delete_outlined,
+              color: Colors.redAccent
+            ),
           ];
         },
         elevation: 4,
@@ -116,4 +111,5 @@ class CommentPopupMenuButtonWidget extends StatelessWidget {
     );
   }
 }
+
 
