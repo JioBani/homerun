@@ -19,6 +19,7 @@ class CommentInputWidget extends StatefulWidget {
     this.startString,
     this.startWithOpen = false,
     this.isModify = false,
+    this.maintainButtons = false,
     this.onPressClosed,
   });
 
@@ -28,6 +29,7 @@ class CommentInputWidget extends StatefulWidget {
   final String? startString;
   final bool startWithOpen;
   final bool isModify;
+  final bool maintainButtons;
   final Function? onPressClosed;
 
   @override
@@ -96,7 +98,7 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
         Align(
           alignment: Alignment.centerRight,
           child: Builder(builder: (context){
-            if(_focusNode.hasFocus){
+            if(_focusNode.hasFocus || widget.maintainButtons){
               if(widget.isModify){
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.end,
