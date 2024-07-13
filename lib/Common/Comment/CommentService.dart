@@ -36,7 +36,7 @@ class CommentService {
     Comment? startAfter,
     required OrderType orderBy,
     bool descending = true,
-    bool hasReply = false
+    bool hasReply = true
   }) {
     return Result.handleFuture<List<Comment>>(
         action: () async {
