@@ -178,6 +178,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                               });
                             },
                             replyTarget: widget.replyTarget,
+                            isMine : widget.comment.commentDto.uid == FirebaseAuth.instance.currentUser?.uid
                           )
                         ],
                       ),
