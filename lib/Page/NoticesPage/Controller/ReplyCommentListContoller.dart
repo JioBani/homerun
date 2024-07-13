@@ -83,4 +83,16 @@ class ReplyCommentWidgetController extends GetxController{
 
     return result;
   }
+
+  Future<Result<void>> updateComment(Comment comment , String content)async {
+    Result<void> result = await CommentService.instance.update(comment.documentSnapshot.reference , content);
+
+    if(result.isSuccess){
+      replyList.remove(comment);
+      update();
+    }
+
+    return result;
+  }
+
 }
