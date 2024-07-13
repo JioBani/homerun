@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/instance_manager.dart';
 import 'package:homerun/Common/Comment/Enums.dart';
 import 'package:homerun/Common/Comment/Exceptions.dart';
@@ -6,8 +9,11 @@ import 'package:homerun/Common/Comment/LikeState.dart';
 import 'package:homerun/Common/Comment/CommentReferences.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
+import 'package:homerun/Service/Auth/ApiResponse.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
+import 'package:http/http.dart' as http;
 
 import 'Comment.dart';
 import 'CommentDto.dart';
@@ -183,57 +189,34 @@ class CommentService {
 
   //#. 좋아요 상태 변경
   Future<Result<LikeState>> updateLikeStatus(Comment comment, int newLikeValue) async {
-   return Result.handleFuture<LikeState>(
-      action: () async {
-        if (newLikeValue != 1 && newLikeValue != -1 && newLikeValue != 0) {
-          throw ArgumentError('likeValue must be either 1 (like), -1 (dislike), or 0 (neutral)');
-        }
+    return Result.handleFuture(action: () async {
+      String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
-        String userId = Get.find<AuthService>().getUser().uid;
-
-        final likeRef = CommentReferences.getCommentLikeDocument(comment.documentSnapshot.reference, userId);
-
-        int likeChange = 0;
-        int dislikeChange = 0;
-
-        await FirebaseFirestore.instance.runTransaction((transaction) async {
-          final likeSnapshot = await transaction.get(likeRef);
-
-          int previousLikeValue = 0;
-          if (likeSnapshot.exists) {
-            previousLikeValue = likeSnapshot[LikeFields.value];
-          }
-
-          if (previousLikeValue != newLikeValue) {
-            if (newLikeValue == 0) {
-              transaction.delete(likeRef);
-            } else {
-              transaction.set(likeRef, {
-                LikeFields.value: newLikeValue,
-                LikeFields.timestamp: FieldValue.serverTimestamp()
-              });
-            }
-
-
-            if (previousLikeValue == 1) likeChange -= 1;
-            if (previousLikeValue == -1) dislikeChange -= 1;
-            if (newLikeValue == 1) likeChange += 1;
-            if (newLikeValue == -1) dislikeChange += 1;
-
-            transaction.update(comment.documentSnapshot.reference, {
-              CommentFields.likes : FieldValue.increment(likeChange),
-              CommentFields.dislikes : FieldValue.increment(dislikeChange),
-            });
-          }
-        });
-
-        return LikeState(
-              likeState: newLikeValue,
-              likeChange: likeChange,
-              dislikeChange: dislikeChange
-        );
+      if(idToken == null){
+        throw ApplicationUnauthorizedException();
       }
-    );
+
+      final response = await http.post(
+        Uri.parse(FirebaseFunctionEndpoints.updateLikeState),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+        body: jsonEncode({
+          'doc': comment.documentSnapshot.reference.path,
+          'state': newLikeValue,
+        }),
+      );
+
+      ApiResponse apiResponse = ApiResponse.fromMap(jsonDecode(response.body));
+
+      if(apiResponse.status == 200 || apiResponse.status == 300){
+        return LikeState.fromMap(apiResponse.data);
+      }
+      else{
+        throw apiResponse.error!;
+      }
+    });
   }
 
   Future<Result<int?>> getCommentCount(CollectionReference commentReference){
