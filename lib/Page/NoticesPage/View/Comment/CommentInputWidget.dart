@@ -21,6 +21,7 @@ class CommentInputWidget extends StatefulWidget {
     this.isModify = false,
     this.maintainButtons = false,
     this.onPressClosed,
+    this.modifyTarget,
   });
 
   final String noticeId;
@@ -31,6 +32,7 @@ class CommentInputWidget extends StatefulWidget {
   final bool isModify;
   final bool maintainButtons;
   final Function? onPressClosed;
+  final Comment? modifyTarget;
 
   @override
   State<CommentInputWidget> createState() => _CommentInputWidgetState();
@@ -62,6 +64,72 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
         widget.onFocus();
       }
     });
+  }
+
+  Future<void> updateComment()async{
+    if(textEditingController.text.isEmpty){
+      Get.snackbar('알림','내용을 입력해주세요.');
+      return;
+    }
+
+    if(widget.replyTarget == null && widget.modifyTarget != null){
+      Result result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
+          .updateComment(widget.modifyTarget!,textEditingController.text);
+
+      if(result.isSuccess){
+        _focusNode.unfocus();
+        widget.onPressClosed?.call();
+      }
+
+      CommentSnackbar.show(
+          result.isSuccess ? "알림" : "오류",
+          result.isSuccess ? "댓글을 수정했습니다." : "댓글 수정에 실패했습니다."
+      );
+    }
+    else if(widget.replyTarget != null && widget.modifyTarget != null){
+      Result result = await Get.find<ReplyCommentWidgetController>(
+          tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
+          .upload(textEditingController.text);
+
+
+      if(result.isSuccess){
+        _focusNode.unfocus();
+        widget.onPressClosed?.call();
+      }
+
+      CommentSnackbar.show(
+          result.isSuccess ? "알림" : "오류",
+          result.isSuccess ? "댓글을 수정했습니다." : "댓글 등록에 수정했습니다."
+      );
+    }
+  }
+
+  Future<void> uploadComment() async{
+    if(textEditingController.text.isEmpty){
+      Get.snackbar('알림','내용을 입력해주세요.');
+      return;
+    }
+
+    Result<Comment> result;
+
+    if(widget.replyTarget ==null){
+      result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
+          .uploadComment(textEditingController.text);
+    }
+    else{
+      result = await Get.find<ReplyCommentWidgetController>(
+          tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
+          .upload(textEditingController.text);
+    }
+
+    if(result.isSuccess){
+      _focusNode.unfocus();
+    }
+
+    CommentSnackbar.show(
+        result.isSuccess ? "알림" : "오류",
+        result.isSuccess ? "댓글을 등록했습니다." : "댓글 등록에 실패했습니다."
+    );
   }
 
   @override
@@ -116,33 +184,8 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
                       text: "등록",
                       width: 50.w,
                       height: 25.w,
-                      onPressed: () async {
-                        if(textEditingController.text.isEmpty){
-                          Get.snackbar('알림','내용을 입력해주세요.');
-                        }
-                        else{
-
-                          Result<Comment> result;
-
-                          if(widget.replyTarget ==null){
-                            result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
-                                .uploadComment(textEditingController.text);
-                          }
-                          else{
-                            result = await Get.find<ReplyCommentWidgetController>(
-                                tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
-                                .upload(textEditingController.text);
-                          }
-
-                          if(result.isSuccess){
-                            _focusNode.unfocus();
-                          }
-
-                          CommentSnackbar.show(
-                              result.isSuccess ? "알림" : "오류",
-                              result.isSuccess ? "댓글을 등록했습니다." : "댓글 등록에 실패했습니다."
-                          );
-                        }
+                      onPressed: (){
+                        updateComment();
                       },
                     )
                   ],
@@ -153,33 +196,8 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
                   text: "등록",
                   width: 50.w,
                   height: 25.w,
-                  onPressed: () async {
-                    if(textEditingController.text.isEmpty){
-                      Get.snackbar('알림','내용을 입력해주세요.');
-                    }
-                    else{
-
-                      Result<Comment> result;
-
-                      if(widget.replyTarget ==null){
-                        result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
-                            .uploadComment(textEditingController.text);
-                      }
-                      else{
-                        result = await Get.find<ReplyCommentWidgetController>(
-                            tag: ReplyCommentWidgetController.makeTag(widget.noticeId, widget.replyTarget!.id))
-                            .upload(textEditingController.text);
-                      }
-
-                      if(result.isSuccess){
-                        _focusNode.unfocus();
-                      }
-
-                      CommentSnackbar.show(
-                          result.isSuccess ? "알림" : "오류",
-                          result.isSuccess ? "댓글을 등록했습니다." : "댓글 등록에 실패했습니다."
-                      );
-                    }
+                  onPressed: (){
+                    uploadComment();
                   },
                 );
               }
