@@ -15,11 +15,14 @@ class CommentPopupMenuButtonWidget extends StatelessWidget {
     required this.comment,
     required this.onTapModify,
     this.replyTarget,
+    this.isMine = false
   });
+
   final String noticeId;
   final Comment comment;
   final void Function() onTapModify;
   final Comment? replyTarget;
+  final bool isMine;
 
   PopupMenuItem<String> buildMenuItem({
     required String value,
@@ -97,20 +100,32 @@ class CommentPopupMenuButtonWidget extends StatelessWidget {
           }
         },
         itemBuilder: (BuildContext buildContext) {
-          return [
-            buildMenuItem(
-              value: "수정",
-              name: "수정하기",
-              icon: Icons.mode_edit_outline_outlined,
-              color: Colors.black,
-            ),
-            buildMenuItem(
-              value: "삭제",
-              name: "삭제하기",
-              icon: Icons.delete_outlined,
-              color: Colors.redAccent
-            ),
-          ];
+          if(isMine){
+            return [
+              buildMenuItem(
+                value: "수정",
+                name: "수정하기",
+                icon: Icons.mode_edit_outline_outlined,
+                color: Colors.black,
+              ),
+              buildMenuItem(
+                  value: "삭제",
+                  name: "삭제하기",
+                  icon: Icons.delete_outlined,
+                  color: Colors.redAccent
+              ),
+            ];
+          }
+          else{
+            return [
+              buildMenuItem(
+                value: "신고",
+                name: "신고하기",
+                icon: Icons.mode_edit_outline_outlined,
+                color: Colors.black,
+              )
+            ];
+          }
         },
         elevation: 4,
       ),
