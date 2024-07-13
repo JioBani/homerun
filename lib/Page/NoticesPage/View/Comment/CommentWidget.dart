@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,7 +13,10 @@ import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentDropdowmMenuWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentInputWidget.dart';
+import 'package:homerun/Page/NoticesPage/View/Comment/CommentSnackbar.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/ReplyCommentListWidget.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
+import 'package:homerun/Service/Auth/HttpError.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/Style/Images.dart';
@@ -81,13 +86,9 @@ class _CommentWidgetState extends State<CommentWidget> {
   Future<void> updateLikeState(int newLikeState) async {
     final now = DateTime.now();
     if (lastClickTime != null && now.difference(lastClickTime!) < cooldownDuration) {
-      Get.snackbar(
+      CommentSnackbar.show(
         '오류',
-        '잠시후 다시 시도해 주세요.',
-        duration: const Duration(milliseconds: 2000),
-        //backgroundColor: Theme.of(context).primaryColor
-        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.5),
-        snackPosition: SnackPosition.TOP
+        '잠시후 다시 시도해 주세요.'
       );
       return;
     }
@@ -104,6 +105,18 @@ class _CommentWidgetState extends State<CommentWidget> {
       setState(() {});
     } else {
       StaticLogger.logger.e('[CommentWidget.updateLikeState()] ${result.exception}');
+      if(result.exception is SocketException){
+        CommentSnackbar.show('오류', '인터넷에 연결 할 수 없습니다.');
+      }
+      else if(result.exception is ApplicationUnauthorizedException){
+        CommentSnackbar.show('오류', '로그인이 필요합니다.');
+      }
+      else if(result.exception is UnauthorizedError){
+        CommentSnackbar.show('오류', '사용자 정보를 확인 할 수 없습니다.');
+      }
+      else{
+        CommentSnackbar.show('오류', '오류가 발생했습니다.');
+      }
     }
   }
 
