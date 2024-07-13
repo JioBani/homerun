@@ -195,6 +195,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                     noticeId: widget.noticeId,
                                     onFocus: (){},
                                     isModify : true,
+                                    modifyTarget: widget.comment,
                                     startWithOpen: true,
                                     startString: widget.comment.commentDto.content,
                                     maintainButtons: true,
