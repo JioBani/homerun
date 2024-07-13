@@ -35,7 +35,8 @@ class CommentService {
     int? index,
     Comment? startAfter,
     required OrderType orderBy,
-    bool descending = true
+    bool descending = true,
+    bool hasReply = false
   }) {
     return Result.handleFuture<List<Comment>>(
         action: () async {
@@ -54,7 +55,7 @@ class CommentService {
 
           UserDto? userDto = Get.find<AuthService>().tryGetUser();
 
-          return Future.wait(querySnapshot.docs.map((doc) => _makeComment(doc , userDto?.uid)));
+          return Future.wait(querySnapshot.docs.map((doc) => _makeComment(doc , userDto?.uid , hasReply: hasReply)));
         }
     );
   }
@@ -99,7 +100,7 @@ class CommentService {
     }
   }
 
-  Future<Comment> _makeComment(DocumentSnapshot doc,String? uid)async{
+  Future<Comment> _makeComment(DocumentSnapshot doc,String? uid, {bool hasReply = true})async{
     CommentDto commentDto = CommentDto.fromMap(doc.data() as Map<String, dynamic>);
 
     int? likeState;
@@ -108,10 +109,14 @@ class CommentService {
       likeState = await _getLikeState(doc,uid);
     }
 
-    CollectionReference replyRef =  CommentReferences.getReplyCollection(doc.reference);
-    Result<int?> replyCountResult = await getCommentCount(replyRef);
+    int replyCount = 0;
 
-    int replyCount = replyCountResult.content ?? 0;
+    if(hasReply){
+      CollectionReference replyRef =  CommentReferences.getReplyCollection(doc.reference);
+      Result<int?> replyCountResult = await getCommentCount(replyRef);
+
+      replyCount = replyCountResult.content ?? 0;
+    }
 
     try{
       return Comment(
