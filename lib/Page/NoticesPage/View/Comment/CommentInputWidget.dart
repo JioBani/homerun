@@ -6,6 +6,7 @@ import 'package:homerun/Common/Comment/Comment.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Palette.dart';
 
 import 'CommentSnackbar.dart';
@@ -111,6 +112,7 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
     }
 
     Result<Comment> result;
+    String content = '';
 
     if(widget.replyTarget ==null){
       result = await Get.find<CommentViewWidgetController>(tag: widget.noticeId)
@@ -124,11 +126,21 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
 
     if(result.isSuccess){
       _focusNode.unfocus();
+      content = "댓글 등록에 성공했습니다.";
+    }
+    else{
+      if(result.exception is ApplicationUnauthorizedException){
+        content = "로그인이 필요합니다.";
+      }
+      else{
+        content = "댓글 등록에 실패했습니다.";
+      }
     }
 
+
     CommentSnackbar.show(
-        result.isSuccess ? "알림" : "오류",
-        result.isSuccess ? "댓글을 등록했습니다." : "댓글 등록에 실패했습니다."
+      result.isSuccess ? "알림" : "오류",
+      content
     );
   }
 
