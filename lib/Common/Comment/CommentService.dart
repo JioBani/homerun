@@ -187,6 +187,14 @@ class CommentService {
     );
   }
 
+  Future<Result<void>> update(DocumentReference target , String content){
+    return Result.handleFuture<void>(
+        action : ()async{
+          return target.update({CommentFields.content : content});
+        }
+    );
+  }
+
   //#. 좋아요 상태 변경
   Future<Result<LikeState>> updateLikeStatus(Comment comment, int newLikeValue) async {
     return Result.handleFuture(action: () async {
