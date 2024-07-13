@@ -95,6 +95,7 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
 
       if(result.isSuccess){
         _focusNode.unfocus();
+        textEditingController.text = '';
         widget.onPressClosed?.call();
       }
 
@@ -126,6 +127,7 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
 
     if(result.isSuccess){
       _focusNode.unfocus();
+      textEditingController.text = '';
       content = "댓글 등록에 성공했습니다.";
     }
     else{
