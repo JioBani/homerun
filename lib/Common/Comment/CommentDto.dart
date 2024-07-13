@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CommentDto {
-  final String content;
+  String content;
   final String uid;
-  final Timestamp date;
+  Timestamp date;
   final DocumentReference? replyTarget;
-  final int? likes;
-  final int? dislikes;
+  int? likes;
+  int? dislikes;
 
   CommentDto({
     required this.content,
