@@ -135,164 +135,168 @@ class _CommentWidgetState extends State<CommentWidget> {
       child: Builder(
         builder: (context) {
           if(loadingState == LoadingState.success){
-            return Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            return Column(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(30.w),
-                  child: Image.asset(
-                    TestImages.ashe_43,
-                    width: 30.w,
-                    height: 30.w,
-                  ),
-                ),
-                SizedBox(
-                  width: 6.w,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30.w),
+                      child: Image.asset(
+                        TestImages.ashe_43,
+                        width: 30.w,
+                        height: 30.w,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 6.w,
+                    ),
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
-                            loadingState == LoadingState.success ? userDto!.displayName! : "",
-                            style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: const Color(0xff767676)),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                loadingState == LoadingState.success ? userDto!.displayName! : "",
+                                style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: const Color(0xff767676)),
+                              ),
+                              SizedBox(width: 7.w,),
+                              Text(
+                                TimeFormatter.formatTimeDifference(widget.comment.commentDto.date.toDate()),
+                                style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
+                              ),
+                              const Spacer(),
+                              CommentPopupMenuButtonWidget(
+                                noticeId: widget.noticeId,
+                                comment: widget.comment,
+                                onTapModify: (){
+                                  setState(() {
+                                    isModifyOpen = true;
+                                  });
+                                },
+                                replyTarget: widget.replyTarget,
+                                isMine : widget.comment.commentDto.uid == FirebaseAuth.instance.currentUser?.uid
+                              )
+                            ],
                           ),
-                          SizedBox(width: 7.w,),
-                          Text(
-                            TimeFormatter.formatTimeDifference(widget.comment.commentDto.date.toDate()),
-                            style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.normal, color: const Color(0xff767676)),
+                          SizedBox(
+                            height: 7.w,
                           ),
-                          const Spacer(),
-                          CommentPopupMenuButtonWidget(
-                            noticeId: widget.noticeId,
-                            comment: widget.comment,
-                            onTapModify: (){
-                              setState(() {
-                                isModifyOpen = true;
-                              });
-                            },
-                            replyTarget: widget.replyTarget,
-                            isMine : widget.comment.commentDto.uid == FirebaseAuth.instance.currentUser?.uid
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 7.w,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 2.w),
-                        child: Builder(
-                          builder: (context) {
-                            if(isModifyOpen){
-                              return Column(
-                                children: [
-                                  CommentInputWidget(
-                                    noticeId: widget.noticeId,
-                                    onFocus: (){},
-                                    isModify : true,
-                                    modifyTarget: widget.comment,
-                                    startWithOpen: true,
-                                    startString: widget.comment.commentDto.content,
-                                    maintainButtons: true,
-                                    onPressClosed: (){
-                                      setState(() {
-                                        isModifyOpen = false;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              );
-                            }
-                            else{
-                              return Text(
-                                widget.comment.commentDto.content,
-                                style: TextStyle(
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              );
-                            }
-                          }
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          CommentIconButton(
-                            imagePath: NoticePageImages.comment.good,
-                            content: likes.toString(),
-                            iconDistance: 2.w,
-                            onTap: () async {
-                              if(likeState == 1){
-                                updateLikeState(0);
+                          Padding(
+                            padding: EdgeInsets.only(left: 2.w),
+                            child: Builder(
+                              builder: (context) {
+                                if(isModifyOpen){
+                                  return Column(
+                                    children: [
+                                      CommentInputWidget(
+                                        noticeId: widget.noticeId,
+                                        onFocus: (){},
+                                        isModify : true,
+                                        modifyTarget: widget.comment,
+                                        startWithOpen: true,
+                                        startString: widget.comment.commentDto.content,
+                                        maintainButtons: true,
+                                        onPressClosed: (){
+                                          setState(() {
+                                            isModifyOpen = false;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                }
+                                else{
+                                  return Text(
+                                    widget.comment.commentDto.content,
+                                    style: TextStyle(
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  );
+                                }
                               }
-                              else{
-                                updateLikeState(1);
-                              }
-                            },
-                            color: likeState == 1 ? Theme.of(context).primaryColor : null,
+                            ),
                           ),
-                          CommentIconButton(
-                            imagePath: NoticePageImages.comment.bad,
-                            content: dislikes.toString(),
-                            iconDistance: 2.w,
-                            onTap: () async {
-                              if(likeState == -1){
-                                updateLikeState(0);
-                              }
-                              else{
-                                updateLikeState(-1);
-                              }
-                            },
-                            color: likeState == -1 ? Theme.of(context).primaryColor : null,
-                          ),
-                          Builder(
-                            builder: (context){
-                              if(widget.replyTarget == null){
-                                return CommentIconButton(
-                                  imagePath: NoticePageImages.comment.reply,
-                                  content: '대댓글 ${widget.comment.replyCount}',
-                                  color: isReplyOpen ? Theme.of(context).primaryColor : null,
-                                  iconDistance: 4.w,
-                                  textTap: true,
-                                  onTap: () {
-                                    if(widget.replyTarget == null){
-                                      setState(() {
-                                        isReplyOpen = !isReplyOpen;
-                                      });
-                                    }
-                                  },
-                                );
-                              }
-                              else{
-                                return SizedBox();
-                              }
-                            }
-                          )
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              CommentIconButton(
+                                imagePath: NoticePageImages.comment.good,
+                                content: likes.toString(),
+                                iconDistance: 2.w,
+                                onTap: () async {
+                                  if(likeState == 1){
+                                    updateLikeState(0);
+                                  }
+                                  else{
+                                    updateLikeState(1);
+                                  }
+                                },
+                                color: likeState == 1 ? Theme.of(context).primaryColor : null,
+                              ),
+                              CommentIconButton(
+                                imagePath: NoticePageImages.comment.bad,
+                                content: dislikes.toString(),
+                                iconDistance: 2.w,
+                                onTap: () async {
+                                  if(likeState == -1){
+                                    updateLikeState(0);
+                                  }
+                                  else{
+                                    updateLikeState(-1);
+                                  }
+                                },
+                                color: likeState == -1 ? Theme.of(context).primaryColor : null,
+                              ),
+                              Builder(
+                                builder: (context){
+                                  if(widget.replyTarget == null){
+                                    return CommentIconButton(
+                                      imagePath: NoticePageImages.comment.reply,
+                                      content: '대댓글 ${widget.comment.replyCount}',
+                                      color: isReplyOpen ? Theme.of(context).primaryColor : null,
+                                      iconDistance: 4.w,
+                                      textTap: true,
+                                      onTap: () {
+                                        if(widget.replyTarget == null){
+                                          setState(() {
+                                            isReplyOpen = !isReplyOpen;
+                                          });
+                                        }
+                                      },
+                                    );
+                                  }
+                                  else{
+                                    return SizedBox();
+                                  }
+                                }
+                              )
 
+                            ],
+                          ),
                         ],
                       ),
-                      Builder(
-                          builder: (context){
-                            if(isReplyOpen && widget.replyTarget == null){
-                              return Padding(
-                                padding: EdgeInsets.only(top: 10.w),
-                                child: ReplyCommentListWidget(noticeId: widget.noticeId,comment: widget.comment,),
-                              );
-                            }
-                            else{
-                              return const SizedBox();
-                            }
-                          }
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+                Builder(
+                    builder: (context){
+                      if(isReplyOpen && widget.replyTarget == null){
+                        return Padding(
+                          padding: EdgeInsets.only(top: 10.w , left: 15.w),
+                          child: ReplyCommentListWidget(noticeId: widget.noticeId,comment: widget.comment,),
+                        );
+                      }
+                      else{
+                        return const SizedBox();
+                      }
+                    }
                 ),
               ],
             );
