@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Comment.dart';
@@ -7,7 +6,6 @@ import 'package:homerun/Common/Comment/Enums.dart';
 import 'package:homerun/Common/Comment/LikeState.dart';
 import 'package:homerun/Common/Comment/CommentReferences.dart';
 import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 
 import 'CommentLoader.dart';
@@ -142,6 +140,17 @@ class CommentViewWidgetController extends GetxController{
     return result;
   }
 
+  Future<Result<void>> updateComment(Comment comment , String content)async {
+    Result<void> result = await CommentService.instance.update(comment.documentSnapshot.reference , content);
+
+    if(result.isSuccess){
+      comment.commentDto.content = content;
+    }
+
+    return result;
+  }
+
+
   Future<Result<List<Comment>>> loadComment({bool reset = false}){
     if(showLoader.comments.isEmpty){
       return showLoader.getComments(initCommentNum , reset: reset);
@@ -158,5 +167,4 @@ class CommentViewWidgetController extends GetxController{
   Future<void> reload(){
     return showLoader.reload();
   }
-
 }
