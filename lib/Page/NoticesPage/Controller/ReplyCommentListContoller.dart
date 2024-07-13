@@ -36,7 +36,8 @@ class ReplyCommentWidgetController extends GetxController{
       orderBy: OrderType.date,
       descending: false,
       index: commentsPerLoad,
-      startAfter: replyList.isNotEmpty ? replyList.last : null
+      startAfter: replyList.isNotEmpty ? replyList.last : null,
+      hasReply: false
     );
 
 
