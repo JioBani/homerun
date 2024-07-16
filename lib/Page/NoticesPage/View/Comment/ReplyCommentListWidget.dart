@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/Comment/Comment.dart';
+import 'package:homerun/Common/Comment/Model/Comment.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Controller/ReplyCommentListContoller.dart';
