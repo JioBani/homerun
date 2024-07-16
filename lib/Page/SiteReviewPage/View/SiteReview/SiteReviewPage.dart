@@ -54,35 +54,29 @@ class _SiteReviewPageState extends State<SiteReviewPage> {
         ],
       ),
       body: SafeArea(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.w),
-              child: ListView(
-                children: [
-                  SizedBox(height: 25.w,),
-                  ImageSlideWidget(siteReview: widget.siteReview,),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      widget.siteReview.content,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Palette.brightMode.mediumText,
-                      ),
-                    ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 25.w),
+          child: ListView(
+            children: [
+              SizedBox(height: 25.w,),
+              ImageSlideWidget(siteReview: widget.siteReview,),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  widget.siteReview.content,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Palette.brightMode.mediumText,
                   ),
-                  ProfileWidget(userDto: widget.userDto,),
-                  SizedBox(height: 5.w,),
-                  Divider(thickness: 1.sp,),
-                  CommentViewWidget(siteReview: widget.siteReview),
-                  SizedBox(height: 50.w,)
-                ],
+                ),
               ),
-            ),
-            CommentInputWidget(siteReview: widget.siteReview,)
-          ],
+              ProfileWidget(userDto: widget.userDto,),
+              SizedBox(height: 5.w,),
+              Divider(thickness: 1.sp,),
+              CommentViewWidget(siteReview: widget.siteReview),
+              SizedBox(height: 50.w,)
+            ],
+          ),
         ),
       ),
     );
