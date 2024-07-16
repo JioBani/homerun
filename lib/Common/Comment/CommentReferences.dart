@@ -13,9 +13,11 @@ class CommentReferences{
 
   static CollectionReference getNoticeComment(String noticeId, String type){
     return FirebaseFirestore.instance
-        .collection('notice_comment')
+        .collection('notice')
         .doc(noticeId)
-        .collection(type);
+        .collection(type)
+        .doc('comment')
+        .collection('comment');
   }
 
   static CollectionReference getReplyCollection(DocumentReference replyRef){
