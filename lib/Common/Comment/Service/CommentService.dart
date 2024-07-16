@@ -15,8 +15,8 @@ import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:http/http.dart' as http;
 
-import 'Model/Comment.dart';
-import 'Model/CommentDto.dart';
+import '../Model/Comment.dart';
+import '../Model/CommentDto.dart';
 
 class CommentService {
 
