@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/instance_manager.dart';
-import 'package:homerun/Common/Comment/Enums.dart';
+import 'package:homerun/Common/Comment/Model/Enums.dart';
 import 'package:homerun/Common/Comment/Exceptions.dart';
-import 'package:homerun/Common/Comment/LikeState.dart';
+import 'package:homerun/Common/Comment/Model/LikeState.dart';
 import 'package:homerun/Common/Comment/CommentReferences.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
@@ -15,8 +15,8 @@ import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:http/http.dart' as http;
 
-import 'Comment.dart';
-import 'CommentDto.dart';
+import 'Model/Comment.dart';
+import 'Model/CommentDto.dart';
 
 class CommentService {
 
@@ -201,7 +201,7 @@ class CommentService {
   }
 
   //#. 좋아요 상태 변경
-  Future<Result<LikeState>> updateLikeStatus(Comment comment, int newLikeValue) async {
+  Future<Result<LikeState>> updateLikeState(Comment comment, int newLikeValue) async {
     return Result.handleFuture(action: () async {
       String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
