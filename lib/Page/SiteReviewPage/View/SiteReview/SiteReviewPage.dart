@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
-import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentInputWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentViewWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/ImageSlideWidget.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
@@ -40,15 +39,15 @@ class _SiteReviewPageState extends State<SiteReviewPage> {
         actions: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.w),
-            child: Icon(Icons.favorite_border),
+            child: const Icon(Icons.favorite_border),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.w),
-            child: Icon(Icons.folder_open),
+            child: const Icon(Icons.folder_open),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.w),
-            child: Icon(Icons.share),
+            child: const Icon(Icons.share),
           ),
           SizedBox(width: 10.w,)
         ],
