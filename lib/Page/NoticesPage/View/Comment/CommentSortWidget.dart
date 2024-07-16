@@ -2,7 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/Comment/Enums.dart';
+import 'package:homerun/Common/Comment/Model/Enums.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
