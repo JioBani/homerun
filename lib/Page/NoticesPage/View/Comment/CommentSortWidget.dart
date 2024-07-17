@@ -34,7 +34,7 @@ class _CommentSortWidgetState extends State<CommentSortWidget> {
             GetBuilder<CommentViewWidgetController>(
               tag: widget.noticeId,
               builder: (controller) {
-                return Text("${controller.showLoader.allCommentCount}개의 댓글");
+                return Text("${controller.showingController.allCommentCount}개의 댓글");
               }
             ),
           ],
