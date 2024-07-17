@@ -4,14 +4,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/Widget/FireStorageImageList.dart';
+import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentSortWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabBarWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabChildWidget.dart';
-import 'package:homerun/Page/NoticesPage/View/Comment/CommentViewWIdget.dart';
 import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
 import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewWidget.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
@@ -19,7 +19,7 @@ import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
 import 'package:homerun/Style/Images.dart';
 
-import 'Comment/CommentInputWidget.dart';
+import '../../../Unused/CommentInputWidget.dart';
 
 class AdNoticePage extends StatefulWidget {
   const AdNoticePage({super.key, required this.announcement});
@@ -253,8 +253,14 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       Padding(
         padding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 5.w),
         child: CommentInputWidget(
-          noticeId:  widget.announcement.publicAnnouncementNumber!,
-          onFocus: (){scrollToCommentInput();},
+          onFocus: (context){scrollToCommentInput();},
+          onTapSubmit: (context , content, focusNode, textController) async {
+            Result? result = await commentViewWidgetController.showingController.upload(content);
+            if(result != null && result.isSuccess){
+              textController.clear();
+              focusNode.unfocus();
+            }
+          },
         ),
       ),
       Padding(
