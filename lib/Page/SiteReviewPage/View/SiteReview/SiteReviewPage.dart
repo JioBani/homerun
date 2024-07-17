@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
+import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentViewWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/ImageSlideWidget.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';

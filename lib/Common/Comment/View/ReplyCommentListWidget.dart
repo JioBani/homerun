@@ -5,11 +5,11 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/Model/Comment.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/NoticesPage/View/Comment/CommentSnackbar.dart';
 import 'package:homerun/Style/Palette.dart';
 
 import '../Controller/ReplyCommentListWidgetController.dart';
 import 'CommentInputWidget.dart';
+import 'CommentSnackBar.dart';
 import 'CommentWidget.dart';
 
 class ReplyCommentListWidget extends StatefulWidget {
