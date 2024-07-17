@@ -5,7 +5,8 @@ import 'package:homerun/Common/Comment/Model/Enums.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/NoticesPage/View/Comment/CommentSnackbar.dart';
+
+import '../View/CommentSnackBar.dart';
 
 class CommentListController{
   late final CollectionReference commentCollection;
@@ -16,6 +17,7 @@ class CommentListController{
   final bool hasReply;
   final bool hasLikes;
   final Function? onUpdate;
+  int allCommentCount = 0;
 
   CommentListController({
     required this.commentCollection,
@@ -34,16 +36,17 @@ class CommentListController{
 
     if(reset){
       comments = [];
+      await getCommentCount();
     }
 
 
     Result<List<Comment>> result = await CommentService.instance.getComments(
         commentCollection: commentCollection,
-        orderBy: OrderType.date,
-        descending: false,
+        orderBy: orderType,
+        descending: descending,
         index: nums,
         startAfter: comments.isNotEmpty ? comments.last : null,
-        hasReply: false
+        hasReply: hasReply
     );
 
 
@@ -120,5 +123,13 @@ class CommentListController{
     }
 
     return result;
+  }
+
+  Future<Result<int?>> getCommentCount() async {
+    Result<int?> count = await CommentService.instance.getCommentCount(commentCollection);
+    if(count.isSuccess){
+      allCommentCount = count.content ?? 0;
+    }
+    return count;
   }
 }
