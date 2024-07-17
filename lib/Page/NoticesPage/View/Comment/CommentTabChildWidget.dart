@@ -1,11 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Comment/View/CommentWidget.dart';
 import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Page/NoticesPage/Controller/CommentLoader.dart';
 
 import '../../Controller/CommentViewWidgetController.dart';
-import 'CommentWidget.dart';
 
 class CommentTabChildWidget extends StatelessWidget {
   const CommentTabChildWidget({super.key, required this.noticeId});
@@ -19,44 +19,43 @@ class CommentTabChildWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
+          //#. 댓글 리스트
           GetBuilder<CommentViewWidgetController>(
               tag: noticeId,
               builder: (controller){
-                CommentLoader commentLoader =  controller.showLoader;
-                if(commentLoader.loadingState == LoadingState.success ||
-                    commentLoader.loadingState == LoadingState.noMoreData
-                ){
-                  return Column(
-                    children: commentLoader.comments.map((comment) =>
+                return Column(
+                  children: controller.showingController.comments.map((comment) =>
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5.w),
-                        child: CommentWidget(comment: comment, noticeId: noticeId,)
+                          padding: EdgeInsets.symmetric(vertical: 5.w),
+                          child: CommentWidget(
+                              comment: comment,
+                              commentController: controller.showingController
+                          )
                       )
-                    ).toList(),
-                  );
-                }
-                else{
-                  return const SizedBox();
-                }
+                  ).toList(),
+                );
               }
           ),
+          //#. 댓글 불러오기
           GetBuilder<CommentViewWidgetController>(
               tag: noticeId,
               builder: (controller){
-                CommentLoader commentLoader =  controller.showLoader;
-                if(commentLoader.loadingState == LoadingState.success){
+                if(controller.showingController.loadingState == LoadingState.success){
                   return TextButton(
                       onPressed: (){
                         controller.loadComment();
                       },
-                      child: Text('더보기')
+                      child: const Text('더보기')
                   );
                 }
-                else if(commentLoader.loadingState == LoadingState.noMoreData){
-                  return Text("마지막 댓글 입니다.");
+                else if(controller.showingController.loadingState == LoadingState.noMoreData){
+                  return const Text("마지막 댓글 입니다.");
+                }
+                else if(controller.showingController.loadingState == LoadingState.loading){
+                  return const CupertinoActivityIndicator();
                 }
                 else{
-                  return Text("댓글을 불러 올 수 없습니다.");
+                  return const Text("댓글을 불러 올 수 없습니다.");
                 }
               }
           ),
