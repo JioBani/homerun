@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/Widget/CustomDialog.dart';
+import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewWritePageController.dart';
+import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
+import 'package:homerun/Page/SiteReviewPage/Service/UploadResult.dart';
 import 'package:homerun/Page/SiteReviewPage/View/ImageListWidget.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Fonts.dart';
@@ -29,6 +33,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
   Widget build(BuildContext context) {
     var controller = Get.put(SiteReviewWritePageController(noticeId: widget.noticeId));
     return Scaffold(
+      //#. Appbar
       appBar:AppBar(
         elevation: 0,
         centerTitle: true,
@@ -67,90 +72,74 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 25.w , vertical: 15.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const ImageListWidget(),
-              Padding(
-                padding: EdgeInsets.only(left: 2.w),
-                child: Text(
-                  "제목",
-                  style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: subTitleColor
-                  ),
-                ),
-              ),
-              SizedBox(height: 9.w,),
-              CustomTextFormField(
-                controller: titleController,
-                hintText: "제목을 입력해주세요",
-                maxLines: 1,
-              ),
-              SizedBox(height: 26.w,),
-              Padding(
-                padding: EdgeInsets.only(left: 2.w),
-                child: Text(
-                  "본문",
-                  style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: subTitleColor
-                  ),
-                ),
-              ),
-              SizedBox(height: 9.w,),
-               Expanded(
-                child: CustomTextFormField(
-                  controller: contentController,
-                  hintText: "리뷰 내용을 작성해주세요.",
-                  maxLines: 30,
-                ),
-              ),
-              SizedBox(height: 14.w,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: SingleChildScrollView(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height - (MediaQuery.of(context).padding.top + kToolbarHeight + kBottomNavigationBarHeight),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 135.w,
-                    height: 30.w,
-                    decoration: BoxDecoration(
-                      color: fillColor,
-                      borderRadius: BorderRadius.circular(5.r),
-                      border: Border.all(color: borderColor)
-                    ),
-                    child: Center(
-                      child: Text(
-                        "파일업로드",
-                        style: TextStyle(
-                          color: subTitleColor,
-                          fontSize: 15.sp
-                        ),
+                  //#. 제목
+                  Padding(
+                    padding: EdgeInsets.only(left: 2.w),
+                    child: Text(
+                      "제목",
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: subTitleColor
                       ),
                     ),
                   ),
+                  SizedBox(height: 9.w,),
+                  //#. 제목 입력
+                  CustomTextFormField(
+                    controller: titleController,
+                    hintText: "제목을 입력해주세요",
+                    maxLines: 1,
+                  ),
+                  SizedBox(height: 26.w,),
+                  const ImageListWidget(),
+                  //#. 본문
+                  Padding(
+                    padding: EdgeInsets.only(left: 2.w),
+                    child: Text(
+                      "본문",
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: subTitleColor
+                      ),
+                    ),
+                  ),
+                  //#. 본문 입력
+                  SizedBox(height: 9.w,),
+                   Expanded(
+                    child: CustomTextFormField(
+                      controller: contentController,
+                      hintText: "리뷰 내용을 작성해주세요.",
+                      maxLines: 30,
+                    ),
+                  ),
+                  SizedBox(height: 14.w,),
+                  SizedBox(height: 14.w,),
                   InkWell(
-                    onTap: () async {
-                      Result<void> result = await controller.addImage();
-                      if(!result.isSuccess){
-                        Get.snackbar('오류', '이미지를 가져올 수 없습니다.');
-                      }
+                    onTap: () {
+                      controller.upload(titleController.text, contentController.text , context);
                     },
                     child: Container(
-                      width: 135.w,
+                      width: double.infinity,
                       height: 30.w,
                       decoration: BoxDecoration(
-                          color: fillColor,
+                          color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(5.r),
-                          border: Border.all(color: borderColor)
                       ),
                       child: Center(
                         child: Text(
-                          "파일업로드",
+                          "작성완료",
                           style: TextStyle(
-                              color: subTitleColor,
-                              fontSize: 15.sp
+                            color: Colors.white,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600
                           ),
                         ),
                       ),
@@ -158,46 +147,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                   ),
                 ],
               ),
-              SizedBox(height: 14.w,),
-              InkWell(
-                onTap: () async {
-                  Result<void> result = await controller.upload(titleController.text, contentController.text);
-                  if(result.isSuccess){
-
-                  }
-                  else{
-                    if(result.exception is OutOfImageSizeException){
-                      Get.snackbar('오류', '이미지의 크기는 10MB를 넘을 수 없습니다.');
-                    }
-                    else if(result.exception is ApplicationUnauthorizedException){
-                      Get.snackbar('오류', '로그인이 필요합니다.'); //TODO 로그인 페이지랑 연결
-                    }
-                    else{
-                      Get.snackbar('오류', '업로드중 오류가 발생 했습니다.');
-                    }
-                    StaticLogger.logger.e(result.stackTrace);
-                  }
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 30.w,
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(5.r),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "작성완료",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
