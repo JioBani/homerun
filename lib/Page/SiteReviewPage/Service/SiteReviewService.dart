@@ -6,13 +6,14 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/NoticesPage/Model/SiteReview.dart';
-import 'package:homerun/Page/SiteReviewPage/Model/Comment.dart';
-import 'package:homerun/Page/SiteReviewPage/Model/CommentDto.dart';
+import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
+import 'package:homerun/Page/SiteReviewPage/Service/UploadResult.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../Exception/SiteServiceException.dart';
 
 class SiteReviewService{
 
@@ -48,12 +49,11 @@ class SiteReviewService{
     );
   }
 
-  ///글 업로드
-  Future<Result<void>> upload(
+  Future<UploadResultInfo> upload(
       SiteReviewWriteDto siteReviewWriteDto,
       List<XFile> images,
       void Function(UploadState, String, Object?)? onProgress
-    ) async{
+      ) async{
 
     //#1. 유저 정보 가져오기
     UserDto userDto;
@@ -64,7 +64,11 @@ class SiteReviewService{
       if(onProgress != null){
         onProgress(UploadState.fail,'로그인이 되어 있지 않습니다.',e);
       }
-      return Result<void>.fromFailure(e, s);
+      return UploadResultInfo.fromFailure(
+          state: UploadResult.authFailure,
+          exception: e,
+          stackTrace: s
+      );
     }
 
 
@@ -81,7 +85,11 @@ class SiteReviewService{
       if(onProgress != null){
         onProgress(UploadState.fail,'문서 만들기 실패',e);
       }
-      return Result<void>.fromFailure(e, s);
+      return UploadResultInfo.fromFailure(
+          state: UploadResult.createDocFailure,
+          exception: e,
+          stackTrace: s
+      );
     }
 
     //#3. 리뷰 문서에 정보 저장하기
@@ -106,42 +114,59 @@ class SiteReviewService{
       if(onProgress != null){
         onProgress(UploadState.fail,'문서 저장 실패',e1);
       }
-      return Result<void>.fromFailure(e1, s);
+
+      return UploadResultInfo.fromFailure(
+          state: UploadResult.writeDocFailure,
+          exception: e1,
+          stackTrace: s
+      );
     }
 
 
     //#4. 이미지 업로드
     Map<XFile , Result<void>> result = await _uploadImage(
-      images,siteReviewWriteDto.noticeId,documentReference.id,null
+        images,siteReviewWriteDto.noticeId,documentReference.id,null
     );
 
     //#4-1. 이미지 업로드 에러 처리
-    int success = 0;
-    Result<void>? lastError;
+    bool hasImageUploadError = false;
+    List<String> errorImageNames = [];
+    late Result lastError;
+
     result.forEach((key, value) {
-      if(value.isSuccess) {
-        success++;
-      }
-      else{
+      if(!value.isSuccess) {
+        errorImageNames.add(key.path);
+        hasImageUploadError = true;
         lastError = value;
       }
     });
 
-    if(onProgress != null){
-      onProgress(
-          success == result.length ? UploadState.success : UploadState.fail,
-          '업로드 : $success/${result.length}',
-          lastError?.exception
+    //#5. 업로드 결과 가져오기
+    SiteReview review;
+    try{
+      review = SiteReview.fromDocumentSnapshot(await documentReference.get());
+    }catch(e , s){
+      return UploadResultInfo.fromFailure(
+          state: UploadResult.getUploadedDocFailure,
+          exception: e,
+          stackTrace: s
       );
     }
 
-    if(success == result.length){
-      return Result<void>.fromSuccess();
+    //#6. 반환
+    if(!hasImageUploadError){
+      return UploadResultInfo.fromSuccess(review);
     }
     else{
-      return lastError!;
+      return UploadResultInfo.fromFailure(
+        state: UploadResult.writeDocFailure,
+        exception: lastError.exception!,
+        stackTrace: lastError.stackTrace!,
+        failImages: errorImageNames,
+      );
     }
   }
+
 
   Future<DocumentReference> _createDocument(String noticeId, String uid) async {
     return await _siteReviewCollection
@@ -191,61 +216,63 @@ class SiteReviewService{
     return resultMap;
   }
 
-  Future<Result<void>> uploadComment(String content, String noticeId, String reviewId)=>
-      Result.handleFuture<void>(
-        action: () async {
-          CollectionReference commentRef = _siteReviewCollection.doc(noticeId)
-              .collection('review')
-              .doc(reviewId)
-              .collection('comment');
 
-          UserDto userDto = Get.find<AuthService>().getUser();
 
-          CommentDto commentDto = CommentDto(
-              date: Timestamp.now(),
-              content: content,
-              uid: userDto.uid,
-              noticeId: noticeId,
-              reviewId: reviewId
-          );
-
-          await commentRef.add(commentDto.toMap());
-        }
-    );
-
-  Future<Result<List<Comment>>> getComments({
-    required String noticeId,
-    required String reviewId,
-    required int index,
-    Comment? startAfter,
-  }){
-    return Result.handleFuture<List<Comment>>(
-        action: () async {
-          CollectionReference ref = _siteReviewCollection.doc(noticeId)
-              .collection('review')
-              .doc(reviewId)
-              .collection('comment');
-
-          Query query = ref.orderBy('date' , descending: true);
-
-          if(startAfter != null){
-            query = query.startAfter([startAfter.commentDto.date]);
-          }
-
-          query = query.limit(index);
-
-          QuerySnapshot querySnapshot = await query.get();
-
-          return querySnapshot.docs.map((doc) =>
-            Comment(
-                id: doc.id,
-                commentDto: CommentDto.fromMap(doc.data() as Map<String,dynamic>)
-            )
-          ).toList();
-        }
-    );
-
-  }
+  // Future<Result<void>> uploadComment(String content, String noticeId, String reviewId)=>
+  //     Result.handleFuture<void>(
+  //       action: () async {
+  //         CollectionReference commentRef = _siteReviewCollection.doc(noticeId)
+  //             .collection('review')
+  //             .doc(reviewId)
+  //             .collection('comment');
+  //
+  //         UserDto userDto = Get.find<AuthService>().getUser();
+  //
+  //         CommentDto commentDto = CommentDto(
+  //             date: Timestamp.now(),
+  //             content: content,
+  //             uid: userDto.uid,
+  //             noticeId: noticeId,
+  //             reviewId: reviewId
+  //         );
+  //
+  //         await commentRef.add(commentDto.toMap());
+  //       }
+  //   );
+  //
+  // Future<Result<List<Comment>>> getComments({
+  //   required String noticeId,
+  //   required String reviewId,
+  //   required int index,
+  //   Comment? startAfter,
+  // }){
+  //   return Result.handleFuture<List<Comment>>(
+  //       action: () async {
+  //         CollectionReference ref = _siteReviewCollection.doc(noticeId)
+  //             .collection('review')
+  //             .doc(reviewId)
+  //             .collection('comment');
+  //
+  //         Query query = ref.orderBy('date' , descending: true);
+  //
+  //         if(startAfter != null){
+  //           query = query.startAfter([startAfter.commentDto.date]);
+  //         }
+  //
+  //         query = query.limit(index);
+  //
+  //         QuerySnapshot querySnapshot = await query.get();
+  //
+  //         return querySnapshot.docs.map((doc) =>
+  //           Comment(
+  //               id: doc.id,
+  //               commentDto: CommentDto.fromMap(doc.data() as Map<String,dynamic>)
+  //           )
+  //         ).toList();
+  //       }
+  //   );
+  //
+  // }
 
 }
 
