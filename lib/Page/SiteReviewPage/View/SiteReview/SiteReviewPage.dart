@@ -59,16 +59,23 @@ class _SiteReviewPageState extends State<SiteReviewPage> {
             children: [
               SizedBox(height: 25.w,),
               ImageSlideWidget(siteReview: widget.siteReview,),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  widget.siteReview.content,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Palette.brightMode.mediumText,
+              SizedBox(height: 10.w,),
+              Container(
+                constraints: BoxConstraints(
+                  minHeight: 120.w,
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    widget.siteReview.content,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Palette.brightMode.mediumText,
+                    ),
                   ),
                 ),
               ),
+              SizedBox(height: 10.w,),
               ProfileWidget(userDto: widget.userDto,),
               SizedBox(height: 5.w,),
               Divider(thickness: 1.sp,),
