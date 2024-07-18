@@ -30,6 +30,7 @@ class Result<T>{
 
   static Future<Result<T>> handleFuture<T>({
     required Future<T> Function() action,
+    Function(Object , StackTrace)? onError,
     Duration timeout = const Duration(seconds: 5), //TODO 적절한 시간으로 수정
   }) async {
     try {
@@ -37,6 +38,9 @@ class Result<T>{
 
     } catch (e , s) {
       StaticLogger.logger.e('[ApiResponse.handleExceptions()] $e\n$s');
+      if(onError != null){
+        onError(e , s);
+      }
       return Result<T>.fromFailure(e, s);
     }
   }
