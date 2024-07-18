@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Service/FirebaseStorageService.dart';
 
@@ -59,6 +60,10 @@ class SiteReview {
       imagesRefPath: map['imagesRefPath'],
       thumbnailRefPath: map['thumbnailRefPath'],
     );
+  }
+
+  factory SiteReview.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+    return SiteReview.fromMap(documentSnapshot.data() as Map<String, dynamic>, documentSnapshot.id);
   }
 
   factory SiteReview.fromWriteDto({
