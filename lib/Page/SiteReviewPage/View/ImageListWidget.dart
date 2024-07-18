@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Widget/Snackbar.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewWritePageController.dart';
 
 class ImageListWidget extends StatelessWidget {
@@ -12,28 +14,34 @@ class ImageListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<SiteReviewWritePageController>(
         builder: (controller){
-          if(controller.images.isNotEmpty){
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "이미지",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xff767676),
-                      fontSize: 16.sp
-                  ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "이미지",
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff767676),
+                    fontSize: 16.sp
                 ),
-                SizedBox(height: 2.w,),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    //scrollDirection : Axis.horizontal,
-                      children: List.generate(controller.images.length, (index) => ImageListItem(index: index,))
-                  ),
-                ),
-                SizedBox(height: 2.w,),
-                Align(
+              ),
+              SizedBox(height: 2.w,),
+              Builder(builder: (context){
+                if(controller.images.isNotEmpty){
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      //scrollDirection : Axis.horizontal,
+                        children: List.generate(controller.images.length, (index) => ImageListItem(index: index,))
+                    ),
+                  );
+                }
+                else{
+                  return ImageUploadWidget(controller: controller,);
+                }
+              }),
+              SizedBox(height: 2.w,),
+              Align(
                   alignment: Alignment.centerRight,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -41,9 +49,9 @@ class ImageListWidget extends StatelessWidget {
                       Text(
                         "(${controller.images.length}/10)",
                         style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).primaryColor,
-                          fontSize: 12.sp
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 12.sp
                         ),
                       ),
                       Text(
@@ -64,14 +72,10 @@ class ImageListWidget extends StatelessWidget {
                       ),
                     ],
                   )
-                ),
-                SizedBox(height: 10.w,),
-              ],
-            );
-          }
-          else{
-            return SizedBox();
-          }
+              ),
+              SizedBox(height: 10.w,),
+            ],
+          );
         }
     );
   }
@@ -87,8 +91,8 @@ class ImageListItem extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 2.w, 13.w, 2.w),
       child: Container(
-        width: 70.w,
-        height: 70.w,
+        width: 60.w,
+        height: 60.w,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5.r),
             border: Border.all(
@@ -149,4 +153,46 @@ class ImageListItem extends StatelessWidget {
     );
   }
 }
+
+class ImageUploadWidget extends StatelessWidget {
+  const ImageUploadWidget({super.key, required this.controller});
+  final SiteReviewWritePageController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 2.w, 13.w, 2.w),
+      child: Container(
+        width: 60.w,
+        height: 60.w,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.r),
+            border: Border.all(
+                color: const Color(0xffA4A4A6) ,
+                width: 0.5.sp
+            )
+        ),
+        child: InkWell(
+          onTap: () async {
+            Result<void> result = await controller.addImage();
+            if(!result.isSuccess){
+              CustomSnackbar.show('오류', '이미지를 가져올 수 없습니다.');
+            }
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                  Icons.camera_alt
+              ),
+              SizedBox(height: 2.w,),
+              const Text("사진 추가")
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
