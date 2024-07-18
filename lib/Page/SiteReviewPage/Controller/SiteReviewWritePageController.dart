@@ -64,32 +64,32 @@ class SiteReviewWritePageController extends GetxController{
   Future<void> upload(String title, String content , BuildContext context) async{
 
     if(imageSize > maxSizeMb){
-      Snackbar.show('오류', '이미지의 크기는 10MB를 넘을 수 없습니다.');
+      CustomSnackbar.show('오류', '이미지의 크기는 10MB를 넘을 수 없습니다.');
       return;
     }
 
     if(images.isEmpty){
-      Snackbar.show('오류', '이미지를 한 개 이상 업로드 해야합니다 .');
+      CustomSnackbar.show('오류', '이미지를 한 개 이상 업로드 해야합니다 .');
       return;
     }
 
     if(title.isEmpty || content.isEmpty){
-      Snackbar.show('오류', '제목과 내용을 입력해주세요.');
+      CustomSnackbar.show('오류', '제목과 내용을 입력해주세요.');
       return;
     }
 
     if(title.length < 3){
-      Snackbar.show('오류', '제목은 3글자 이상이어야 합니다.');
+      CustomSnackbar.show('오류', '제목은 3글자 이상이어야 합니다.');
       return;
     }
 
     if(title.length > 20){
-      Snackbar.show('오류', '제목은 20글자 이하이어야 합니다.');
+      CustomSnackbar.show('오류', '제목은 20글자 이하이어야 합니다.');
       return;
     }
 
     if(content.length < 3){
-      Snackbar.show('오류', '내용은 10글자 이상이어야 합니다.');
+      CustomSnackbar.show('오류', '내용은 10글자 이상이어야 합니다.');
       return;
     }
 
@@ -134,7 +134,7 @@ class SiteReviewWritePageController extends GetxController{
       }
     }
     else{
-      Snackbar.show(snackbarTitle, snackbarContent);
+      CustomSnackbar.show(snackbarTitle, snackbarContent);
     }
   }
 
