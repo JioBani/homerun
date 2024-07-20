@@ -1,42 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 class CustomDialog{
-  static show({
+  static DialogRoute show({
     required Widget Function(BuildContext) builder,
     required BuildContext context,
     double? height,
     double? width,
   }){
-    showDialog(
+    final route = DialogRoute(
       context: context,
-      builder: (BuildContext context) {
-        return UnconstrainedBox(
-          constrainedAxis: Axis.vertical,
-          child: SizedBox(
-            width: width ?? 200.w,
-            height: height ?? 100.w,
-            child: Dialog(
-              insetPadding: EdgeInsets.zero,
-              backgroundColor: Colors.white,
-              surfaceTintColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.r),
-              ),
-              child: SizedBox(
-                width: width ?? 200.w,
-                height: height ?? 100.w,
-                child: builder(context),
-              ),
+      builder: (dialogContext) =>  UnconstrainedBox(
+        constrainedAxis: Axis.vertical,
+        child: SizedBox(
+          width: width ?? 200.w,
+          height: height ?? 100.w,
+          child: Dialog(
+            insetPadding: EdgeInsets.zero,
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.r),
+            ),
+            child: SizedBox(
+              width: width ?? 200.w,
+              height: height ?? 100.w,
+              child: builder(dialogContext),
             ),
           ),
-        );
-      },
+        ),
+      )
     );
+
+    Navigator.of(context).push(route);
+
+    return route;
   }
 
-  static void defaultDialog({
+  static DialogRoute defaultDialog({
     required BuildContext context,
     required Function(BuildContext) onTap,
     required String title,
@@ -47,7 +48,7 @@ class CustomDialog{
     TextStyle? buttonTextStyle,
     bool closedOnTap = true,
   }){
-    CustomDialog.show(
+    return CustomDialog.show(
         height: height,
         width: width,
         builder: (dialogContext){
