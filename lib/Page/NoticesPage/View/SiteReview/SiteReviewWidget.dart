@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/NoticesPage/Controller/SiteReviewWidgetController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReviewListPage.dart';
@@ -64,7 +65,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
                             duration: const Duration(milliseconds: 350),
                             child: Builder(
                               builder: (context) {
-                                if(index == controller.maxThumbnailCount){
+                                if(index == controller.thumbnailWidgetCount - 1){
                                   return ShowAllButtonWidget(announcement: widget.aptAnnouncement,);
                                 }
                                 else{
@@ -91,18 +92,23 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
         SizedBox(height: 10.w,),
         GetBuilder<SiteReviewWidgetController>(
             builder: (controller) {
-              return SmoothPageIndicator(
-                controller: _pageController,  // PageController
-                count: controller.thumbnailWidgetCount,
-                effect:  ExpandingDotsEffect(
-                    spacing: 3.w,
-                    radius: 6.w,
-                    dotHeight: 6.w,
-                    dotWidth: 6.w,
-                    expansionFactor: 2.5,
-                    activeDotColor: Theme.of(context).primaryColor
-                ),
-              );
+              if(controller.reviews?.isEmpty == true){
+                return const SizedBox();
+              }
+              else{
+                return SmoothPageIndicator(
+                  controller: _pageController,  // PageController
+                  count: controller.thumbnailWidgetCount,
+                  effect:  ExpandingDotsEffect(
+                      spacing: 3.w,
+                      radius: 6.w,
+                      dotHeight: 6.w,
+                      dotWidth: 6.w,
+                      expansionFactor: 2.5,
+                      activeDotColor: Theme.of(context).primaryColor
+                  ),
+                );
+              }
             }
         ),
       ],
