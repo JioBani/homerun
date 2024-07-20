@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
@@ -9,11 +11,15 @@ import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/UploadResult.dart';
+import 'package:homerun/Page/SiteReviewPage/SiteReviewReferences.dart';
+import 'package:homerun/Page/SiteReviewPage/Value/SiteReviewFields.dart';
+import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
+import 'package:homerun/Service/Auth/ApiResponse.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
-import '../Exception/SiteServiceException.dart';
 
 class SiteReviewService{
 
@@ -75,22 +81,29 @@ class SiteReviewService{
     //#2. 리뷰 문서 만들기
     DocumentReference documentReference;
 
-    try{
-      documentReference = await _createDocument(siteReviewWriteDto.noticeId,userDto.uid);
+    Result<DocumentReference> makeResult = await _makeDocument(
+      noticeId: siteReviewWriteDto.noticeId,
+      title: siteReviewWriteDto.title,
+      content: siteReviewWriteDto.content
+    );
 
+    if(!makeResult.isSuccess){
       if(onProgress != null){
-        onProgress(UploadState.progress,'문서 만들기 성공',null);
-      }
-    }catch(e,s){
-      if(onProgress != null){
-        onProgress(UploadState.fail,'문서 만들기 실패',e);
+        onProgress(UploadState.fail,'문서 만들기 실패', makeResult.exception);
       }
       return UploadResultInfo.fromFailure(
           state: UploadResult.createDocFailure,
-          exception: e,
-          stackTrace: s
+          exception: makeResult.exception!,
+          stackTrace: makeResult.stackTrace!
       );
     }
+
+    if(onProgress != null){
+      onProgress(UploadState.progress,'문서 만들기 성공',null);
+    }
+
+    documentReference = makeResult.content!;
+
 
     //#3. 리뷰 문서에 정보 저장하기
     try{
@@ -125,7 +138,7 @@ class SiteReviewService{
 
     //#4. 이미지 업로드
     Map<XFile , Result<void>> result = await _uploadImage(
-        images,siteReviewWriteDto.noticeId,documentReference.id,null
+        images,siteReviewWriteDto.noticeId,documentReference.id,userDto.uid,null
     );
 
     //#4-1. 이미지 업로드 에러 처리
@@ -167,12 +180,41 @@ class SiteReviewService{
     }
   }
 
+  Future<Result<DocumentReference>> _makeDocument({
+    required String noticeId,
+    required String title,
+    required String content,
+  }) async {
+    return Result.handleFuture(action: () async {
+      String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
-  Future<DocumentReference> _createDocument(String noticeId, String uid) async {
-    return await _siteReviewCollection
-        .doc(noticeId)
-        .collection('review')
-        .add({'writer': uid});
+      if(idToken == null){
+        throw ApplicationUnauthorizedException();
+      }
+
+      final response = await http.post(
+        Uri.parse(FirebaseFunctionEndpoints.makeSiteReviewDocument),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+        body: jsonEncode({
+          SiteReviewFields.noticeId: noticeId,
+          SiteReviewFields.title: title,
+          SiteReviewFields.content: content,
+        }),
+      );
+
+      ApiResponse<String> apiResponse = ApiResponse<String>.fromMap(jsonDecode(response.body));
+
+      if(apiResponse.status == 200 || apiResponse.status == 300){
+        return FirebaseFirestore.instance.doc(apiResponse.data!);
+      }
+      else{
+        StaticLogger.logger.e(apiResponse.error?.message);
+        throw apiResponse.error!;
+      }
+    });
   }
 
   Future<void> _updateDocument(SiteReviewWriteDto siteReviewWriteDto, DocumentReference documentReference, String uid) async {
@@ -189,6 +231,7 @@ class SiteReviewService{
       List<XFile> images,
       String noticeId,
       String docId,
+      String uid,
       void Function(TaskSnapshot)? snapshotEventAction
       ) async {
     List<Map<XFile, Result<void>>> mapList = await Future.wait(images.map((imageFile) async {
@@ -200,6 +243,15 @@ class SiteReviewService{
         uploadTask.snapshotEvents.listen(snapshotEventAction);
 
         await uploadTask.whenComplete(() {});
+
+        final newCustomMetadata = SettableMetadata(
+          customMetadata: {
+            'owner' : uid
+          },
+        );
+
+        //await storageRef.updateMetadata(newCustomMetadata);
+
         return {imageFile: Result<void>.fromSuccess()};
       }
       catch (e, s) {
@@ -217,63 +269,36 @@ class SiteReviewService{
   }
 
 
+  Future<Result<void>> delete(SiteReview siteReview){
+    return Result.handleFuture(action: () async {
+      String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
-  // Future<Result<void>> uploadComment(String content, String noticeId, String reviewId)=>
-  //     Result.handleFuture<void>(
-  //       action: () async {
-  //         CollectionReference commentRef = _siteReviewCollection.doc(noticeId)
-  //             .collection('review')
-  //             .doc(reviewId)
-  //             .collection('comment');
-  //
-  //         UserDto userDto = Get.find<AuthService>().getUser();
-  //
-  //         CommentDto commentDto = CommentDto(
-  //             date: Timestamp.now(),
-  //             content: content,
-  //             uid: userDto.uid,
-  //             noticeId: noticeId,
-  //             reviewId: reviewId
-  //         );
-  //
-  //         await commentRef.add(commentDto.toMap());
-  //       }
-  //   );
-  //
-  // Future<Result<List<Comment>>> getComments({
-  //   required String noticeId,
-  //   required String reviewId,
-  //   required int index,
-  //   Comment? startAfter,
-  // }){
-  //   return Result.handleFuture<List<Comment>>(
-  //       action: () async {
-  //         CollectionReference ref = _siteReviewCollection.doc(noticeId)
-  //             .collection('review')
-  //             .doc(reviewId)
-  //             .collection('comment');
-  //
-  //         Query query = ref.orderBy('date' , descending: true);
-  //
-  //         if(startAfter != null){
-  //           query = query.startAfter([startAfter.commentDto.date]);
-  //         }
-  //
-  //         query = query.limit(index);
-  //
-  //         QuerySnapshot querySnapshot = await query.get();
-  //
-  //         return querySnapshot.docs.map((doc) =>
-  //           Comment(
-  //               id: doc.id,
-  //               commentDto: CommentDto.fromMap(doc.data() as Map<String,dynamic>)
-  //           )
-  //         ).toList();
-  //       }
-  //   );
-  //
-  // }
+      if(idToken == null){
+        throw ApplicationUnauthorizedException();
+      }
 
+      final response = await http.post(
+        Uri.parse(FirebaseFunctionEndpoints.deleteSiteReview),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+        body: jsonEncode({
+          "path" : SiteReviewReferences.getReviewCollection(siteReview.noticeId).doc(siteReview.id).path
+        }),
+      );
+
+      ApiResponse<String> apiResponse = ApiResponse<String>.fromMap(jsonDecode(response.body));
+
+      if(apiResponse.status == 200 || apiResponse.status == 300){
+        return;
+      }
+      else{
+        StaticLogger.logger.e(apiResponse.error?.message);
+        throw apiResponse.error!;
+      }
+    });
+  }
 }
 
 enum UploadState{
