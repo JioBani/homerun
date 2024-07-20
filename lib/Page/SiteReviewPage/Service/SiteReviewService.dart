@@ -58,6 +58,7 @@ class SiteReviewService{
   Future<UploadResultInfo> upload(
       SiteReviewWriteDto siteReviewWriteDto,
       List<XFile> images,
+      String thumbnailImageName,
       void Function(UploadState, String, Object?)? onProgress
       ) async{
 
@@ -84,7 +85,8 @@ class SiteReviewService{
     Result<DocumentReference> makeResult = await _makeDocument(
       noticeId: siteReviewWriteDto.noticeId,
       title: siteReviewWriteDto.title,
-      content: siteReviewWriteDto.content
+      content: siteReviewWriteDto.content,
+      thumbnailImageName: thumbnailImageName
     );
 
     if(!makeResult.isSuccess){
@@ -184,6 +186,7 @@ class SiteReviewService{
     required String noticeId,
     required String title,
     required String content,
+    required String thumbnailImageName,
   }) async {
     return Result.handleFuture(action: () async {
       String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
@@ -202,6 +205,7 @@ class SiteReviewService{
           SiteReviewFields.noticeId: noticeId,
           SiteReviewFields.title: title,
           SiteReviewFields.content: content,
+          "thumbnailImageName" : thumbnailImageName
         }),
       );
 
