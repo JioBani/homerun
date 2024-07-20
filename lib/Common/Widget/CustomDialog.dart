@@ -7,9 +7,11 @@ class CustomDialog{
     required BuildContext context,
     double? height,
     double? width,
+    bool barrierDismissible = true
   }){
     final route = DialogRoute(
       context: context,
+      barrierDismissible: barrierDismissible,
       builder: (dialogContext) =>  UnconstrainedBox(
         constrainedAxis: Axis.vertical,
         child: SizedBox(
@@ -47,10 +49,12 @@ class CustomDialog{
     double? width,
     TextStyle? buttonTextStyle,
     bool closedOnTap = true,
+    bool barrierDismissible = true
   }){
     return CustomDialog.show(
         height: height,
         width: width,
+        barrierDismissible: barrierDismissible,
         builder: (dialogContext){
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 5.w),
