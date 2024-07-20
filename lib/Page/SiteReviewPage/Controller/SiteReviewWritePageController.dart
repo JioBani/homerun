@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -63,6 +64,7 @@ class SiteReviewWritePageController extends GetxController{
 
   Future<void> upload(String title, String content , BuildContext context) async{
 
+    //#. 예외 검토
     if(imageSize > maxSizeMb){
       CustomSnackbar.show('오류', '이미지의 크기는 10MB를 넘을 수 없습니다.');
       return;
@@ -93,20 +95,18 @@ class SiteReviewWritePageController extends GetxController{
       return;
     }
 
-
-    UploadResultInfo result = await SiteReviewService.instance.upload(
-        SiteReviewWriteDto(
+    //#. 업로드
+    UploadResultInfo result = await _handleUploadProgress(
+      siteReviewWriteDto:  SiteReviewWriteDto(
           noticeId: noticeId,
           title: title,
           content: content,
           thumbnail: thumbnailFile.value?.name ?? images.first.name
-        ),
-        images,
-        (p0, p1, p2) {
-
-        }
+      ),
+      context: context
     );
 
+    //#. 업로드 결과 취합
     String snackbarTitle = "";
     String snackbarContent = "";
 
@@ -119,23 +119,54 @@ class SiteReviewWritePageController extends GetxController{
       default :
     }
 
+    //#. 다이얼로그 띄우기
     if(result.uploadState == result.uploadState){
       if(context.mounted){
         CustomDialog.show(
-            builder: (dialogContext){
-              return buildDialog(
-                result.siteReview,
-                dialogContext,
-                context,
-              );
-            },
-            context: context
+          barrierDismissible: false,
+          builder: (dialogContext){
+            return buildResultDialog(
+              result.siteReview,
+              dialogContext,
+              context,
+            );
+          },
+          context: context
         );
       }
     }
     else{
       CustomSnackbar.show(snackbarTitle, snackbarContent);
     }
+  }
+
+  Future<UploadResultInfo> _handleUploadProgress({
+    required SiteReviewWriteDto siteReviewWriteDto,
+    required BuildContext context,
+  }) async {
+
+    DialogRoute? dialogRoute;
+
+    //#. 업로드
+    var result = await SiteReviewService.instance.upload(
+        siteReviewWriteDto,
+        images,
+        thumbnailFile.value?.name ?? images.first.name,
+        (text) {
+          //#. 진행 상황을 다이얼로그로 출력
+          if(dialogRoute != null && dialogRoute!.canPop){
+            Navigator.of(context).removeRoute(dialogRoute!);
+          }
+          dialogRoute = buildProgressDialog(context ,text);
+        }
+    );
+
+    //#. 다이얼로그가 남아있다면 지우기
+    if(dialogRoute != null && dialogRoute!.canPop && context.mounted){
+      Navigator.of(context).removeRoute(dialogRoute!);
+    }
+
+    return result;
   }
 
   Future<void> calculateTotalImageSize() async {
@@ -147,7 +178,7 @@ class SiteReviewWritePageController extends GetxController{
     imageSize = (totalSize / (1024 * 1024));
   }
 
-  Widget buildDialog(SiteReview? siteReview , BuildContext dialogContext , BuildContext pageContext){
+  Widget buildResultDialog(SiteReview? siteReview , BuildContext dialogContext , BuildContext pageContext){
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5.w),
       child: Column(
@@ -200,6 +231,31 @@ class SiteReviewWritePageController extends GetxController{
           )
         ],
       ),
+    );
+  }
+
+  DialogRoute buildProgressDialog(BuildContext context,String content){
+    return CustomDialog.show(
+      barrierDismissible: false,
+      height: 50.w,
+      builder: (_){
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 5.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                content,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      context: context
     );
   }
 }
