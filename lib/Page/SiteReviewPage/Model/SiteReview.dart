@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Service/FirebaseStorageService.dart';
 
@@ -50,16 +51,21 @@ class SiteReview {
   }
 
   factory SiteReview.fromMap(Map<String, dynamic> map , String id) {
-    return SiteReview(
-      id : id,
-      noticeId: map['noticeId'],
-      title: map['title'],
-      content: map['content'],
-      writer: map['writer'],
-      view: map['view'],
-      imagesRefPath: map['imagesRefPath'],
-      thumbnailRefPath: map['thumbnailRefPath'],
-    );
+    try{
+      return SiteReview(
+        id : id,
+        noticeId: map['noticeId'],
+        title: map['title'],
+        content: map['content'],
+        writer: map['writer'],
+        view: map['view'],
+        imagesRefPath: map['imagesRefPath'],
+        thumbnailRefPath: map['thumbnailRefPath'],
+      );
+    }catch(e , s){
+      StaticLogger.logger.e("$e\n$s");
+      return SiteReview.error();
+    }
   }
 
   factory SiteReview.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
@@ -97,6 +103,19 @@ class SiteReview {
       view: 0,
       imagesRefPath: 'site_review/test/1',
       thumbnailRefPath: 'site_review/test/1',
+    );
+  }
+
+  factory SiteReview.error() {
+    return SiteReview(
+      id : "error",
+      noticeId: 'error',
+      title: "error",
+      content: 'error',
+      writer: 'error',
+      view: 0,
+      imagesRefPath: '',
+      thumbnailRefPath: '',
     );
   }
 }
