@@ -15,6 +15,8 @@ class LoadingDialog extends StatelessWidget {
         height: 50.w,
         child: Dialog(
           insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.r),
           ),
