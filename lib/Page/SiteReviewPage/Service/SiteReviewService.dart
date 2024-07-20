@@ -59,8 +59,12 @@ class SiteReviewService{
       SiteReviewWriteDto siteReviewWriteDto,
       List<XFile> images,
       String thumbnailImageName,
-      void Function(UploadState, String, Object?)? onProgress
+      void Function(String)? onProgress
       ) async{
+
+    if(onProgress != null){
+      onProgress('문서 만드는 중');
+    }
 
     //#1. 유저 정보 가져오기
     UserDto userDto;
@@ -68,9 +72,6 @@ class SiteReviewService{
     try{
       userDto = Get.find<AuthService>().getUser();
     }catch(e , s){
-      if(onProgress != null){
-        onProgress(UploadState.fail,'로그인이 되어 있지 않습니다.',e);
-      }
       return UploadResultInfo.fromFailure(
           state: UploadResult.authFailure,
           exception: e,
@@ -90,18 +91,11 @@ class SiteReviewService{
     );
 
     if(!makeResult.isSuccess){
-      if(onProgress != null){
-        onProgress(UploadState.fail,'문서 만들기 실패', makeResult.exception);
-      }
       return UploadResultInfo.fromFailure(
           state: UploadResult.createDocFailure,
           exception: makeResult.exception!,
           stackTrace: makeResult.stackTrace!
       );
-    }
-
-    if(onProgress != null){
-      onProgress(UploadState.progress,'문서 만들기 성공',null);
     }
 
     documentReference = makeResult.content!;
@@ -110,11 +104,6 @@ class SiteReviewService{
     //#3. 리뷰 문서에 정보 저장하기
     try{
       await _updateDocument(siteReviewWriteDto , documentReference , userDto.uid);
-
-      if(onProgress != null){
-        onProgress(UploadState.progress,'문서 저장 성공',null);
-      }
-
     }catch(e1 , s){
       try{
         await _siteReviewCollection
@@ -125,11 +114,6 @@ class SiteReviewService{
       }catch(e2){
         StaticLogger.logger.e('[SiteReviewService.write()] 삭제 실패 $e2');
       }
-
-      if(onProgress != null){
-        onProgress(UploadState.fail,'문서 저장 실패',e1);
-      }
-
       return UploadResultInfo.fromFailure(
           state: UploadResult.writeDocFailure,
           exception: e1,
@@ -137,8 +121,11 @@ class SiteReviewService{
       );
     }
 
-
     //#4. 이미지 업로드
+    if(onProgress != null){
+      onProgress('이미지 업로드 중');
+    }
+
     Map<XFile , Result<void>> result = await _uploadImage(
         images,siteReviewWriteDto.noticeId,documentReference.id,userDto.uid,null
     );
@@ -248,14 +235,6 @@ class SiteReviewService{
 
         await uploadTask.whenComplete(() {});
 
-        final newCustomMetadata = SettableMetadata(
-          customMetadata: {
-            'owner' : uid
-          },
-        );
-
-        //await storageRef.updateMetadata(newCustomMetadata);
-
         return {imageFile: Result<void>.fromSuccess()};
       }
       catch (e, s) {
@@ -303,10 +282,4 @@ class SiteReviewService{
       }
     });
   }
-}
-
-enum UploadState{
-  progress,
-  fail,
-  success,
 }
