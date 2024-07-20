@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Widget/CustomDialog.dart';
+import 'package:homerun/Common/Widget/LoadingDialog.dart';
+import 'package:homerun/Common/Widget/Snackbar.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
+import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentViewWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/ImageSlideWidget.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
@@ -51,7 +56,10 @@ class _SiteReviewPageState extends State<SiteReviewPage> {
             padding: EdgeInsets.symmetric(horizontal: 5.w),
             child: const Icon(Icons.share),
           ),
-          AppbarPopupMenu(isMine: Get.find<AuthService>().tryGetUser()?.uid == widget.userDto.uid,),
+          AppbarPopupMenu(
+            isMine: Get.find<AuthService>().tryGetUser()?.uid == widget.userDto.uid,
+            siteReview: widget.siteReview,
+          ),
           SizedBox(width: 10.w,)
         ],
       ),
@@ -154,8 +162,9 @@ class ProfileWidget extends StatelessWidget {
 }
 
 class AppbarPopupMenu extends StatelessWidget {
-  const AppbarPopupMenu({super.key, required this.isMine});
+  const AppbarPopupMenu({super.key, required this.isMine, required this.siteReview});
   final bool isMine;
+  final SiteReview siteReview;
 
   PopupMenuItem<String> buildMenuItem({
     required String value,
@@ -210,7 +219,28 @@ class AppbarPopupMenu extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(5.r))
         ),
         onSelected: (String result) async {
+          if(result == "삭제"){
+            var(Result result, bool isSucess) = await LoadingDialog.showLoadingDialogWithFuture<Result>(
+                context,
+                SiteReviewService.instance.delete(siteReview)
+            );
 
+            if(result.isSuccess){
+              CustomDialog.defaultDialog(
+                  context: context,
+                  onTap: (dialogContext){
+                    if(context.mounted){
+                      Navigator.pop(context);
+                    }
+                  },
+                  title: "삭제되었습니다.",
+                  buttonText: "확인"
+              );
+            }
+            else{
+              CustomSnackbar.show("오류" , "삭제에 실패했습니다.");
+            }
+          }
         },
         itemBuilder: (BuildContext buildContext) {
           if(isMine){
