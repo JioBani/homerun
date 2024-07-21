@@ -24,6 +24,7 @@ import 'package:http/http.dart' as http;
 class SiteReviewService{
 
   final CollectionReference _siteReviewCollection = FirebaseFirestore.instance.collection('site_review');
+  final List<String> viewList = [];
 
   static SiteReviewService? _instance;
 
@@ -281,5 +282,26 @@ class SiteReviewService{
         throw apiResponse.error!;
       }
     });
+  }
+
+  Future<void> increaseViewCount(SiteReview siteReview) async{
+    if(viewList.contains(siteReview.id)){
+      return;
+    }
+
+    final res = await http.post(
+      Uri.parse(FirebaseFunctionEndpoints.increaseSiteReviewViewCount),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "noticeId" : siteReview.noticeId,
+        "siteReviewId" : siteReview.id,
+      }),
+    );
+
+    if(res.statusCode == 200 || res.statusCode == 300){
+      viewList.add(siteReview.id);
+    }
   }
 }
