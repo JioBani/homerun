@@ -26,6 +26,12 @@ class SiteReviewPage extends StatefulWidget {
 class _SiteReviewPageState extends State<SiteReviewPage> {
 
   @override
+  void initState() {
+    SiteReviewService.instance.increaseViewCount(widget.siteReview);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar : AppBar(
@@ -87,7 +93,7 @@ class _SiteReviewPageState extends State<SiteReviewPage> {
                 ),
               ),
               SizedBox(height: 10.w,),
-              ProfileWidget(userDto: widget.userDto,),
+              ProfileWidget(userDto: widget.userDto, siteReview: widget.siteReview,),
               SizedBox(height: 5.w,),
               Divider(thickness: 1.sp,),
               CommentViewWidget(siteReview: widget.siteReview),
@@ -102,8 +108,9 @@ class _SiteReviewPageState extends State<SiteReviewPage> {
 }
 
 class ProfileWidget extends StatelessWidget {
-  const ProfileWidget({super.key, required this.userDto});
+  const ProfileWidget({super.key, required this.userDto, required this.siteReview});
   final UserDto userDto;
+  final SiteReview siteReview;
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +154,7 @@ class ProfileWidget extends StatelessWidget {
           Align(
             alignment: Alignment.bottomRight,
             child: Text(
-              "좋아요 5 · 조회 23",
+              "좋아요 5 · 조회 ${siteReview.view}",
               style: TextStyle(
                 fontSize: 12.sp,
                 color: Palette.brightMode.mediumText,
