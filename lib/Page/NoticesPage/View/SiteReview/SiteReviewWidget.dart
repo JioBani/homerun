@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/NoticesPage/Controller/SiteReviewWidgetController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReviewListPage.dart';
