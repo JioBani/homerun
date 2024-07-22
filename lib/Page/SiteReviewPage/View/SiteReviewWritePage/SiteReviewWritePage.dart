@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Common/Widget/CustomDialog.dart';
-import 'package:homerun/Common/Widget/LoadingDialog.dart';
-import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewWritePageController.dart';
-import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
-import 'package:homerun/Page/SiteReviewPage/Service/UploadResult.dart';
+import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/View/ImageListWidget.dart';
-import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Fonts.dart';
 
 class SiteReviewWritePage extends StatefulWidget {
-  const SiteReviewWritePage({super.key, required this.noticeId});
+  const SiteReviewWritePage({super.key, required this.noticeId, this.updateTargetReview});
   final String noticeId;
+  final SiteReview? updateTargetReview;
 
   @override
   State<SiteReviewWritePage> createState() => _SiteReviewWritePageState();
@@ -23,8 +18,6 @@ class SiteReviewWritePage extends StatefulWidget {
 class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
 
   static const Color subTitleColor = Color(0xff767676);
-  static const Color fillColor = Color(0xffFBFBFB);
-  static const Color borderColor = Color(0xffA4A4A6);
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
