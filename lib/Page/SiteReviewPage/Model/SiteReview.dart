@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
+import 'package:homerun/Page/SiteReviewPage/SiteReviewReferences.dart';
 import 'package:homerun/Service/FirebaseStorageService.dart';
 
 class SiteReview {
@@ -78,8 +79,8 @@ class SiteReview {
     required String docId,
   }) {
 
-    String imageRefPath = FirebaseStorageService.getSiteImagePath(writeDto.noticeId , docId);
-    String thumbnailRefPath = "$imageRefPath${writeDto.thumbnail}"; //imageRefPath가 /를 포함하고 있음
+    String imageRefPath = SiteReviewReferences.getReviewImageFolderPath(writeDto.noticeId , docId);
+    String thumbnailRefPath = SiteReviewReferences.getReviewThumbnailPath(writeDto.noticeId , docId , writeDto.thumbnail);
 
     return SiteReview(
       id : '',
