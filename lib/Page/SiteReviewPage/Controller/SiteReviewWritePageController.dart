@@ -102,7 +102,7 @@ class SiteReviewWritePageController extends GetxController{
   Future<void> upload(String title, String content , BuildContext context) async{
 
     //#. 예외 검토
-    if(!_checkValidation(title , content)){
+    if(!_checkValidation(title , content , false)){
       return;
     }
 
@@ -186,7 +186,7 @@ class SiteReviewWritePageController extends GetxController{
   //#. 업데이트
   Future<void> updateReview(String title, String content , BuildContext context) async{
 
-    if(!_checkValidation(title , content)){
+    if(!_checkValidation(title , content , true)){
       return;
     }
 
@@ -352,6 +352,8 @@ class SiteReviewWritePageController extends GetxController{
     Map<String , Result<XFile>> imageResult = await FirebaseStorageService.instance.downloadAllAssetsAsXFiles(
         updateTarget!.imagesRefPath
     );
+    
+    imageResult[imageResult.keys.first] = Result<XFile>.fromFailure(Exception('테스트 에러'), StackTrace.current);
 
     for (var entry in imageResult.entries) {
       if(entry.value.isSuccess){
@@ -381,19 +383,27 @@ class SiteReviewWritePageController extends GetxController{
     calculateTotalImageSize();
 
     updateImageLoading = LoadingState.success;
-        
+
     update();
   }
   
-  bool _checkValidation(String title, String content){
+  bool _checkValidation(String title, String content ,bool isUpdate){
     if(imageSize > maxSizeMb){
       CustomSnackbar.show('오류', '이미지의 크기는 10MB를 넘을 수 없습니다.');
       return false;
     }
 
-    if(images.isEmpty){
-      CustomSnackbar.show('오류', '이미지를 한 개 이상 업로드 해야합니다 .');
-      return false;
+    if(isUpdate){
+      if(showImages.isEmpty){
+        CustomSnackbar.show('오류', '이미지를 한 개 이상 업로드 해야합니다 .');
+        return false;
+      }
+    }
+    else{
+      if(images.isEmpty){
+        CustomSnackbar.show('오류', '이미지를 한 개 이상 업로드 해야합니다 .');
+        return false;
+      }
     }
 
     if(title.isEmpty || content.isEmpty){
