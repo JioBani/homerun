@@ -84,9 +84,11 @@ class SiteReviewWritePageController extends GetxController{
 
   Future<void> calculateTotalImageSize() async {
     double totalSize = 0;
-    for (XFile image in images.values) {
-      final file = File(image.path);
-      totalSize += await file.length();
+    for (XFile? image in showImages.values) {
+      if(image != null){
+        final file = File(image.path);
+        totalSize += await file.length();
+      }
     }
     imageSize = (totalSize / (1024 * 1024));
   }
@@ -374,7 +376,10 @@ class SiteReviewWritePageController extends GetxController{
     if(showImages.containsKey(split.last)){
       setThumbnail(split.last);
     }
-    
+
+    //#. 이미지 용량 계산
+    calculateTotalImageSize();
+
     updateImageLoading = LoadingState.success;
         
     update();
