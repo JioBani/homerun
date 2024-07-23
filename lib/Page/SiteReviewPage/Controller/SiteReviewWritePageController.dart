@@ -422,7 +422,7 @@ class SiteReviewWritePageController extends GetxController{
     }
 
     //#. 이미지 용량 계산
-    calculateTotalImageSize();
+    await calculateTotalImageSize();
 
     updateImageLoading = LoadingState.success;
 
