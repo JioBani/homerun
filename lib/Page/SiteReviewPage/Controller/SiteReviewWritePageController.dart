@@ -388,8 +388,8 @@ class SiteReviewWritePageController extends GetxController{
     Map<String , Result<XFile>> imageResult = await FirebaseStorageService.instance.downloadAllAssetsAsXFiles(
         updateTarget!.imagesRefPath
     );
-    
-    imageResult[imageResult.keys.first] = Result<XFile>.fromFailure(Exception('테스트 에러'), StackTrace.current);
+
+    Result? lastFailResult;
 
     for (var entry in imageResult.entries) {
       if(entry.value.isSuccess){
@@ -398,13 +398,15 @@ class SiteReviewWritePageController extends GetxController{
       }
       else{
         uploadedImages[entry.key] = null;
+        lastFailResult = entry.value;
         StaticLogger.logger.e("이미지를 가져오지 못함 : ${entry.key}");
       }
       showImages[entry.key] = entry.value.content;
     }
 
-    StaticLogger.logger.i("getUploadedImages : ${showImages.length}");
-
+    if(lastFailResult != null && context.mounted){
+      _showLoadingFailDialog("이미지를 가져오지 못했습니다." , context);
+    }
 
     //#. 썸네일 결정
     List<String> split = updateTarget!.thumbnailRefPath.split('/');
