@@ -1,15 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Firebase/FirebaseStorageService.dart';
+import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
+import 'package:homerun/Page/SiteReviewPage/Service/UpdateResultInfo.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/SiteReviewPage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
@@ -23,43 +28,64 @@ class OutOfImageSizeException implements Exception{
 
 class SiteReviewWritePageController extends GetxController{
   final ImagePicker picker = ImagePicker();
+
   final String noticeId;
+  final SiteReview? updateTarget;
+  final bool updateMode;
+
   final double maxSizeMb = 10;
-  RxList<XFile> images = RxList([]);
-  Rx<XFile?> thumbnailFile = Rx(null);
+
+  Map<String , XFile?> showImages = {};
+  Map<String , XFile> images = {};
+  Map<String , XFile?> uploadedImages = {};
+  Map<String , XFile?> deleteImages = {};
+
+  XFile? thumbnailFile;
+
   double imageSize = 0;
 
-  SiteReviewWritePageController({required this.noticeId});
+  LoadingState updateImageLoading = LoadingState.before;
+
+  SiteReviewWritePageController({required this.noticeId , this.updateTarget , this.updateMode = false});
 
   Future<Result<void>> addImage() async {
     return await Result.handleFuture(
         action: () async {
           final List<XFile> pickedFile = await picker.pickMultiImage();
 
-          images.addAll(pickedFile);
+          for(var file in pickedFile){
+            if(images.containsKey(pickedFile)){
+              throw Exception('파일이름이 같은 이미지가 있습니다.');
+            }
+            images[file.name] = file;
+            showImages[file.name] = file;
+          }
+
           await calculateTotalImageSize();
           update();
         }
     );
-
   }
 
-  Future<void> removeImage(int index) async {
-    if(index < images.length){
-      if(images[index] == thumbnailFile.value){
-        thumbnailFile.value = null;
-      }
-      images.removeAt(index);
-      await calculateTotalImageSize();
-      update();
+  Future<void> removeImage(String name) async {
+    if(images[name] == thumbnailFile){
+      thumbnailFile = null;
     }
+
+    images.remove(name);
+    showImages.remove(name);
+
+    if(uploadedImages.containsKey(name)){
+      deleteImages[name] = uploadedImages[name];
+    }
+
+    await calculateTotalImageSize();
+    update();
   }
 
-  void setThumbnail(int index){
-    if(index < images.length){
-      thumbnailFile.value = images[index];
-      update();
-    }
+  void setThumbnail(String name){
+    thumbnailFile = showImages[name];
+    update();
   }
 
   Future<void> upload(String title, String content , BuildContext context) async{
@@ -95,15 +121,16 @@ class SiteReviewWritePageController extends GetxController{
       return;
     }
 
+
     //#. 업로드
     UploadResultInfo result = await _handleUploadProgress(
-      siteReviewWriteDto:  SiteReviewWriteDto(
-          noticeId: noticeId,
-          title: title,
-          content: content,
-          thumbnail: thumbnailFile.value?.name ?? images.first.name
-      ),
-      context: context
+        siteReviewWriteDto:  SiteReviewWriteDto(
+            noticeId: noticeId,
+            title: title,
+            content: content,
+            thumbnail: thumbnailFile?.name ?? images.keys.first
+        ),
+        context: context
     );
 
     //#. 업로드 결과 취합
@@ -123,15 +150,15 @@ class SiteReviewWritePageController extends GetxController{
     if(result.uploadState == result.uploadState){
       if(context.mounted){
         CustomDialog.show(
-          barrierDismissible: false,
-          builder: (dialogContext){
-            return buildResultDialog(
-              result.siteReview,
-              dialogContext,
-              context,
-            );
-          },
-          context: context
+            barrierDismissible: false,
+            builder: (dialogContext){
+              return buildResultDialog(
+                result.siteReview,
+                dialogContext,
+                context,
+              );
+            },
+            context: context
         );
       }
     }
@@ -150,9 +177,9 @@ class SiteReviewWritePageController extends GetxController{
     //#. 업로드
     var result = await SiteReviewService.instance.upload(
         siteReviewWriteDto,
-        images,
-        thumbnailFile.value?.name ?? images.first.name,
-        (text) {
+        images.values.toList(),
+        thumbnailFile?.name ?? images.keys.first,
+            (text) {
           //#. 진행 상황을 다이얼로그로 출력
           if(dialogRoute != null && dialogRoute!.canPop){
             Navigator.of(context).removeRoute(dialogRoute!);
@@ -171,7 +198,7 @@ class SiteReviewWritePageController extends GetxController{
 
   Future<void> calculateTotalImageSize() async {
     double totalSize = 0;
-    for (XFile image in images) {
+    for (XFile image in images.values) {
       final file = File(image.path);
       totalSize += await file.length();
     }
@@ -236,26 +263,71 @@ class SiteReviewWritePageController extends GetxController{
 
   DialogRoute buildProgressDialog(BuildContext context,String content){
     return CustomDialog.show(
-      barrierDismissible: false,
-      height: 50.w,
-      builder: (_){
-        return Padding(
-          padding: EdgeInsets.symmetric(vertical: 5.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                content,
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14.sp,
+        barrierDismissible: false,
+        height: 50.w,
+        builder: (_){
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 5.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  content,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14.sp,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-      context: context
+              ],
+            ),
+          );
+        },
+        context: context
     );
   }
+
+  Future<void> getUploadedImages() async {
+    updateImageLoading = LoadingState.loading;
+    update();
+
+    Map<String , Result<XFile>> imageResult = await FirebaseStorageService.instance.downloadAllAssetsAsXFiles(
+        updateTarget!.imagesRefPath
+    );
+
+    for (var entry in imageResult.entries) {
+      if(entry.value.isSuccess){
+        uploadedImages[entry.key] = entry.value.content!;
+        StaticLogger.logger.e("${entry.key} : ${entry.value.content!.name}");
+      }
+      else{
+        uploadedImages[entry.key] = null;
+        StaticLogger.logger.e("이미지를 가져오지 못함 : ${entry.key}");
+      }
+      showImages[entry.key] = entry.value.content;
+    }
+
+    StaticLogger.logger.i("getUploadedImages : ${showImages.length}");
+
+    updateImageLoading = LoadingState.success;
+    update();
+  }
+
+  Future<void> updateReview(String title, String content) async{
+    UpdateResultInfo result = await SiteReviewService.instance.update(
+        targetReview: updateTarget!,
+        title: title,
+        content: content,
+        thumbnailImageName: thumbnailFile?.name ?? showImages.keys.first,
+        uploadImages: images.values.toList(),
+        deleteImageNames: deleteImages.keys.toList()
+    );
+
+    if(result.updateResult == UpdateResult.success){
+      StaticLogger.logger.i("업데이트 성공");
+    }
+    else{
+      StaticLogger.logger.e("업데이트 실패 : ${result.updateResult}\n${result.exception}\n${result.stackTrace}");
+    }
+  }
+
 }
