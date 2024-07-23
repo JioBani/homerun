@@ -118,7 +118,7 @@ class SiteReviewWritePageController extends GetxController{
     }
 
     //#. 다이얼로그 띄우기
-    if(result.uploadState == result.uploadState){
+    if(result.uploadState == UploadResult.success){
       if(context.mounted){
         CustomDialog.show(
             barrierDismissible: false,
