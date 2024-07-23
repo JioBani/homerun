@@ -288,13 +288,10 @@ class SiteReviewWritePageController extends GetxController{
 
     _checkValidation(title , content);
 
-    UpdateResultInfo result = await SiteReviewService.instance.update(
-        targetReview: updateTarget!,
-        title: title,
-        content: content,
-        thumbnailImageName: thumbnailFile?.name ?? showImages.keys.first,
-        uploadImages: images.values.toList(),
-        deleteImageNames: deleteImages.keys.toList()
+    UpdateResultInfo result = await _handleUpdateProgress(
+      title: title,
+      content: content,
+      context: context
     );
 
     String snackbarTitle = "";
@@ -327,6 +324,39 @@ class SiteReviewWritePageController extends GetxController{
     else{
       CustomSnackbar.show(snackbarTitle, snackbarContent);
     }
+  }
+
+  Future<UpdateResultInfo> _handleUpdateProgress({
+    required String title,
+    required String content,
+    required BuildContext context,
+  }) async {
+
+    DialogRoute? dialogRoute;
+
+    //#. 업로드
+    UpdateResultInfo result = await SiteReviewService.instance.update(
+        targetReview: updateTarget!,
+        title: title,
+        content: content,
+        thumbnailImageName: thumbnailFile?.name ?? showImages.keys.first,
+        uploadImages: images.values.toList(),
+        deleteImageNames: deleteImages.keys.toList(),
+        onProgress : (text) {
+          //#. 진행 상황을 다이얼로그로 출력
+          if(dialogRoute != null && dialogRoute!.canPop){
+            Navigator.of(context).removeRoute(dialogRoute!);
+          }
+          dialogRoute = buildProgressDialog(context ,text);
+        }
+    );
+
+    //#. 다이얼로그가 남아있다면 지우기
+    if(dialogRoute != null && dialogRoute!.canPop && context.mounted){
+      Navigator.of(context).removeRoute(dialogRoute!);
+    }
+
+    return result;
   }
 
   bool _checkValidation(String title, String content){
