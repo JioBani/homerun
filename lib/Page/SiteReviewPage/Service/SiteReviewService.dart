@@ -312,7 +312,12 @@ class SiteReviewService{
     required String thumbnailImageName,
     required List<XFile> uploadImages,
     required List<String> deleteImageNames,
+    void Function(String)? onProgress
   }) async {
+
+    if(onProgress != null) {
+      onProgress('문서 수정 중');
+    }
     
     //#1. 로그인 확인
     String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
@@ -344,6 +349,10 @@ class SiteReviewService{
       );
     }
 
+    if(onProgress != null) {
+      onProgress('이미지 수정 중');
+    }
+    
     //#3. 이미지 수정
     List<Map<dynamic ,Result<void>>> imageResult = await Future.wait<Map<dynamic ,Result<void>>>([
       _deleteImage(
@@ -375,6 +384,9 @@ class SiteReviewService{
       }
     });
 
+    if(onProgress != null) {
+      onProgress('문서 불러오는 중');
+    }
     //#4. 문서 다시 가져오기
     Result<SiteReview> updateReview = await _getSiteReview(targetReview.noticeId , targetReview.id);
 
