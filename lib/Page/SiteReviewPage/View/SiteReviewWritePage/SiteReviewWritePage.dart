@@ -232,3 +232,94 @@ class CustomTextFormField extends StatelessWidget {
     );
   }
 }
+
+class ConfirmDialog extends StatelessWidget {
+  const ConfirmDialog({
+    super.key,
+    required this.onConfirm,
+    required this.title,
+    required this.dialogContext
+  });
+
+  final Function() onConfirm;
+  final String title;
+  final BuildContext dialogContext;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 5.w),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 14.sp,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: ()  {
+                  if(dialogContext.mounted){
+                    Navigator.pop(context);
+                  }
+                  onConfirm();
+                },
+                child: Container(
+                  width: 75.w,
+                  height: 25.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.r),
+                    color: Theme.of(dialogContext).primaryColor,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "예",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.sp,
+                          color: Colors.white
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 15.w,),
+              InkWell(
+                onTap: ()  {
+                  if(dialogContext.mounted){
+                    Navigator.pop(context);
+                  }
+                },
+                child: Container(
+                  width: 75.w,
+                  height: 25.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.r),
+                    color: Palette.brightMode.lightText,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "아니오",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.sp,
+                          color: Colors.white
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
