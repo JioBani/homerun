@@ -21,10 +21,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../Service/UploadResult.dart';
 
-class OutOfImageSizeException implements Exception{
-
-}
-
 class SiteReviewWritePageController extends GetxController{
   final ImagePicker picker = ImagePicker();
 
