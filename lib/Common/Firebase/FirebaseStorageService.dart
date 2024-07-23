@@ -24,7 +24,7 @@ class FirebaseStorageService{
 
           //#. 로컬 파일 경로
           final Directory tempDir = await getTemporaryDirectory();
-          final String filePath = path.join(tempDir.path, 'downloadedImage.jpg');
+          final String filePath = path.join(tempDir.path, ref.name);
           final File file = File(filePath);
 
           //#. 이미지 다운로드
