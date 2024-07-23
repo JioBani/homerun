@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewWritePageController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage/ImageListWidget.dart';
 import 'package:homerun/Style/Fonts.dart';
+import 'package:homerun/Style/Palette.dart';
 
-import '../../Controller/controller.dart';
 
 class SiteReviewWritePage extends StatefulWidget {
   const SiteReviewWritePage({super.key, required this.noticeId, this.updateTargetReview, this.isUpdateMode = false});
@@ -142,12 +143,29 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                   SizedBox(height: 14.w,),
                   InkWell(
                     onTap: () {
-                      if(widget.isUpdateMode){
-                        controller.updateReview(titleController.text, contentController.text , context);
-                      }
-                      else{
-                        controller.upload(titleController.text, contentController.text , context);
-                      }
+                      CustomDialog.show(
+                          builder: (dialogContext){
+                            if(widget.isUpdateMode) {
+                              return ConfirmDialog(
+                                  onConfirm: (){
+                                    controller.updateReview(titleController.text, contentController.text , context);
+                                  },
+                                  title: "수정하시겠습니까?",
+                                  dialogContext: dialogContext
+                              );
+                            }
+                            else{
+                              return ConfirmDialog(
+                                  onConfirm: (){
+                                    controller.upload(titleController.text, contentController.text , context);
+                                  },
+                                  title: "등록하시겠습니까?",
+                                  dialogContext: dialogContext
+                              );
+                            }
+                          },
+                          context: context
+                      );
                     },
                     child: Container(
                       width: double.infinity,
