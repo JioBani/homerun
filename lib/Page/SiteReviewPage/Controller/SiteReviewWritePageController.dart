@@ -83,11 +83,21 @@ class SiteReviewWritePageController extends GetxController{
     update();
   }
 
+  Future<void> calculateTotalImageSize() async {
+    double totalSize = 0;
+    for (XFile image in images.values) {
+      final file = File(image.path);
+      totalSize += await file.length();
+    }
+    imageSize = (totalSize / (1024 * 1024));
+  }
+
   void setThumbnail(String name){
     thumbnailFile = showImages[name];
     update();
   }
 
+  //#.업로드
   Future<void> upload(String title, String content , BuildContext context) async{
 
     //#. 예외 검토
@@ -168,14 +178,83 @@ class SiteReviewWritePageController extends GetxController{
     return result;
   }
 
-  Future<void> calculateTotalImageSize() async {
-    double totalSize = 0;
-    for (XFile image in images.values) {
-      final file = File(image.path);
-      totalSize += await file.length();
+
+  //#. 업데이트
+  Future<void> updateReview(String title, String content , BuildContext context) async{
+
+    _checkValidation(title , content);
+
+    UpdateResultInfo result = await _handleUpdateProgress(
+        title: title,
+        content: content,
+        context: context
+    );
+
+    String snackbarTitle = "";
+    String snackbarContent = "";
+
+    switch(result.updateResult){
+      case UpdateResult.authFailure : snackbarTitle = "오류"; snackbarContent = "로그인이 필요합니다.";
+      case UpdateResult.docUpdateFailure : snackbarTitle = "오류"; snackbarContent = "글 수정에 실패했습니다.";
+      case UpdateResult.imageUpdateFailure : snackbarTitle = "오류"; snackbarContent = "이미지 업로드에 실패했습니다.";
+      default :
     }
-    imageSize = (totalSize / (1024 * 1024));
+
+    //#. 다이얼로그 띄우기
+    if(result.updateResult == UpdateResult.success){
+      if(context.mounted){
+        CustomDialog.show(
+            barrierDismissible: false,
+            builder: (dialogContext){
+              return buildResultDialog(
+                result.siteReview,
+                "글을 수정했습니다.",
+                dialogContext,
+                context,
+              );
+            },
+            context: context
+        );
+      }
+    }
+    else{
+      CustomSnackbar.show(snackbarTitle, snackbarContent);
+    }
   }
+
+  Future<UpdateResultInfo> _handleUpdateProgress({
+    required String title,
+    required String content,
+    required BuildContext context,
+  }) async {
+
+    DialogRoute? dialogRoute;
+
+    //#. 업로드
+    UpdateResultInfo result = await SiteReviewService.instance.update(
+        targetReview: updateTarget!,
+        title: title,
+        content: content,
+        thumbnailImageName: thumbnailFile?.name ?? showImages.keys.first,
+        uploadImages: images.values.toList(),
+        deleteImageNames: deleteImages.keys.toList(),
+        onProgress : (text) {
+          //#. 진행 상황을 다이얼로그로 출력
+          if(dialogRoute != null && dialogRoute!.canPop){
+            Navigator.of(context).removeRoute(dialogRoute!);
+          }
+          dialogRoute = buildProgressDialog(context ,text);
+        }
+    );
+
+    //#. 다이얼로그가 남아있다면 지우기
+    if(dialogRoute != null && dialogRoute!.canPop && context.mounted){
+      Navigator.of(context).removeRoute(dialogRoute!);
+    }
+
+    return result;
+  }
+
 
   Widget buildResultDialog(SiteReview? siteReview , String content ,BuildContext dialogContext , BuildContext pageContext){
     return Padding(
@@ -282,81 +361,6 @@ class SiteReviewWritePageController extends GetxController{
 
     updateImageLoading = LoadingState.success;
     update();
-  }
-
-  Future<void> updateReview(String title, String content , BuildContext context) async{
-
-    _checkValidation(title , content);
-
-    UpdateResultInfo result = await _handleUpdateProgress(
-      title: title,
-      content: content,
-      context: context
-    );
-
-    String snackbarTitle = "";
-    String snackbarContent = "";
-
-    switch(result.updateResult){
-      case UpdateResult.authFailure : snackbarTitle = "오류"; snackbarContent = "로그인이 필요합니다.";
-      case UpdateResult.docUpdateFailure : snackbarTitle = "오류"; snackbarContent = "글 수정에 실패했습니다.";
-      case UpdateResult.imageUpdateFailure : snackbarTitle = "오류"; snackbarContent = "이미지 업로드에 실패했습니다.";
-      default :
-    }
-
-    //#. 다이얼로그 띄우기
-    if(result.updateResult == UpdateResult.success){
-      if(context.mounted){
-        CustomDialog.show(
-            barrierDismissible: false,
-            builder: (dialogContext){
-              return buildResultDialog(
-                result.siteReview,
-                "글을 수정했습니다.",
-                dialogContext,
-                context,
-              );
-            },
-            context: context
-        );
-      }
-    }
-    else{
-      CustomSnackbar.show(snackbarTitle, snackbarContent);
-    }
-  }
-
-  Future<UpdateResultInfo> _handleUpdateProgress({
-    required String title,
-    required String content,
-    required BuildContext context,
-  }) async {
-
-    DialogRoute? dialogRoute;
-
-    //#. 업로드
-    UpdateResultInfo result = await SiteReviewService.instance.update(
-        targetReview: updateTarget!,
-        title: title,
-        content: content,
-        thumbnailImageName: thumbnailFile?.name ?? showImages.keys.first,
-        uploadImages: images.values.toList(),
-        deleteImageNames: deleteImages.keys.toList(),
-        onProgress : (text) {
-          //#. 진행 상황을 다이얼로그로 출력
-          if(dialogRoute != null && dialogRoute!.canPop){
-            Navigator.of(context).removeRoute(dialogRoute!);
-          }
-          dialogRoute = buildProgressDialog(context ,text);
-        }
-    );
-
-    //#. 다이얼로그가 남아있다면 지우기
-    if(dialogRoute != null && dialogRoute!.canPop && context.mounted){
-      Navigator.of(context).removeRoute(dialogRoute!);
-    }
-
-    return result;
   }
 
   bool _checkValidation(String title, String content){
