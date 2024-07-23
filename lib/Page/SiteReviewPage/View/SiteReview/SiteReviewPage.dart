@@ -9,6 +9,7 @@ import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentViewWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/ImageSlideWidget.dart';
+import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage/SiteReviewWritePage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Style/Palette.dart';
@@ -177,7 +178,7 @@ class AppbarPopupMenu extends StatelessWidget {
     required String value,
     required String name,
     required IconData icon,
-    required Color color
+    required Color color,
   }){
     return PopupMenuItem<String>(
       value: value,
@@ -247,6 +248,15 @@ class AppbarPopupMenu extends StatelessWidget {
             else{
               CustomSnackbar.show("오류" , "삭제에 실패했습니다.");
             }
+          }
+          else if(result == "수정"){
+            Get.to(
+              SiteReviewWritePage(
+                noticeId: siteReview.noticeId,
+                updateTargetReview: siteReview,
+                isUpdateMode : true
+              )
+            );
           }
         },
         itemBuilder: (BuildContext buildContext) {
