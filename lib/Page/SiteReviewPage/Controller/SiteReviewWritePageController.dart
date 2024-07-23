@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -101,7 +100,7 @@ class SiteReviewWritePageController extends GetxController{
   Future<void> upload(String title, String content , BuildContext context) async{
 
     //#. 예외 검토
-    if(_checkValidation(title , content)){
+    if(!_checkValidation(title , content)){
       return;
     }
 
@@ -185,7 +184,7 @@ class SiteReviewWritePageController extends GetxController{
   //#. 업데이트
   Future<void> updateReview(String title, String content , BuildContext context) async{
 
-    if(_checkValidation(title , content)){
+    if(!_checkValidation(title , content)){
       return;
     }
 
