@@ -83,7 +83,7 @@ class ImageListWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        "(${controller.images.length}/10)",
+                        "(${controller.showImages.length}/10)",
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Theme.of(context).primaryColor,
