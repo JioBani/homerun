@@ -3,13 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewWritePageController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
-import 'package:homerun/Page/SiteReviewPage/View/ImageListWidget.dart';
+import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage/ImageListWidget.dart';
 import 'package:homerun/Style/Fonts.dart';
 
+import '../../Controller/controller.dart';
+
 class SiteReviewWritePage extends StatefulWidget {
-  const SiteReviewWritePage({super.key, required this.noticeId, this.updateTargetReview});
+  const SiteReviewWritePage({super.key, required this.noticeId, this.updateTargetReview, this.isUpdateMode = false});
   final String noticeId;
   final SiteReview? updateTargetReview;
+  final bool isUpdateMode;
 
   @override
   State<SiteReviewWritePage> createState() => _SiteReviewWritePageState();
@@ -22,9 +25,31 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
 
+  late final SiteReviewWritePageController controller;
+
+
+  @override
+  void initState() {
+    controller = Get.put(
+        SiteReviewWritePageController(
+            noticeId: widget.noticeId,
+            updateTarget: widget.updateTargetReview,
+            updateMode: widget.updateTargetReview != null
+        )
+    );
+
+    if(widget.isUpdateMode){
+      controller.getUploadedImages();
+      titleController.text = widget.updateTargetReview!.title;
+      contentController.text = widget.updateTargetReview!.content;
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var controller = Get.put(SiteReviewWritePageController(noticeId: widget.noticeId));
+
     return Scaffold(
       //#. Appbar
       appBar:AppBar(
@@ -91,7 +116,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                     maxLines: 1,
                   ),
                   SizedBox(height: 26.w,),
-                  const ImageListWidget(),
+                  ImageListWidget(isUpdateMode: widget.isUpdateMode,),
                   //#. 본문
                   Padding(
                     padding: EdgeInsets.only(left: 2.w),
@@ -117,7 +142,12 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                   SizedBox(height: 14.w,),
                   InkWell(
                     onTap: () {
-                      controller.upload(titleController.text, contentController.text , context);
+                      if(widget.isUpdateMode){
+                        controller.updateReview(titleController.text, contentController.text);
+                      }
+                      else{
+                        controller.upload(titleController.text, contentController.text , context);
+                      }
                     },
                     child: Container(
                       width: double.infinity,
@@ -128,7 +158,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                       ),
                       child: Center(
                         child: Text(
-                          "작성완료",
+                          widget.isUpdateMode ? "수정완료" : "작성완료",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15.sp,
