@@ -196,6 +196,10 @@ class SiteReviewWritePageController extends GetxController{
   //#. 업데이트
   Future<void> updateReview(String title, String content , BuildContext context) async{
 
+    if(updateImageLoading != LoadingState.success){
+      return;
+    }
+
     if(!_checkValidation(title , content , true)){
       return;
     }
