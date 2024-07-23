@@ -47,23 +47,44 @@ class SiteReviewWritePageController extends GetxController{
 
   SiteReviewWritePageController({required this.noticeId , this.updateTarget , this.updateMode = false});
 
-  Future<Result<void>> addImage() async {
-    return await Result.handleFuture(
-        action: () async {
-          final List<XFile> pickedFile = await picker.pickMultiImage();
+  Future<void> addImage() async {
 
-          for(var file in pickedFile){
-            if(images.containsKey(pickedFile)){
-              throw Exception('파일이름이 같은 이미지가 있습니다.');
-            }
-            images[file.name] = file;
-            showImages[file.name] = file;
-          }
+    try{
+      final List<XFile> pickedFile = await picker.pickMultiImage();
 
-          await calculateTotalImageSize();
-          update();
+      final List<String> duplicatedImages = [];
+
+      for(var file in pickedFile){
+        if(showImages.containsKey(file.name)){
+          duplicatedImages.add(file.name);
         }
-    );
+        else{
+          images[file.name] = file;
+          showImages[file.name] = file;
+        }
+      }
+
+      await calculateTotalImageSize();
+      update();
+
+      if(duplicatedImages.isNotEmpty){
+        if(duplicatedImages.length == 1){
+          CustomSnackbar.show(
+            '오류',
+            '동일한 파일명의 이미지가 있습니다. (${duplicatedImages.first})',
+            duration: const Duration(milliseconds: 2500)
+          );
+        }
+        else{
+          CustomSnackbar.show(
+            '오류',
+            '동일한 파일명의 이미지가 있습니다. (${duplicatedImages.first}) 외 ${duplicatedImages.length - 1}개'
+          );
+        }
+      }
+    }catch(e,s){
+      CustomSnackbar.show('오류', '이미지를 가져 올 수 없습니다.');
+    }
   }
 
   Future<void> removeImage(String name) async {
