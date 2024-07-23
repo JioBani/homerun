@@ -151,17 +151,10 @@ class SiteReviewWritePageController extends GetxController{
     //#. 다이얼로그 띄우기
     if(result.uploadState == UploadResult.success){
       if(context.mounted){
-        CustomDialog.show(
-            barrierDismissible: false,
-            builder: (dialogContext){
-              return buildResultDialog(
-                result.siteReview,
-                "글을 업로드 했습니다.",
-                dialogContext,
-                context,
-              );
-            },
-            context: context
+        _showResultDialog(
+          result.siteReview,
+          "글을 업로드 했습니다.",
+          context,
         );
       }
     }
@@ -187,7 +180,7 @@ class SiteReviewWritePageController extends GetxController{
           if(dialogRoute != null && dialogRoute!.canPop){
             Navigator.of(context).removeRoute(dialogRoute!);
           }
-          dialogRoute = buildProgressDialog(context ,text);
+          dialogRoute = _showProgressDialog(context ,text);
         }
     );
 
@@ -226,17 +219,10 @@ class SiteReviewWritePageController extends GetxController{
     //#. 다이얼로그 띄우기
     if(result.updateResult == UpdateResult.success){
       if(context.mounted){
-        CustomDialog.show(
-            barrierDismissible: false,
-            builder: (dialogContext){
-              return buildResultDialog(
-                result.siteReview,
-                "글을 수정했습니다.",
-                dialogContext,
-                context,
-              );
-            },
-            context: context
+        _showResultDialog(
+          result.siteReview,
+          "글을 수정 했습니다.",
+          context,
         );
       }
     }
@@ -266,7 +252,7 @@ class SiteReviewWritePageController extends GetxController{
           if(dialogRoute != null && dialogRoute!.canPop){
             Navigator.of(context).removeRoute(dialogRoute!);
           }
-          dialogRoute = buildProgressDialog(context ,text);
+          dialogRoute = _showProgressDialog(context ,text);
         }
     );
 
@@ -278,8 +264,7 @@ class SiteReviewWritePageController extends GetxController{
     return result;
   }
 
-
-  Widget buildResultDialog(SiteReview? siteReview , String content ,BuildContext dialogContext , BuildContext pageContext){
+  Widget _buildDialog(String content, Function() onTap, BuildContext context){
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5.w),
       child: Column(
@@ -293,30 +278,13 @@ class SiteReviewWritePageController extends GetxController{
             ),
           ),
           InkWell(
-            onTap: ()  {
-              UserDto? userDto = Get.find<AuthService>().tryGetUser();
-
-              if(dialogContext.mounted){
-                Navigator.pop(dialogContext);
-              }
-
-              if(pageContext.mounted){
-                Navigator.pop(pageContext);
-              }
-
-              if(userDto != null && siteReview != null){
-                Get.to(SiteReviewPage(
-                    siteReview: siteReview,
-                    userDto: userDto
-                ));
-              }
-            },
+            onTap: onTap,
             child: Container(
               width: 75.w,
               height: 25.w,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5.r),
-                color: Theme.of(dialogContext).primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               child: Center(
                 child: Text(
@@ -335,7 +303,59 @@ class SiteReviewWritePageController extends GetxController{
     );
   }
 
-  DialogRoute buildProgressDialog(BuildContext context,String content){
+  void _showLoadingFailDialog(String content,BuildContext pageContext){
+    CustomDialog.show(
+      builder: (dialogContext){
+        return _buildDialog(
+          content,
+              (){
+            if(dialogContext.mounted){
+              Navigator.pop(dialogContext);
+            }
+
+            if(pageContext.mounted){
+              Navigator.pop(pageContext);
+            }
+          },
+          dialogContext
+        );
+      },
+      context: pageContext
+    );
+  }
+
+  void _showResultDialog(SiteReview? siteReview , String content , BuildContext pageContext){
+    CustomDialog.show(
+        barrierDismissible: false,
+        builder: (dialogContext){
+          return _buildDialog(
+              content,
+              (){
+                UserDto? userDto = Get.find<AuthService>().tryGetUser();
+
+                if(dialogContext.mounted){
+                  Navigator.pop(dialogContext);
+                }
+
+                if(pageContext.mounted){
+                  Navigator.pop(pageContext);
+                }
+
+                if(userDto != null && siteReview != null){
+                  Get.to(SiteReviewPage(
+                      siteReview: siteReview,
+                      userDto: userDto
+                  ));
+                }
+              },
+              dialogContext
+          );
+        },
+        context: pageContext
+    );
+  }
+
+  DialogRoute _showProgressDialog(BuildContext context,String content){
     return CustomDialog.show(
         barrierDismissible: false,
         height: 50.w,
@@ -360,8 +380,7 @@ class SiteReviewWritePageController extends GetxController{
     );
   }
 
-
-  Future<void> setUploadedData() async {
+  Future<void> setUploadedData(BuildContext context) async {
     //#. 이미지 불러오기
     updateImageLoading = LoadingState.loading;
     update();
