@@ -261,11 +261,8 @@ class ImageUploadWidget extends StatelessWidget {
             )
         ),
         child: InkWell(
-          onTap: () async {
-            Result<void> result = await controller.addImage();
-            if(!result.isSuccess){
-              CustomSnackbar.show('오류', '이미지를 가져올 수 없습니다.');
-            }
+          onTap: () {
+            controller.addImage();
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
