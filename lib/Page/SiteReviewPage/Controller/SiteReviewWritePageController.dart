@@ -93,7 +93,6 @@ class SiteReviewWritePageController extends GetxController{
     //#. 예외 검토
     _checkValidation(title , content);
 
-
     //#. 업로드
     UploadResultInfo result = await _handleUploadProgress(
         siteReviewWriteDto:  SiteReviewWriteDto(
@@ -126,6 +125,7 @@ class SiteReviewWritePageController extends GetxController{
             builder: (dialogContext){
               return buildResultDialog(
                 result.siteReview,
+                "글을 업로드 했습니다.",
                 dialogContext,
                 context,
               );
@@ -177,14 +177,14 @@ class SiteReviewWritePageController extends GetxController{
     imageSize = (totalSize / (1024 * 1024));
   }
 
-  Widget buildResultDialog(SiteReview? siteReview , BuildContext dialogContext , BuildContext pageContext){
+  Widget buildResultDialog(SiteReview? siteReview , String content ,BuildContext dialogContext , BuildContext pageContext){
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5.w),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            "글을 업로드 했습니다.",
+            content,
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 14.sp,
@@ -284,7 +284,10 @@ class SiteReviewWritePageController extends GetxController{
     update();
   }
 
-  Future<void> updateReview(String title, String content) async{
+  Future<void> updateReview(String title, String content , BuildContext context) async{
+
+    _checkValidation(title , content);
+
     UpdateResultInfo result = await SiteReviewService.instance.update(
         targetReview: updateTarget!,
         title: title,
@@ -294,11 +297,35 @@ class SiteReviewWritePageController extends GetxController{
         deleteImageNames: deleteImages.keys.toList()
     );
 
-    if(result.updateResult == UpdateResult.success){
+    String snackbarTitle = "";
+    String snackbarContent = "";
 
+    switch(result.updateResult){
+      case UpdateResult.authFailure : snackbarTitle = "오류"; snackbarContent = "로그인이 필요합니다.";
+      case UpdateResult.docUpdateFailure : snackbarTitle = "오류"; snackbarContent = "글 수정에 실패했습니다.";
+      case UpdateResult.imageUpdateFailure : snackbarTitle = "오류"; snackbarContent = "이미지 업로드에 실패했습니다.";
+      default :
+    }
+
+    //#. 다이얼로그 띄우기
+    if(result.updateResult == UpdateResult.success){
+      if(context.mounted){
+        CustomDialog.show(
+            barrierDismissible: false,
+            builder: (dialogContext){
+              return buildResultDialog(
+                result.siteReview,
+                "글을 수정했습니다.",
+                dialogContext,
+                context,
+              );
+            },
+            context: context
+        );
+      }
     }
     else{
-      StaticLogger.logger.e("업데이트 실패 : ${result.updateResult}\n${result.exception}\n${result.stackTrace}");
+      CustomSnackbar.show(snackbarTitle, snackbarContent);
     }
   }
 
