@@ -39,7 +39,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
     );
 
     if(widget.isUpdateMode){
-      controller.getUploadedImages();
+      controller.setUploadedData();
       titleController.text = widget.updateTargetReview!.title;
       contentController.text = widget.updateTargetReview!.content;
     }
