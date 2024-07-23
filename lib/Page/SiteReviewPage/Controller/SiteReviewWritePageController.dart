@@ -341,7 +341,9 @@ class SiteReviewWritePageController extends GetxController{
     );
   }
 
-  Future<void> getUploadedImages() async {
+
+  Future<void> setUploadedData() async {
+    //#. 이미지 불러오기
     updateImageLoading = LoadingState.loading;
     update();
 
@@ -363,10 +365,21 @@ class SiteReviewWritePageController extends GetxController{
 
     StaticLogger.logger.i("getUploadedImages : ${showImages.length}");
 
+
+    //#. 썸네일 결정
+    List<String> split = updateTarget!.thumbnailRefPath.split('/');
+
+    setThumbnail(split.last);
+
+    if(showImages.containsKey(split.last)){
+      setThumbnail(split.last);
+    }
+    
     updateImageLoading = LoadingState.success;
+        
     update();
   }
-
+  
   bool _checkValidation(String title, String content){
     if(imageSize > maxSizeMb){
       CustomSnackbar.show('오류', '이미지의 크기는 10MB를 넘을 수 없습니다.');
