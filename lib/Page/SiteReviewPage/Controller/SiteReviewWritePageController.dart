@@ -101,7 +101,10 @@ class SiteReviewWritePageController extends GetxController{
   Future<void> upload(String title, String content , BuildContext context) async{
 
     //#. 예외 검토
-    _checkValidation(title , content);
+    if(_checkValidation(title , content)){
+      return;
+    }
+
 
     //#. 업로드
     UploadResultInfo result = await _handleUploadProgress(
@@ -182,7 +185,9 @@ class SiteReviewWritePageController extends GetxController{
   //#. 업데이트
   Future<void> updateReview(String title, String content , BuildContext context) async{
 
-    _checkValidation(title , content);
+    if(_checkValidation(title , content)){
+      return;
+    }
 
     UpdateResultInfo result = await _handleUpdateProgress(
         title: title,
