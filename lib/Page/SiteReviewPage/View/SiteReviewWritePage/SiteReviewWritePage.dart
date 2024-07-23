@@ -143,7 +143,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                   InkWell(
                     onTap: () {
                       if(widget.isUpdateMode){
-                        controller.updateReview(titleController.text, contentController.text);
+                        controller.updateReview(titleController.text, contentController.text , context);
                       }
                       else{
                         controller.upload(titleController.text, contentController.text , context);
