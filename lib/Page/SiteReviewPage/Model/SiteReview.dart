@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Page/SiteReviewPage/SiteReviewReferences.dart';
-import 'package:homerun/Service/FirebaseStorageService.dart';
 
 class SiteReview {
   String id;
@@ -13,7 +12,8 @@ class SiteReview {
   int view;
   String imagesRefPath;
   String thumbnailRefPath;
-
+  Timestamp date;
+  Timestamp? modified;
 
   SiteReview({
     required this.id,
@@ -23,13 +23,15 @@ class SiteReview {
     required this.writer,
     required this.view,
     required this.imagesRefPath,
-    required this.thumbnailRefPath
+    required this.thumbnailRefPath,
+    required this.date,
+    this.modified,
   });
 
-  factory SiteReview.fromMap(Map<String, dynamic> map , String id) {
-    try{
+  factory SiteReview.fromMap(Map<String, dynamic> map, String id) {
+    try {
       return SiteReview(
-        id : id,
+        id: id,
         noticeId: map['noticeId'],
         title: map['title'],
         content: map['content'],
@@ -37,8 +39,10 @@ class SiteReview {
         view: map['view'],
         imagesRefPath: map['imagesRefPath'],
         thumbnailRefPath: map['thumbnailRefPath'],
+        date: map['date'],
+        modified: map['modified'],
       );
-    }catch(e , s){
+    } catch (e, s) {
       StaticLogger.logger.e("$e\n$s");
       return SiteReview.error();
     }
@@ -53,12 +57,11 @@ class SiteReview {
     required String uid,
     required String docId,
   }) {
-
-    String imageRefPath = SiteReviewReferences.getReviewImageFolderPath(writeDto.noticeId , docId);
-    String thumbnailRefPath = SiteReviewReferences.getReviewThumbnailPath(writeDto.noticeId , docId , writeDto.thumbnail);
+    String imageRefPath = SiteReviewReferences.getReviewImageFolderPath(writeDto.noticeId, docId);
+    String thumbnailRefPath = SiteReviewReferences.getReviewThumbnailPath(writeDto.noticeId, docId, writeDto.thumbnail);
 
     return SiteReview(
-      id : '',
+      id: '',
       noticeId: writeDto.noticeId,
       title: writeDto.title,
       content: writeDto.content,
@@ -66,12 +69,13 @@ class SiteReview {
       view: 0,
       imagesRefPath: imageRefPath,
       thumbnailRefPath: thumbnailRefPath,
+      date: writeDto.date,
     );
   }
 
   factory SiteReview.test() {
     return SiteReview(
-      id : "test",
+      id: "test",
       noticeId: '1',
       title: "테스트1",
       content: '테스트1',
@@ -79,12 +83,13 @@ class SiteReview {
       view: 0,
       imagesRefPath: 'site_review/test/1',
       thumbnailRefPath: 'site_review/test/1',
+      date: Timestamp.now(),
     );
   }
 
   factory SiteReview.error() {
     return SiteReview(
-      id : "error",
+      id: "error",
       noticeId: 'error',
       title: "error",
       content: 'error',
@@ -92,35 +97,39 @@ class SiteReview {
       view: 0,
       imagesRefPath: '',
       thumbnailRefPath: '',
+      date: Timestamp.now(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id' : id,
-      'noticeId' : noticeId,
+      'id': id,
+      'noticeId': noticeId,
       'title': title,
       'content': content,
       'writer': writer,
       'view': view,
       'imagesRefPath': imagesRefPath,
       'thumbnailRefPath': thumbnailRefPath,
+      'date': date,
+      'modified': modified,
     };
   }
 
   Map<String, dynamic> toUploadMap() {
     return {
-      'noticeId' : noticeId,
+      'noticeId': noticeId,
       'title': title,
       'content': content,
       'writer': writer,
       'view': view,
       'imagesRefPath': imagesRefPath,
       'thumbnailRefPath': thumbnailRefPath,
+      'modified': modified,
     };
   }
 
-  void replace(SiteReview replace){
+  void replace(SiteReview replace) {
     id = replace.id;
     title = replace.title;
     content = replace.content;
@@ -128,5 +137,7 @@ class SiteReview {
     view = replace.view;
     imagesRefPath = replace.imagesRefPath;
     thumbnailRefPath = replace.thumbnailRefPath;
+    date = replace.date;
+    modified = replace.modified;
   }
 }
