@@ -16,7 +16,6 @@ import 'package:homerun/Page/SiteReviewPage/SiteReviewReferences.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/ApiResponse.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
-import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,7 +24,6 @@ import '../Value/SiteReviewFields.dart';
 
 class SiteReviewService{
 
-  final CollectionReference _siteReviewCollection = FirebaseFirestore.instance.collection('site_review');
   final List<String> viewList = [];
 
   static SiteReviewService? _instance;
@@ -76,10 +74,8 @@ class SiteReviewService{
     }
 
     //#1. 유저 정보 가져오기
-    UserDto userDto;
-
     try{
-      userDto = Get.find<AuthService>().getUser();
+      Get.find<AuthService>().getUser();
     }catch(e , s){
       return UploadResultInfo.fromFailure(
           state: UploadResult.authFailure,
@@ -109,27 +105,6 @@ class SiteReviewService{
 
     documentReference = makeResult.content!;
 
-
-    //#3. 리뷰 문서에 정보 저장하기
-    // try{
-    //   await _updateDocument(siteReviewWriteDto , documentReference , userDto.uid);
-    // }catch(e1 , s){
-    //   StaticLogger.logger.e('[SiteReviewService.upload()] 문서 저장 실패 $e1\n$s');
-    //   try{
-    //     await _siteReviewCollection
-    //         .doc(siteReviewWriteDto.noticeId)
-    //         .collection('review')
-    //         .doc()
-    //         .delete();
-    //   }catch(e2){
-    //     StaticLogger.logger.e('[SiteReviewService.upload()] 삭제 실패 $e2');
-    //   }
-    //   return UploadResultInfo.fromFailure(
-    //       state: UploadResult.writeDocFailure,
-    //       exception: e1,
-    //       stackTrace: s
-    //   );
-    // }
 
     //#4. 이미지 업로드
     if(onProgress != null){
@@ -338,8 +313,6 @@ class SiteReviewService{
     }
 
     //#2. 문서 업데이트
-    DocumentReference documentReference = SiteReviewReferences.getReviewDocument(targetReview.noticeId, targetReview.id);
-
     Result updateDocResult = await _updateDocument(
         noticeId: targetReview.noticeId,
         reviewId: targetReview.id,
