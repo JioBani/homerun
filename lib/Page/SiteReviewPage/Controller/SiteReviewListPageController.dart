@@ -6,6 +6,10 @@ import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
 
 class SiteReviewListPageController extends GetxController{
+  static const initReviewNumber = 2;
+  static const loadReviewNumber = 2;
+
+
   final String noticeId;
   List<SiteReview> siteReviews = [];
   Rx<LoadingState> loadingState = Rx(LoadingState.before);
@@ -20,13 +24,21 @@ class SiteReviewListPageController extends GetxController{
 
   //TODO 리뷰가 수백개면 어캄?
   Future<void> loadSiteReviews()async {
+    int count = siteReviews.isEmpty ? initReviewNumber : loadReviewNumber;
     update();
     loadingState.value = LoadingState.loading;
 
-    Result<List<SiteReview>> result = await SiteReviewService.instance.getSiteReviews(noticeId);
+    Result<List<SiteReview>> result = await SiteReviewService.instance.getSiteReviews(
+      noticeId,
+      index: count
+    );
+
     if(result.isSuccess){
-      siteReviews = result.content!;
+      siteReviews.addAll(result.content!);
       loadingState.value = LoadingState.success;
+      if(result.content!.length < count){
+        loadingState.value = LoadingState.noMoreData;
+      }
     }
     else{
       StaticLogger.logger.e('[SiteReviewListPageController.loadSiteReviews()] ${result.exception}\n${result.stackTrace}');
