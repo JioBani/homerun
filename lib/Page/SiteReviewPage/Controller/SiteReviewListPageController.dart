@@ -6,8 +6,8 @@ import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
 
 class SiteReviewListPageController extends GetxController{
-  static const initReviewNumber = 2;
-  static const loadReviewNumber = 2;
+  static const initReviewNumber = 10;
+  static const loadReviewNumber = 10;
 
 
   final String noticeId;
