@@ -35,6 +35,9 @@ class SiteReviewService{
     return _instance!;
   }
 
+  //region #. CRUD
+  
+  //#. 리뷰 가져오기
   Future<Result<List<SiteReview>>> getSiteReviews({
     required String noticeId,
     required int count,
@@ -61,7 +64,9 @@ class SiteReviewService{
       }
     );
   }
+  
 
+  //#.리뷰 업로드
   Future<UploadResultInfo> upload(
       SiteReviewWriteDto siteReviewWriteDto,
       List<XFile> images,
@@ -156,137 +161,9 @@ class SiteReviewService{
       );
     }
   }
+  
 
-  Future<Result<DocumentReference>> _makeDocument({
-    required String noticeId,
-    required String title,
-    required String content,
-    required String thumbnailImageName,
-  }) async {
-    return Result.handleFuture(action: () async {
-      String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
-
-      if(idToken == null){
-        throw ApplicationUnauthorizedException();
-      }
-
-      final response = await http.post(
-        Uri.parse(FirebaseFunctionEndpoints.makeSiteReviewDocument),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $idToken',
-        },
-        body: jsonEncode({
-          SiteReviewFields.noticeId :  noticeId,
-          SiteReviewFields.title: title,
-          SiteReviewFields.content: content,
-          "thumbnailImageName" : thumbnailImageName
-        }),
-      );
-
-      ApiResponse<String> apiResponse = ApiResponse<String>.fromMap(jsonDecode(response.body));
-
-      if(apiResponse.status == 200 || apiResponse.status == 300){
-        return FirebaseFirestore.instance.doc(apiResponse.data!);
-      }
-      else{
-        StaticLogger.logger.e(apiResponse.error?.message);
-        throw apiResponse.error!;
-      }
-    });
-  }
-
-  Future<Map<XFile , Result<void>>> _uploadImage({
-    required List<XFile> images,
-    required String noticeId,
-    required String docId,
-    required void Function(TaskSnapshot)? snapshotEventAction
-  }) async {
-    List<Map<XFile, Result<void>>> mapList = await Future.wait(images.map((imageFile) async {
-      try {
-        String fileName = imageFile.name;
-        Reference storageRef = FirebaseStorage.instance.ref().child('site_review/$noticeId/$docId/$fileName');
-        UploadTask uploadTask = storageRef.putFile(File(imageFile.path));
-
-        uploadTask.snapshotEvents.listen(snapshotEventAction);
-
-        await uploadTask.whenComplete(() {});
-
-        return {imageFile: Result<void>.fromSuccess()};
-      }
-      catch (e, s) {
-        StaticLogger.logger.e("[SiteReviewService._uploadImage()] $e\n$s");
-        return {imageFile: Result<void>.fromFailure(e, s)};
-      }
-    }));
-
-    Map<XFile, Result<void>> resultMap = {};
-
-    for (var map in mapList) {
-      resultMap.addAll(map);
-    }
-    return resultMap;
-  }
-
-  Future<Map<String , Result<void>>> _deleteImage({
-    required List<String> imagesNames,
-    required String noticeId,
-    required String docId,
-    required void Function(TaskSnapshot)? snapshotEventAction
-  }) async {
-
-    List<Map<String, Result<void>>> mapList = await Future.wait(imagesNames.map((name) async {
-      try {
-        Reference storageRef = SiteReviewReferences.getReviewImageRef(noticeId, docId, name);
-        await storageRef.delete();
-        return {name: Result<void>.fromSuccess()};
-      }
-      catch (e, s) {
-        StaticLogger.logger.e("[SiteReviewService._deleteImage()] $e\n$s");
-        return {name: Result<void>.fromFailure(e, s)};
-      }
-    }));
-
-    Map<String, Result<void>> resultMap = {};
-
-    for (var map in mapList) {
-      resultMap.addAll(map);
-    }
-    return resultMap;
-  }
-
-
-  Future<Result<void>> delete(SiteReview siteReview){
-    return Result.handleFuture(action: () async {
-      String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
-
-      if(idToken == null){
-        throw ApplicationUnauthorizedException();
-      }
-
-      final response = await http.post(
-        Uri.parse(FirebaseFunctionEndpoints.deleteSiteReview),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $idToken',
-        },
-        body: jsonEncode({
-          "path" : SiteReviewReferences.getReviewCollection(siteReview.noticeId).doc(siteReview.id).path
-        }),
-      );
-
-      ApiResponse<String> apiResponse = ApiResponse<String>.fromMap(jsonDecode(response.body));
-
-      if(apiResponse.status == 200 || apiResponse.status == 300){
-        return;
-      }
-      else{
-        StaticLogger.logger.e(apiResponse.error?.message);
-        throw apiResponse.error!;
-      }
-    });
-  }
-
+  //#. 리뷰 업데이트
   Future<UpdateResultInfo> update({
     required SiteReview targetReview,
     required String title,
@@ -300,14 +177,14 @@ class SiteReviewService{
     if(onProgress != null) {
       onProgress('문서 수정 중');
     }
-    
+
     //#1. 로그인 확인
     String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
     if(idToken == null){
       return UpdateResultInfo.fromFailure(
-          state: UpdateResult.authFailure, 
-          exception: ApplicationUnauthorizedException(), 
+          state: UpdateResult.authFailure,
+          exception: ApplicationUnauthorizedException(),
           stackTrace: StackTrace.current
       );
     }
@@ -332,7 +209,7 @@ class SiteReviewService{
     if(onProgress != null) {
       onProgress('이미지 수정 중');
     }
-    
+
     //#3. 이미지 수정
     List<Map<dynamic ,Result<void>>> imageResult = await Future.wait<Map<dynamic ,Result<void>>>([
       _deleteImage(
@@ -403,28 +280,96 @@ class SiteReviewService{
       }
     }
   }
+  
 
-  Future<void> increaseViewCount(SiteReview siteReview) async{
-    if(viewList.contains(siteReview.id)){
-      return;
-    }
+  //#. 리뷰 삭제
+  Future<Result<void>> delete(SiteReview siteReview){
+    return Result.handleFuture(action: () async {
+      String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
-    final res = await http.post(
-      Uri.parse(FirebaseFunctionEndpoints.increaseSiteReviewViewCount),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        "noticeId" : siteReview.noticeId,
-        "siteReviewId" : siteReview.id,
-      }),
+      if(idToken == null){
+        throw ApplicationUnauthorizedException();
+      }
+
+      final response = await http.post(
+        Uri.parse(FirebaseFunctionEndpoints.deleteSiteReview),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+        body: jsonEncode({
+          "path" : SiteReviewReferences.getReviewCollection(siteReview.noticeId).doc(siteReview.id).path
+        }),
+      );
+
+      ApiResponse<String> apiResponse = ApiResponse<String>.fromMap(jsonDecode(response.body));
+
+      if(apiResponse.status == 200 || apiResponse.status == 300){
+        return;
+      }
+      else{
+        StaticLogger.logger.e(apiResponse.error?.message);
+        throw apiResponse.error!;
+      }
+    });
+  }
+  
+  //#endregion
+  
+  
+  //#region #. 문서 작업
+
+  //#. 문서 가져오기
+  Future<Result<SiteReview>> _getSiteReview(String noticeId, String reviewId){
+    return Result.handleFuture<SiteReview>(action: () async =>
+        SiteReview.fromDocumentSnapshot(
+            await SiteReviewReferences.getReviewDocument(noticeId, reviewId).get()
+        )
     );
-
-    if(res.statusCode == 200 || res.statusCode == 300){
-      viewList.add(siteReview.id);
-    }
   }
 
+  //#. 문서 만들기
+  Future<Result<DocumentReference>> _makeDocument({
+    required String noticeId,
+    required String title,
+    required String content,
+    required String thumbnailImageName,
+  }) async {
+    return Result.handleFuture(action: () async {
+      String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+
+      if(idToken == null){
+        throw ApplicationUnauthorizedException();
+      }
+
+      final response = await http.post(
+        Uri.parse(FirebaseFunctionEndpoints.makeSiteReviewDocument),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+        body: jsonEncode({
+          SiteReviewFields.noticeId :  noticeId,
+          SiteReviewFields.title: title,
+          SiteReviewFields.content: content,
+          "thumbnailImageName" : thumbnailImageName
+        }),
+      );
+
+      ApiResponse<String> apiResponse = ApiResponse<String>.fromMap(jsonDecode(response.body));
+
+      if(apiResponse.status == 200 || apiResponse.status == 300){
+        return FirebaseFirestore.instance.doc(apiResponse.data!);
+      }
+      else{
+        StaticLogger.logger.e(apiResponse.error?.message);
+        throw apiResponse.error!;
+      }
+    });
+  }
+
+
+  //#. 문서 업데이트
   Future<Result> _updateDocument({
     required String noticeId,
     required String reviewId,
@@ -467,9 +412,99 @@ class SiteReviewService{
       }
     });
   }
+  //#endregion
 
-  Future<Result<SiteReview>> _getSiteReview(String noticeId, String reviewId){
-    return Result.handleFuture<SiteReview>(action: () async => SiteReview.fromDocumentSnapshot(await SiteReviewReferences.getReviewDocument(noticeId, reviewId).get()));
+
+  //#region #. 이미지 작업
+  
+  //#. 이미지 업로드
+  Future<Map<XFile , Result<void>>> _uploadImage({
+    required List<XFile> images,
+    required String noticeId,
+    required String docId,
+    required void Function(TaskSnapshot)? snapshotEventAction
+  }) async {
+    List<Map<XFile, Result<void>>> mapList = await Future.wait(images.map((imageFile) async {
+      try {
+        String fileName = imageFile.name;
+        Reference storageRef = FirebaseStorage.instance.ref().child('site_review/$noticeId/$docId/$fileName');
+        UploadTask uploadTask = storageRef.putFile(File(imageFile.path));
+
+        uploadTask.snapshotEvents.listen(snapshotEventAction);
+
+        await uploadTask.whenComplete(() {});
+
+        return {imageFile: Result<void>.fromSuccess()};
+      }
+      catch (e, s) {
+        StaticLogger.logger.e("[SiteReviewService._uploadImage()] $e\n$s");
+        return {imageFile: Result<void>.fromFailure(e, s)};
+      }
+    }));
+
+    Map<XFile, Result<void>> resultMap = {};
+
+    for (var map in mapList) {
+      resultMap.addAll(map);
+    }
+    return resultMap;
   }
 
+  //#. 이미지 삭제
+  Future<Map<String , Result<void>>> _deleteImage({
+    required List<String> imagesNames,
+    required String noticeId,
+    required String docId,
+    required void Function(TaskSnapshot)? snapshotEventAction
+  }) async {
+
+    List<Map<String, Result<void>>> mapList = await Future.wait(imagesNames.map((name) async {
+      try {
+        Reference storageRef = SiteReviewReferences.getReviewImageRef(noticeId, docId, name);
+        await storageRef.delete();
+        return {name: Result<void>.fromSuccess()};
+      }
+      catch (e, s) {
+        StaticLogger.logger.e("[SiteReviewService._deleteImage()] $e\n$s");
+        return {name: Result<void>.fromFailure(e, s)};
+      }
+    }));
+
+    Map<String, Result<void>> resultMap = {};
+
+    for (var map in mapList) {
+      resultMap.addAll(map);
+    }
+    return resultMap;
+  }
+
+  //#endregion
+
+
+
+  //#region #. 기타
+  
+  //#. 조회수 증가
+  Future<void> increaseViewCount(SiteReview siteReview) async{
+    if(viewList.contains(siteReview.id)){
+      return;
+    }
+
+    final res = await http.post(
+      Uri.parse(FirebaseFunctionEndpoints.increaseSiteReviewViewCount),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "noticeId" : siteReview.noticeId,
+        "siteReviewId" : siteReview.id,
+      }),
+    );
+
+    if(res.statusCode == 200 || res.statusCode == 300){
+      viewList.add(siteReview.id);
+    }
+  }
+
+  //#endregion
 }
