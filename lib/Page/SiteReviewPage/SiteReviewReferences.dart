@@ -31,4 +31,13 @@ class SiteReviewReferences{
         .collection('like')
         .doc(uid);
   }
+
+  static CollectionReference getReviewLikeCollection(String noticeId, String reviewId)  {
+    return FirebaseFirestore.instance
+        .collection('site_review')
+        .doc(noticeId)
+        .collection('review')
+        .doc(reviewId)
+        .collection('like');
+  }
 }
