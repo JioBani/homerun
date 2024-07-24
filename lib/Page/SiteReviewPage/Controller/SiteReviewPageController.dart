@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'package:homerun/Common/Loadable/Loadable.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
@@ -15,6 +16,8 @@ class SiteReviewPageController extends GetxController{
   final String likeMethod = "like";
   final String unlikeMethod = "unlike";
 
+  RxInt likes = RxInt(0);
+
   SiteReviewPageController({required this.siteReview}){
     loadableLike = Loadable<bool>(controller: this , loadingActions: {
       loadMethod : _loadLike,
@@ -26,6 +29,7 @@ class SiteReviewPageController extends GetxController{
   @override
   onInit(){
     loadableLike.load(loadMethod);
+    getLikes();
     super.onInit();
   }
 
@@ -53,6 +57,7 @@ class SiteReviewPageController extends GetxController{
 
     if(result.isSuccess){
       loadable.setValue(true);
+      likes++;
       loadable.update(LoadingState.success);
     }
     else{
@@ -75,6 +80,7 @@ class SiteReviewPageController extends GetxController{
 
     if(result.isSuccess){
       loadable.setValue(false);
+      likes--;
       loadable.update(LoadingState.success);
     }
     else{
@@ -86,6 +92,16 @@ class SiteReviewPageController extends GetxController{
 
   Future<void> unlike()async{
     loadableLike.load(unlikeMethod);
+  }
+
+  Future<void> getLikes() async {
+    Result result = await SiteReviewService.instance.getLikeCount(siteReview);
+    if(result.isSuccess){
+      likes.value = result.content!;
+    }
+    else{
+      StaticLogger.logger.e(result.exception);
+    }
   }
 
 }
