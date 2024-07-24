@@ -3,6 +3,8 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Page/SiteReviewPage/SiteReviewReferences.dart';
 
+import '../Value/SiteReviewFields.dart';
+
 class SiteReview {
   String id;
   String noticeId;
@@ -32,15 +34,15 @@ class SiteReview {
     try {
       return SiteReview(
         id: id,
-        noticeId: map['noticeId'],
-        title: map['title'],
-        content: map['content'],
-        writer: map['writer'],
-        view: map['view'],
-        imagesRefPath: map['imagesRefPath'],
-        thumbnailRefPath: map['thumbnailRefPath'],
-        date: map['date'],
-        modified: map['modified'],
+        noticeId: map[SiteReviewFields.noticeId],
+        title: map[SiteReviewFields.title],
+        content: map[SiteReviewFields.content],
+        writer: map[SiteReviewFields.writer],
+        view: map[SiteReviewFields.view],
+        imagesRefPath: map[SiteReviewFields.imagesRefPath],
+        thumbnailRefPath: map[SiteReviewFields.thumbnailRefPath],
+        date: map[SiteReviewFields.date],
+        modified: map[SiteReviewFields.modified],
       );
     } catch (e, s) {
       StaticLogger.logger.e("$e\n$s");
@@ -103,29 +105,29 @@ class SiteReview {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'noticeId': noticeId,
-      'title': title,
-      'content': content,
-      'writer': writer,
-      'view': view,
-      'imagesRefPath': imagesRefPath,
-      'thumbnailRefPath': thumbnailRefPath,
-      'date': date,
-      'modified': modified,
+      SiteReviewFields.id: id,
+      SiteReviewFields.noticeId: noticeId,
+      SiteReviewFields.title: title,
+      SiteReviewFields.content: content,
+      SiteReviewFields.writer: writer,
+      SiteReviewFields.view: view,
+      SiteReviewFields.imagesRefPath: imagesRefPath,
+      SiteReviewFields.thumbnailRefPath: thumbnailRefPath,
+      SiteReviewFields.date: date,
+      SiteReviewFields.modified: modified,
     };
   }
 
   Map<String, dynamic> toUploadMap() {
     return {
-      'noticeId': noticeId,
-      'title': title,
-      'content': content,
-      'writer': writer,
-      'view': view,
-      'imagesRefPath': imagesRefPath,
-      'thumbnailRefPath': thumbnailRefPath,
-      'modified': modified,
+      SiteReviewFields.noticeId: noticeId,
+      SiteReviewFields.title: title,
+      SiteReviewFields.content: content,
+      SiteReviewFields.writer: writer,
+      SiteReviewFields.view: view,
+      SiteReviewFields.imagesRefPath: imagesRefPath,
+      SiteReviewFields.thumbnailRefPath: thumbnailRefPath,
+      SiteReviewFields.modified: modified,
     };
   }
 
