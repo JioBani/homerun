@@ -34,4 +34,23 @@ class SiteReviewListPageController extends GetxController{
     }
     update();
   }
+
+  void addReview(SiteReview review){
+    siteReviews.insert(0, review);
+    update();
+  }
+
+  void removeReview(SiteReview review){
+    siteReviews.remove(review);
+    update();
+  }
+
+  void updateReview(SiteReview review){
+    for(var r in siteReviews){
+      if(r.id == review.id){
+        r.replace(review);
+      }
+    }
+    update();
+  }
 }
