@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewListPageController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentViewWidget.dart';
@@ -244,6 +246,8 @@ class AppbarPopupMenu extends StatelessWidget {
                   title: "삭제되었습니다.",
                   buttonText: "확인"
               );
+
+              Get.find<SiteReviewListPageController>(tag: siteReview.noticeId).removeReview(siteReview);
             }
             else{
               CustomSnackbar.show("오류" , "삭제에 실패했습니다.");
