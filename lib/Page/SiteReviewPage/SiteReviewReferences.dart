@@ -21,4 +21,14 @@ class SiteReviewReferences{
   static String getReviewThumbnailPath(String noticeId , String docId , String thumbnailImageName){
     return "site_review/$noticeId/$docId/$thumbnailImageName";
   }
+
+  static DocumentReference getReviewLikeDocument(String noticeId, String reviewId, String uid)  {
+    return FirebaseFirestore.instance
+        .collection('site_review')
+        .doc(noticeId)
+        .collection('review')
+        .doc(reviewId)
+        .collection('like')
+        .doc(uid);
+  }
 }
