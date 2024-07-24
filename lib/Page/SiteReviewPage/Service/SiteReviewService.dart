@@ -13,9 +13,11 @@ import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/UpdateResultInfo.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/UploadResult.dart';
 import 'package:homerun/Page/SiteReviewPage/SiteReviewReferences.dart';
+import 'package:homerun/Page/SiteReviewPage/Value/Values.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/ApiResponse.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
+import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
@@ -504,6 +506,52 @@ class SiteReviewService{
     if(res.statusCode == 200 || res.statusCode == 300){
       viewList.add(siteReview.id);
     }
+  }
+  
+  //#. 좋아요 확인
+  Future<Result<bool>> isLiked(SiteReview siteReview){
+    return Result.handleFuture<bool>(action: ()async{
+      UserDto userDto = Get.find<AuthService>().getUser();
+
+      DocumentSnapshot snapshot = await SiteReviewReferences.getReviewLikeDocument(
+          siteReview.noticeId,
+          siteReview.id,
+          userDto.uid
+      ).get();
+
+      if(snapshot.exists){
+        return true;
+      }
+      else{
+        return false;
+      }
+    });
+  }
+
+  Future<Result> like(SiteReview siteReview) async {
+    return Result.handleFuture(action: ()async{
+      UserDto userDto = Get.find<AuthService>().getUser();
+      DocumentReference likeDoc = SiteReviewReferences.getReviewLikeDocument(
+        siteReview.noticeId,
+        siteReview.id,
+        userDto.uid,
+      );
+
+      await likeDoc.set({Values.likeAt: FieldValue.serverTimestamp()});
+    });
+  }
+
+  Future<Result> unlike(SiteReview siteReview) async {
+    return Result.handleFuture(action: ()async{
+      UserDto userDto = Get.find<AuthService>().getUser();
+      DocumentReference likeDoc = SiteReviewReferences.getReviewLikeDocument(
+        siteReview.noticeId,
+        siteReview.id,
+        userDto.uid,
+      );
+
+      await likeDoc.delete();
+    });
   }
 
   //#endregion
