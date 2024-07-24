@@ -41,7 +41,11 @@ class SiteReviewWritePageController extends GetxController{
 
   LoadingState updateImageLoading = LoadingState.before;
 
-  SiteReviewWritePageController({required this.noticeId , this.updateTarget , this.updateMode = false});
+  SiteReviewWritePageController({
+    required this.noticeId ,
+    this.updateTarget ,
+    this.updateMode = false,
+  });
 
   Future<void> addImage() async {
 
@@ -155,6 +159,7 @@ class SiteReviewWritePageController extends GetxController{
           result.siteReview,
           "글을 업로드 했습니다.",
           context,
+          false
         );
       }
     }
@@ -227,6 +232,7 @@ class SiteReviewWritePageController extends GetxController{
           result.siteReview,
           "글을 수정 했습니다.",
           context,
+          true
         );
       }
     }
@@ -328,7 +334,12 @@ class SiteReviewWritePageController extends GetxController{
     );
   }
 
-  void _showResultDialog(SiteReview? siteReview , String content , BuildContext pageContext){
+  void _showResultDialog(
+      SiteReview? siteReview ,
+      String content ,
+      BuildContext pageContext,
+      bool isUpdate
+    ){
     CustomDialog.show(
         barrierDismissible: false,
         builder: (dialogContext){
@@ -346,9 +357,12 @@ class SiteReviewWritePageController extends GetxController{
                 }
 
                 if(userDto != null && siteReview != null){
+                  if(isUpdate){
+                    Get.back();
+                  }
                   Get.to(SiteReviewPage(
-                      siteReview: siteReview,
-                      userDto: userDto
+                    siteReview: siteReview,
+                    userDto: userDto
                   ));
                 }
               },
@@ -428,53 +442,6 @@ class SiteReviewWritePageController extends GetxController{
 
     update();
   }
-
-  // Future<void> setUploadedData(BuildContext context) async {
-  //   //#. 이미지 불러오기
-  //   updateImageLoading = LoadingState.loading;
-  //   update();
-  //
-  //   Map<String , Result<XFile>> imageResult = await FirebaseStorageService.instance.downloadAllAssetsAsXFiles(
-  //       updateTarget!.imagesRefPath
-  //   );
-  //
-  //   Result? lastFailResult;
-  //
-  //   imageResult[imageResult.keys.first] = Result.fromFailure(Exception('테스트 예외'), StackTrace.current);
-  //
-  //   for (var entry in imageResult.entries) {
-  //     if(entry.value.isSuccess){
-  //       uploadedImages[entry.key] = entry.value.content!;
-  //       StaticLogger.logger.e("${entry.key} : ${entry.value.content!.name}");
-  //     }
-  //     else{
-  //       uploadedImages[entry.key] = null;
-  //       lastFailResult = entry.value;
-  //       StaticLogger.logger.e("이미지를 가져오지 못함 : ${entry.key}");
-  //     }
-  //     showImages[entry.key] = entry.value.content;
-  //   }
-  //
-  //   if(lastFailResult != null && context.mounted){
-  //     _showLoadingFailDialog("이미지를 가져오지 못했습니다." , context);
-  //   }
-  //
-  //   //#. 썸네일 결정
-  //   List<String> split = updateTarget!.thumbnailRefPath.split('/');
-  //
-  //   setThumbnail(split.last);
-  //
-  //   if(showImages.containsKey(split.last)){
-  //     setThumbnail(split.last);
-  //   }
-  //
-  //   //#. 이미지 용량 계산
-  //   calculateTotalImageSize();
-  //
-  //   updateImageLoading = LoadingState.success;
-  //
-  //   update();
-  // }
   
   bool _checkValidation(String title, String content ,bool isUpdate){
     if(imageSize > maxSizeMb){
