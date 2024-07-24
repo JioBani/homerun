@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:homerun/Common/Loadable/Loadable.dart';
@@ -7,6 +8,7 @@ import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 
 class SiteReviewPageController extends GetxController{
   final SiteReview siteReview;
@@ -28,7 +30,9 @@ class SiteReviewPageController extends GetxController{
 
   @override
   onInit(){
-    loadableLike.load(loadMethod);
+    if(FirebaseAuth.instance.currentUser != null){
+      loadableLike.load(loadMethod);
+    }
     getLikes();
     super.onInit();
   }
@@ -51,8 +55,6 @@ class SiteReviewPageController extends GetxController{
   Future<void> _like(Loadable<bool> loadable) async {
     loadable.update(LoadingState.loading);
 
-    await Future.delayed(Duration(seconds: 3));
-
     Result result = await SiteReviewService.instance.like(siteReview);
 
     if(result.isSuccess){
@@ -63,7 +65,13 @@ class SiteReviewPageController extends GetxController{
     else{
       StaticLogger.logger.e(result.exception);
       loadable.update(LoadingState.fail);
-      CustomSnackbar.show("오류", "좋아요에 실패했습니다.");
+
+      if(result.exception is ApplicationUnauthorizedException){
+        CustomSnackbar.show("오류", "로그인이 필요합니다.");
+      }
+      else{
+        CustomSnackbar.show("오류", "좋아요에 실패했습니다.");
+      }
     }
   }
 
@@ -73,8 +81,6 @@ class SiteReviewPageController extends GetxController{
 
   Future<void> _unlike(Loadable<bool> loadable) async {
     loadable.update(LoadingState.loading);
-
-    await Future.delayed(Duration(seconds: 3));
 
     Result result = await SiteReviewService.instance.unlike(siteReview);
 
@@ -86,7 +92,13 @@ class SiteReviewPageController extends GetxController{
     else{
       StaticLogger.logger.e(result.exception);
       loadable.update(LoadingState.fail);
-      CustomSnackbar.show("오류", "좋아요에 실패했습니다.");
+
+      if(result.exception is ApplicationUnauthorizedException){
+        CustomSnackbar.show("오류", "로그인이 필요합니다.");
+      }
+      else{
+        CustomSnackbar.show("오류", "좋아요 취소에 실패했습니다.");
+      }
     }
   }
 
