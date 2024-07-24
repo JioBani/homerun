@@ -337,7 +337,7 @@ class SiteReviewService{
     required String content,
     required String thumbnailImageName,
   }) async {
-    return Result.handleFuture(action: () async {
+    return Result.handleFuture(timeout : const Duration(seconds: 30) , action: () async {
       String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
       if(idToken == null){
@@ -379,7 +379,7 @@ class SiteReviewService{
     required String content,
     required String thumbnailImageName,
   })async {
-    return Result.handleFuture(action: () async {
+    return Result.handleFuture(timeout: const Duration(minutes: 1), action: () async {
       String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
       if(idToken == null){
@@ -501,7 +501,7 @@ class SiteReviewService{
         "noticeId" : siteReview.noticeId,
         "siteReviewId" : siteReview.id,
       }),
-    );
+    ).timeout(const Duration(seconds: 10));
 
     if(res.statusCode == 200 || res.statusCode == 300){
       viewList.add(siteReview.id);
@@ -551,6 +551,17 @@ class SiteReviewService{
       );
 
       await likeDoc.delete();
+    });
+  }
+
+  Future<Result<int>> getLikeCount(SiteReview siteReview){
+    return Result.handleFuture<int>(action: ()async{
+      AggregateQuerySnapshot snapshot = await SiteReviewReferences.getReviewLikeCollection(
+          siteReview.noticeId,
+          siteReview.id
+      ).count().get();
+
+      return snapshot.count ?? 0;
     });
   }
 
