@@ -46,6 +46,16 @@ class _SiteReviewListItemWidgetState extends State<SiteReviewListItemWidget> {
   }
 
   @override
+  void didUpdateWidget(SiteReviewListItemWidget oldWidget) {
+    if (oldWidget.siteReview != widget.siteReview) {
+      userDto = null;
+      getUser();
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
