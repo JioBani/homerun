@@ -26,7 +26,6 @@ class SiteReviewPage extends StatefulWidget {
 
 class _SiteReviewPageState extends State<SiteReviewPage> {
 
-
   late final SiteReviewPageController controller;
 
   @override
@@ -158,12 +157,53 @@ class ProfileWidget extends StatelessWidget {
           const Spacer(),
           Align(
             alignment: Alignment.bottomRight,
-            child: Text(
-              "좋아요 5 · 조회 ${siteReview.view}",
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Palette.brightMode.mediumText,
-              ),
+            child: GetBuilder<SiteReviewPageController>(
+              builder: (controller) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Builder(builder: (context){
+                      if(controller.loadableLike.loadingState == LoadingState.loading){
+                        return CupertinoActivityIndicator(radius: 6.sp,);
+
+                      }
+                      else{
+                        if(controller.loadableLike.value == true){
+                          return InkWell(
+                            onTap: (){
+                              controller.unlike();
+                            },
+                            child: Icon(
+                              Icons.favorite ,
+                              color: Colors.redAccent,
+                              size: 12.sp,
+                            ),
+                          );
+                        }
+                        else{
+                          return InkWell(
+                            onTap: (){
+                              controller.like();
+                            },
+                            child: Icon(
+                              Icons.favorite_border ,
+                              size: 12.sp,
+                            ),
+                          );
+                        }
+                      }
+                    }),
+                    SizedBox(width: 2.w,),
+                    Text(
+                      "좋아요 ${controller.likes} · 조회 ${siteReview.view}",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Palette.brightMode.mediumText,
+                      ),
+                    ),
+                  ],
+                );
+              }
             )
           ),
           SizedBox(width: 5.w,)
