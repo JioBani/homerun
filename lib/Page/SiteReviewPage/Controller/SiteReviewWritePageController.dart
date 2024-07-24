@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -132,10 +133,11 @@ class SiteReviewWritePageController extends GetxController{
     //#. 업로드
     UploadResultInfo result = await _handleUploadProgress(
         siteReviewWriteDto:  SiteReviewWriteDto(
-            noticeId: noticeId,
-            title: title,
-            content: content,
-            thumbnail: thumbnailFile?.name ?? images.keys.first
+          noticeId: noticeId,
+          title: title,
+          content: content,
+          thumbnail: thumbnailFile?.name ?? images.keys.first,
+          date: Timestamp.now()
         ),
         context: context
     );
