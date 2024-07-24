@@ -33,9 +33,10 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
   void initState() {
     controller = Get.put(
       SiteReviewWritePageController(
-          noticeId: widget.noticeId,
-          updateTarget: widget.updateTargetReview,
-          updateMode: widget.updateTargetReview != null
+        noticeId: widget.noticeId,
+        updateTarget: widget.updateTargetReview,
+        updateMode: widget.updateTargetReview != null,
+
       ),
     );
 
