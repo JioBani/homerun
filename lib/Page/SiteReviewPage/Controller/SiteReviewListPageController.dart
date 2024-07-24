@@ -20,6 +20,7 @@ class SiteReviewListPageController extends GetxController{
 
   //TODO 리뷰가 수백개면 어캄?
   Future<void> loadSiteReviews()async {
+    update();
     loadingState.value = LoadingState.loading;
 
     Result<List<SiteReview>> result = await SiteReviewService.instance.getSiteReviews(noticeId);
@@ -31,5 +32,6 @@ class SiteReviewListPageController extends GetxController{
       StaticLogger.logger.e('[SiteReviewListPageController.loadSiteReviews()] ${result.exception}\n${result.stackTrace}');
       loadingState.value = LoadingState.fail;
     }
+    update();
   }
 }
