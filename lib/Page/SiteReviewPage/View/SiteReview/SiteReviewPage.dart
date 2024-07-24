@@ -1,21 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Common/Widget/CustomDialog.dart';
-import 'package:homerun/Common/Widget/LoadingDialog.dart';
-import 'package:homerun/Common/Widget/Snackbar.dart';
-import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewListPageController.dart';
+import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewPageController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/CommentViewWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/ImageSlideWidget.dart';
-import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage/SiteReviewWritePage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Style/TestImages.dart';
+
+import 'AppbarPopupMenu.dart';
 
 class SiteReviewPage extends StatefulWidget {
   const SiteReviewPage({super.key, required this.siteReview, required this.userDto});
@@ -28,9 +26,13 @@ class SiteReviewPage extends StatefulWidget {
 
 class _SiteReviewPageState extends State<SiteReviewPage> {
 
+
+  late final SiteReviewPageController controller;
+
   @override
   void initState() {
     SiteReviewService.instance.increaseViewCount(widget.siteReview);
+    controller = Get.put(SiteReviewPageController(siteReview: widget.siteReview));
     super.initState();
   }
 
@@ -55,7 +57,7 @@ class _SiteReviewPageState extends State<SiteReviewPage> {
         actions: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.w),
-            child: const Icon(Icons.favorite_border),
+            child: const LikeIconWidget(),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.w),
