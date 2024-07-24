@@ -18,7 +18,10 @@ class SiteReviewWidgetController extends GetxController{
     reviews = [];
     loadingState = LoadingState.loading;
 
-    Result<List<SiteReview>> result = await SiteReviewService.instance.getSiteReviews(noticeId , index: maxThumbnailCount);
+    Result<List<SiteReview>> result = await SiteReviewService.instance.getSiteReviews(
+        noticeId: noticeId ,
+        count: maxThumbnailCount
+    );
 
     if(result.isSuccess){
       reviews = result.content;
