@@ -26,31 +26,6 @@ class SiteReview {
     required this.thumbnailRefPath
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id' : id,
-      'noticeId' : noticeId,
-      'title': title,
-      'content': content,
-      'writer': writer,
-      'view': view,
-      'imagesRefPath': imagesRefPath,
-      'thumbnailRefPath': thumbnailRefPath,
-    };
-  }
-
-  Map<String, dynamic> toUploadMap() {
-    return {
-      'noticeId' : noticeId,
-      'title': title,
-      'content': content,
-      'writer': writer,
-      'view': view,
-      'imagesRefPath': imagesRefPath,
-      'thumbnailRefPath': thumbnailRefPath,
-    };
-  }
-
   factory SiteReview.fromMap(Map<String, dynamic> map , String id) {
     try{
       return SiteReview(
@@ -118,5 +93,40 @@ class SiteReview {
       imagesRefPath: '',
       thumbnailRefPath: '',
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id' : id,
+      'noticeId' : noticeId,
+      'title': title,
+      'content': content,
+      'writer': writer,
+      'view': view,
+      'imagesRefPath': imagesRefPath,
+      'thumbnailRefPath': thumbnailRefPath,
+    };
+  }
+
+  Map<String, dynamic> toUploadMap() {
+    return {
+      'noticeId' : noticeId,
+      'title': title,
+      'content': content,
+      'writer': writer,
+      'view': view,
+      'imagesRefPath': imagesRefPath,
+      'thumbnailRefPath': thumbnailRefPath,
+    };
+  }
+
+  void replace(SiteReview replace){
+    id = replace.id;
+    title = replace.title;
+    content = replace.content;
+    writer = replace.writer;
+    view = replace.view;
+    imagesRefPath = replace.imagesRefPath;
+    thumbnailRefPath = replace.thumbnailRefPath;
   }
 }
