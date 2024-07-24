@@ -13,13 +13,14 @@ import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/UpdateResultInfo.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/UploadResult.dart';
 import 'package:homerun/Page/SiteReviewPage/SiteReviewReferences.dart';
-import 'package:homerun/Page/SiteReviewPage/Value/SiteReviewFields.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/ApiResponse.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+
+import '../Value/SiteReviewFields.dart';
 
 
 class SiteReviewService{
@@ -36,17 +37,23 @@ class SiteReviewService{
     return _instance!;
   }
 
-  Future<Result<List<SiteReview>>> getSiteReviews(String noticeId, {int? index}) {
+  Future<Result<List<SiteReview>>> getSiteReviews({
+    required String noticeId,
+    required int count,
+    SiteReview? startAfter
+  }) {
     return Result.handleFuture<List<SiteReview>>(
       action: () async {
         QuerySnapshot querySnapshot;
+        Query query = SiteReviewReferences.getReviewCollection(noticeId);
 
-        if(index != null){
-          querySnapshot = await _siteReviewCollection.doc(noticeId).collection('review').limit(index).get();
+        query = query.orderBy(SiteReviewFields.date , descending:true);
+
+        if(startAfter != null){
+          query = query.startAfter([startAfter.date]);
         }
-        else{
-          querySnapshot = await _siteReviewCollection.doc(noticeId).collection('review').get();
-        }
+
+        querySnapshot = await query.limit(count).get();
 
         List<SiteReview> reviews = querySnapshot.docs.map(
                 (review) => SiteReview.fromMap(review.data() as Map<String,dynamic> , review.id)
@@ -195,7 +202,7 @@ class SiteReviewService{
           'Authorization': 'Bearer $idToken',
         },
         body: jsonEncode({
-          SiteReviewFields.noticeId: noticeId,
+          SiteReviewFields.noticeId :  noticeId,
           SiteReviewFields.title: title,
           SiteReviewFields.content: content,
           "thumbnailImageName" : thumbnailImageName
