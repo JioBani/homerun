@@ -10,6 +10,7 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewListPageController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
@@ -162,6 +163,10 @@ class SiteReviewWritePageController extends GetxController{
           false
         );
       }
+
+      if(result.siteReview != null){
+        Get.find<SiteReviewListPageController>(tag: result.siteReview!.noticeId).addReview(result.siteReview!);
+      }
     }
     else{
       CustomSnackbar.show(snackbarTitle, snackbarContent);
@@ -234,6 +239,10 @@ class SiteReviewWritePageController extends GetxController{
           context,
           true
         );
+      }
+
+      if(result.siteReview != null){
+        Get.find<SiteReviewListPageController>(tag: result.siteReview!.noticeId).updateReview(result.siteReview!);
       }
     }
     else{
