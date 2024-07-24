@@ -25,12 +25,14 @@ class SiteReviewListPageController extends GetxController{
   //TODO 리뷰가 수백개면 어캄?
   Future<void> loadSiteReviews()async {
     int count = siteReviews.isEmpty ? initReviewNumber : loadReviewNumber;
+
     update();
     loadingState.value = LoadingState.loading;
 
     Result<List<SiteReview>> result = await SiteReviewService.instance.getSiteReviews(
-      noticeId,
-      index: count
+      noticeId: noticeId,
+      count: count,
+      startAfter: siteReviews.isNotEmpty ? siteReviews.last : null
     );
 
     if(result.isSuccess){
