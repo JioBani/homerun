@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewListPageController.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReviewListItemWidget.dart';
-import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage.dart';
+import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage/SiteReviewWritePage.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Style/Fonts.dart';
 
@@ -55,7 +55,7 @@ class _SiteReviewListPageState extends State<SiteReviewListPage> {
         ],
       ),
       body: SafeArea(
-        child: GetX<SiteReviewListPageController>(
+        child: GetBuilder<SiteReviewListPageController>(
           tag: widget.announcement.publicAnnouncementNumber ?? '',
           builder: (controller) {
             if(controller.loadingState.value == LoadingState.success){
