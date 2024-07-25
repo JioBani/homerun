@@ -1,16 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
-import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Common/Widget/FireStorageImageList.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
@@ -80,25 +75,17 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
   void _onScroll() {
     if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
       _lastScrollDirection = ScrollDirection.reverse;
-      //StaticLogger.logger.i("위로");
     } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
       _lastScrollDirection = ScrollDirection.forward;
-      //StaticLogger.logger.i("아래로");
     }
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
     if (info.visibleFraction > 0 && _lastScrollDirection == ScrollDirection.reverse) {
       _streamController.sink.add(false);
-      StaticLogger.logger.i(false);
     }else if(info.visibleFraction <= 0 && _lastScrollDirection == ScrollDirection.forward) {
       _streamController.sink.add(true);
-      StaticLogger.logger.i(true);
     }
-    StaticLogger.logger.i(""
-        "info.visibleFraction : ${info.visibleFraction}\n"
-        "_lastScrollDirection : ${_lastScrollDirection}\n"
-    );
   }
 
   void scrollToCommentInput() {
