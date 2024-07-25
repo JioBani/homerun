@@ -1,10 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
+import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/Widget/FireStorageImageList.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
@@ -17,9 +23,10 @@ import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewWidget.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
+import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Images.dart';
-
-import '../../../Unused/CommentInputWidget.dart';
+import 'package:homerun/Style/Palette.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class AdNoticePage extends StatefulWidget {
   const AdNoticePage({super.key, required this.announcement});
@@ -41,24 +48,57 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
   late final TabController commentTabController = TabController(length: 2 , vsync: this);
   late final CommentViewWidgetController commentViewWidgetController;
 
+  final StreamController<bool> _streamController = StreamController<bool>();
+
   late int inputIndex;
+  ScrollDirection _lastScrollDirection = ScrollDirection.forward;
 
   @override
   void initState() {
+    VisibilityDetectorController.instance.updateInterval = const Duration(milliseconds: 100);
+
     commentViewWidgetController = Get.put(
-      CommentViewWidgetController(
-          noticeId: widget.announcement.publicAnnouncementNumber!,
-          tabController: commentTabController
-      ),
-      tag: widget.announcement.publicAnnouncementNumber!
+        CommentViewWidgetController(
+            noticeId: widget.announcement.publicAnnouncementNumber!,
+            tabController: commentTabController
+        ),
+        tag: widget.announcement.publicAnnouncementNumber!
     );
+    _scrollController.addListener(_onScroll);
     super.initState();
   }
 
   @override
   void dispose() {
     commentTabController.dispose();
+    _scrollController.dispose();
+    _scrollController.removeListener(_onScroll);
+    VisibilityDetectorController.instance.updateInterval = const Duration(milliseconds: 500);
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      _lastScrollDirection = ScrollDirection.reverse;
+      //StaticLogger.logger.i("위로");
+    } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+      _lastScrollDirection = ScrollDirection.forward;
+      //StaticLogger.logger.i("아래로");
+    }
+  }
+
+  void _onVisibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction > 0 && _lastScrollDirection == ScrollDirection.reverse) {
+      _streamController.sink.add(false);
+      StaticLogger.logger.i(false);
+    }else if(info.visibleFraction <= 0 && _lastScrollDirection == ScrollDirection.forward) {
+      _streamController.sink.add(true);
+      StaticLogger.logger.i(true);
+    }
+    StaticLogger.logger.i(""
+        "info.visibleFraction : ${info.visibleFraction}\n"
+        "_lastScrollDirection : ${_lastScrollDirection}\n"
+    );
   }
 
   void scrollToCommentInput() {
@@ -98,7 +138,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         padding: EdgeInsets.only(left: 25.w),
         child: Row(
           children: [
-            Text("서울"),
+            const Text("서울"),
             SizedBox(width: 4.w,),
             Container(
               padding: EdgeInsets.fromLTRB(4.w, 0, 4.w, 0),
@@ -242,9 +282,13 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       SiteReviewWidget(aptAnnouncement: widget.announcement,),
       //#. 댓글 위젯
       SizedBox(height: 24.w,),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25.w),
-        child: CommentTabBarWidget(tabController: commentTabController),
+      VisibilityDetector(
+        key: const Key('CommentTabBarWidget'),
+        onVisibilityChanged: _onVisibilityChanged,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 25.w),
+          child: CommentTabBarWidget(tabController: commentTabController),
+        ),
       ),
       Padding(
         padding: EdgeInsets.fromLTRB(25.w, 5.w, 25.w, 0),
@@ -277,12 +321,134 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
     inputIndex = list.length;
     return Scaffold(
       body: SafeArea(
-        child: FlutterListView.builder(
-          controller: _scrollController,
-          itemCount: list.length,
-          itemBuilder: (BuildContext context, int index) {
-            return list[index];
-          },
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            FlutterListView.builder(
+              controller: _scrollController,
+              itemCount: list.length,
+              itemBuilder: (BuildContext context, int index) {
+                return list[index];
+              },
+            ),
+            BottomBar(stream: _streamController.stream,),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BottomBar extends StatefulWidget {
+  const BottomBar({super.key, required this.stream});
+  final Stream<bool> stream;
+
+  @override
+  State<BottomBar> createState() => _BottomBarState();
+}
+
+class _BottomBarState extends State<BottomBar> {
+
+  bool _isVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.stream.listen((isVisible) {
+      setState(() {
+        _isVisible = isVisible;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      height: _isVisible ? 46.w : 0.0,
+      curve: Curves.easeInOut,
+      child: AnimatedOpacity(
+        opacity: _isVisible ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 250),
+        child: Material(
+          elevation: 10,
+          child: Container(
+            padding: EdgeInsets.only(left: 43.w , right: 26.w),
+            width: double.infinity,
+            color: Theme.of(context).colorScheme.background,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: 20.sp,
+                  height: 20.sp,
+                  child: Icon(
+                    Icons.folder_copy_outlined,
+                    color: Palette.brightMode.mediumText,
+                    size: 20.sp,
+                  ),
+                ),
+                Container(
+                  width: 120.w,
+                  height: 35.w,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(7.r)
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.sell_outlined,
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: 2.w,),
+                      Text(
+                        "관심등록",
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: Fonts.BCCard,
+                          color: Colors.white
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 120.w,
+                  height: 35.w,
+                  decoration: BoxDecoration(
+                    color: const Color(0xffF6F5F5),
+                    borderRadius: BorderRadius.circular(7.r),
+                    border: Border.all(
+                      color: const Color(0xffA4A4A6),
+                      width: 0.3.w
+                    )
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.phone_outlined,
+                        color: Palette.brightMode.mediumText,
+                      ),
+                      SizedBox(width: 2.w,),
+                      Text(
+                        "전화문의",
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: Fonts.BCCard,
+                          color: Palette.brightMode.mediumText
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
