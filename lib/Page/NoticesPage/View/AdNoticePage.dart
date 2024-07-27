@@ -1,15 +1,19 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
+import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/Widget/LoadableIcon.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
+import 'package:homerun/Page/NoticesPage/Service/NoticeService.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentSortWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabBarWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabChildWidget.dart';
@@ -50,6 +54,8 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
 
   @override
   void initState() {
+    NoticeService.instance.increaseViewCount(widget.announcement.publicAnnouncementNumber!);
+
     VisibilityDetectorController.instance.updateInterval = const Duration(milliseconds: 100);
 
     commentViewWidgetController = Get.put(
@@ -171,7 +177,20 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          SmallIconButton(iconPath: Images.heart, text: "좋아요", onTap: (){}),
+          //SmallIconButton(iconPath: Images.heart, text: "좋아요", onTap: (){}),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              LikeIconButton(noticeId: widget.announcement.publicAnnouncementNumber!,),
+              SizedBox(height: 3.w,),
+              Text(
+                "좋아요",
+                style: TextStyle(
+                    fontSize: 7.sp
+                ),
+              )
+            ],
+          ),
           SizedBox(width: 4.w,),
           SmallIconButton(iconPath: Images.scrap, text: "스크랩", onTap: (){}),
           SizedBox(width: 4.w,),
@@ -438,6 +457,41 @@ class _BottomBarState extends State<BottomBar> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class LikeIconButton extends StatelessWidget {
+  const LikeIconButton({super.key, required this.noticeId});
+
+  final String noticeId;
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadableIcon<bool>(
+        iconBuilder: (value , loadingState){
+          if(loadingState != LoadingState.success){
+            return const CupertinoActivityIndicator();
+          }
+          else{
+            if(value == true){
+              return const Icon(Icons.favorite);
+            }
+            else{
+              return const Icon(Icons.favorite_border);
+            }
+          }
+        },
+        load: (currentValue){
+          return NoticeService.instance.getLikeState(noticeId);
+        },
+        onTap: (currentValue){
+          if(currentValue != null){
+            return NoticeService.instance.like(noticeId ,!currentValue);
+          }
+        },
+        width: 15.sp,
+        height: 15.sp
     );
   }
 }
