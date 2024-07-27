@@ -37,7 +37,7 @@ class Result<T>{
       return Result<T>.fromSuccess(content: await action().timeout(timeout));
 
     } catch (e , s) {
-      StaticLogger.logger.e('[ApiResponse.handleExceptions()] $e\n$s');
+      StaticLogger.logger.e('[Result.handleFuture()] $e\n$s');
       if(onError != null){
         onError(e , s);
       }
