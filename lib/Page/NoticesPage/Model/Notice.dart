@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Page/SiteReviewPage/Model/NoticeDto.dart';
+import 'package:homerun/Page/NoticesPage/Model/NoticeDto.dart';
 
 class Notice{
   DocumentSnapshot documentSnapshot;
