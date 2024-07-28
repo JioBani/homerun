@@ -13,6 +13,7 @@ import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
+import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/Service/NoticeService.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentSortWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabBarWidget.dart';
@@ -28,8 +29,8 @@ import 'package:homerun/Style/Palette.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class AdNoticePage extends StatefulWidget {
-  const AdNoticePage({super.key, required this.announcement});
-  final APTAnnouncement announcement;
+  const AdNoticePage({super.key, required this.notice});
+  final Notice notice;
 
   @override
   State<AdNoticePage> createState() => _AdNoticePageState();
@@ -54,16 +55,16 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
 
   @override
   void initState() {
-    NoticeService.instance.increaseViewCount(widget.announcement.publicAnnouncementNumber!);
+    NoticeService.instance.increaseViewCount(widget.notice.id);
 
     VisibilityDetectorController.instance.updateInterval = const Duration(milliseconds: 100);
 
     commentViewWidgetController = Get.put(
         CommentViewWidgetController(
-            noticeId: widget.announcement.publicAnnouncementNumber!,
+            noticeId: widget.notice.id,
             tabController: commentTabController
         ),
-        tag: widget.announcement.publicAnnouncementNumber!
+        tag: widget.notice.id
     );
     _scrollController.addListener(_onScroll);
     super.initState();
@@ -181,7 +182,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              LikeIconButton(noticeId: widget.announcement.publicAnnouncementNumber!,),
+              LikeIconButton(noticeId: widget.notice.id,),
               SizedBox(height: 3.w,),
               Text(
                 "좋아요",
@@ -243,7 +244,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
                 SizedBox(
                     width: double.infinity,
                     height: 150.w,
-                    child: LocationMap(announcement: widget.announcement,geocodeService: _geocodeService,)
+                    child: LocationMap(notice : widget.notice ,geocodeService: _geocodeService,)
                 ),
                 IconButton(
                     iconSize: 25.sp,
@@ -251,7 +252,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
                       showDialog<String>(
                           context: context,
                           builder: (BuildContext context) => Dialog.fullscreen(
-                              child:FullLocationMap(announcement: widget.announcement,geocodeService: _geocodeService,)
+                              child:FullLocationMap(notice: widget.notice,geocodeService: _geocodeService,)
                           )
                       );
                     },
@@ -274,7 +275,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
           SizedBox(width: 2.w,),
           Expanded( //TODO 텍스트가 오버플로우 될때 어떻게 표현할지
             child: Text(
-              "${widget.announcement.houseName} 현장리뷰",
+              "${widget.notice.noticeDto?.houseName} 현장리뷰",
               style: TextStyle(
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w600,
@@ -285,7 +286,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
           ),
         ],
       ),
-      SiteReviewWidget(aptAnnouncement: widget.announcement,),
+      SiteReviewWidget(notice: widget.notice,),
       //#. 댓글 위젯
       SizedBox(height: 24.w,),
       VisibilityDetector(
@@ -298,7 +299,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       ),
       Padding(
         padding: EdgeInsets.fromLTRB(25.w, 5.w, 25.w, 0),
-        child: CommentSortWidget(noticeId: widget.announcement.publicAnnouncementNumber!,),
+        child: CommentSortWidget(noticeId: widget.notice.id,),
       ),
       Padding(
         padding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 5.w),
@@ -315,7 +316,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       ),
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 25.w),
-        child: CommentTabChildWidget(noticeId: widget.announcement.publicAnnouncementNumber!),
+        child: CommentTabChildWidget(noticeId: widget.notice.id,),
       ),
       SizedBox(height: 50.w,),
     ];
