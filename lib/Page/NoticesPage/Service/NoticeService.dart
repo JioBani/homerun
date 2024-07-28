@@ -3,7 +3,7 @@ import 'package:get/instance_manager.dart';
 import 'package:homerun/Common/Firebase/FirebaseFunctionsRequest.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Value/NoticeDtoFields.dart';
-import 'package:homerun/Page/SiteReviewPage/Model/Notice.dart';
+import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/NoticeReferences.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
