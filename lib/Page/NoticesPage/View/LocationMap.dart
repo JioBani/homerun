@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,10 +7,12 @@ import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Style/Palette.dart';
 
-class LocationMap extends StatefulWidget {
-  const LocationMap({super.key, required this.announcement, required this.geocodeService});
+import '../Model/Notice.dart';
 
-  final APTAnnouncement announcement;
+class LocationMap extends StatefulWidget {
+  const LocationMap({super.key, required this.geocodeService, required this.notice});
+  final Notice notice;
+
   final NaverGeocodeService geocodeService;
 
   @override
@@ -23,7 +26,11 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
 
   Future<void> moveMapCameraToAddress(NaverMapController controller) async {
     try {
-      final geocodeData = await widget.geocodeService.fetchGeocode(widget.announcement.supplyLocationAddress ?? '');
+      if(widget.notice.hasError){
+        return;
+      }
+
+      final geocodeData = await widget.geocodeService.fetchGeocode(widget.notice.noticeDto?.info?.supplyLocationAddress ?? '');
       if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
         var position = NLatLng(
             double.parse(geocodeData.addresses![0].y ?? ''),
@@ -38,7 +45,7 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
         final infoWindow = NInfoWindow.onMap(
             id: "position",
             position: position,
-            text: widget.announcement.houseName ?? ''
+            text: widget.notice.noticeDto?.houseName ?? ''
         );
 
         controller.addOverlay(infoWindow);
@@ -52,17 +59,26 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return  NaverMap(
-      onMapReady: (controller){
-        moveMapCameraToAddress(controller);
-      },
-    );
+    if(widget.notice.hasError){
+      return SizedBox(
+        height: 200.w,
+        width: double.infinity,
+        child: const CupertinoActivityIndicator(),
+      );
+    }
+    else{
+      return NaverMap(
+        onMapReady: (controller){
+          moveMapCameraToAddress(controller);
+        },
+      );
+    }
   }
 }
 
 class FullLocationMap extends StatelessWidget {
-  FullLocationMap({super.key, required this.announcement, required this.geocodeService});
-  final APTAnnouncement announcement;
+  FullLocationMap({super.key, required this.geocodeService, required this.notice});
+  final Notice notice;
   final NaverGeocodeService geocodeService;
   NaverMapController? naverMapController;
 
@@ -72,7 +88,7 @@ class FullLocationMap extends StatelessWidget {
         return;
       }
 
-      final geocodeData = await geocodeService.fetchGeocode(announcement.supplyLocationAddress ?? '');
+      final geocodeData = await geocodeService.fetchGeocode(notice.noticeDto?.info?.supplyLocationAddress  ?? '');
 
       if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
         var position = NLatLng(
@@ -88,7 +104,7 @@ class FullLocationMap extends StatelessWidget {
         final infoWindow = NInfoWindow.onMap(
             id: "position",
             position: position,
-            text: announcement.houseName ?? ''
+            text: notice.noticeDto?.houseName ?? ''
         );
 
         naverMapController!.addOverlay(infoWindow);
