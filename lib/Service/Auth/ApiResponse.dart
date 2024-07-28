@@ -1,3 +1,5 @@
+import 'package:homerun/Common/StaticLogger.dart';
+
 import 'HttpError.dart';
 
 class ApiResponse<T> {
@@ -12,11 +14,16 @@ class ApiResponse<T> {
   });
 
   factory ApiResponse.fromMap(Map<String, dynamic> map) {
-    return ApiResponse(
-      status: map['status'],
-      data: map['data'] as T?,
-      error: map['error'] != null ? HttpError.fromMap(map['error']) : null,
-    );
+    try{
+      return ApiResponse(
+        status: map['status'],
+        data: map['data'] as T?,
+        error: map['error'] != null ? HttpError.fromMap(map['error']) : null,
+      );
+    }catch(e , s){
+      StaticLogger.logger.e("[ApiResponse.fromMap()] $e\n$s");
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toMap() {
