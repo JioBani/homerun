@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewListPageController.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReviewListItemWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage/SiteReviewWritePage.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Style/Fonts.dart';
 
 class SiteReviewListPage extends StatefulWidget {
-  const SiteReviewListPage({super.key, required this.announcement});
-  final APTAnnouncement announcement;
+  const SiteReviewListPage({super.key, required this.notice});
+  final Notice notice;
 
   @override
   State<SiteReviewListPage> createState() => _SiteReviewListPageState();
@@ -21,9 +21,9 @@ class _SiteReviewListPageState extends State<SiteReviewListPage> {
   @override
   Widget build(BuildContext context) {
     Get.put(SiteReviewListPageController(
-        noticeId: widget.announcement.publicAnnouncementNumber ?? ''
+        noticeId: widget.notice.id
        ),
-       tag: widget.announcement.publicAnnouncementNumber ?? ''
+       tag: widget.notice.id
     );
     return Scaffold(
       appBar:AppBar(
@@ -35,7 +35,7 @@ class _SiteReviewListPageState extends State<SiteReviewListPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              widget.announcement.houseName ?? '',
+              widget.notice.noticeDto?.houseName ?? '',
               style: TextStyle(
                 fontSize:  16.sp,
                 fontWeight: FontWeight.bold,
@@ -49,14 +49,14 @@ class _SiteReviewListPageState extends State<SiteReviewListPage> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              Get.to(SiteReviewWritePage(noticeId: widget.announcement.publicAnnouncementNumber ?? '',));
+              Get.to(SiteReviewWritePage(noticeId:widget.notice.id,));
             },
           )
         ],
       ),
       body: SafeArea(
         child: GetBuilder<SiteReviewListPageController>(
-          tag: widget.announcement.publicAnnouncementNumber ?? '',
+          tag: widget.notice.id,
           builder: (controller) {
             List<Widget> widgets = [];
 

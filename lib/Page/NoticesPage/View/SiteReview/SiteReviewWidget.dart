@@ -12,9 +12,11 @@ import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../Model/Notice.dart';
+
 class SiteReviewWidget extends StatefulWidget {
-  const SiteReviewWidget({super.key, required this.aptAnnouncement});
-  final APTAnnouncement aptAnnouncement;
+  const SiteReviewWidget({super.key, required this.notice});
+  final Notice notice;
 
   @override
   State<SiteReviewWidget> createState() => _SiteReviewWidgetState();
@@ -24,7 +26,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
   final PageController _pageController = PageController(viewportFraction: 1 / 3, initialPage: 0);
   int _currentIndex = 0;
   late SiteReviewWidgetController siteReviewWidgetController = Get.put(SiteReviewWidgetController(
-      noticeId: widget.aptAnnouncement.publicAnnouncementNumber ?? ''
+      noticeId: widget.notice.id
   ));
 
   @override
@@ -65,7 +67,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
                             child: Builder(
                               builder: (context) {
                                 if(index == controller.thumbnailWidgetCount - 1){
-                                  return ShowAllButtonWidget(announcement: widget.aptAnnouncement,);
+                                  return ShowAllButtonWidget(notice: widget.notice);
                                 }
                                 else{
                                   return Container(
@@ -216,14 +218,14 @@ class _ThumbnailWidgetState extends State<ThumbnailWidget> with AutomaticKeepAli
 }
 
 class ShowAllButtonWidget extends StatelessWidget {
-  const ShowAllButtonWidget({super.key, required this.announcement});
-  final APTAnnouncement announcement;
+  const ShowAllButtonWidget({super.key, required this.notice});
+  final Notice notice;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Get.to(SiteReviewListPage(announcement: announcement,));
+        Get.to(SiteReviewListPage(notice: notice,));
       },
       child: Center(
         child: Column(
