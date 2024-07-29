@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -13,6 +15,7 @@ import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
+import 'package:homerun/Page/NoticesPage/ApplyhomeCodeConverter.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/Service/NoticeService.dart';
@@ -107,6 +110,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
   List<Widget> getListViewChildren(){
     return [
       SizedBox(height: 17.w,),
+      //#. 상단 아이콘바
       Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -129,11 +133,12 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         ],
       ),
       SizedBox(height: 22.w,),
+      //#. 지역명 & 주택상세구분
       Padding(
         padding: EdgeInsets.only(left: 25.w),
         child: Row(
           children: [
-            const Text("서울"),
+            Text(widget.notice.noticeDto?.info?.subscriptionAreaName ?? "알수없음"),
             SizedBox(width: 4.w,),
             Container(
               padding: EdgeInsets.fromLTRB(4.w, 0, 4.w, 0),
@@ -142,7 +147,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
                 borderRadius: BorderRadius.circular(3.r), // radius가 약하게 보여서 2인데 3으로 변경
               ),
               child: Text(
-                "민간분양",
+                widget.notice.noticeDto?.info?.houseDetailSectionName ?? "알수없음",
                 style: TextStyle(
                     color: typeColor,
                     fontWeight: FontWeight.w700 //폰트 굵기가 미디움인데 작게 보여서 bold로 변경
@@ -153,6 +158,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         ),
       ),
       SizedBox(height: 6.w,),
+      //#. 주택 이름
       Padding(
         padding: EdgeInsets.only(left: 25.w),
         child: Row(
@@ -165,17 +171,23 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
               ),
             ),
             SizedBox(width: 4.w,),
-            Text(
-              "서대문구 월드 메리앙",
-              style: TextStyle(
+            Expanded(
+              child: AutoSizeText(
+                widget.notice.noticeDto?.houseName ?? "알수없음",
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 15.sp
+                  fontSize: 15.sp,
+                ),
+                minFontSize: 13,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],
         ),
       ),
       SizedBox(height: 3.w,),
+      //#. 좋아요, 스크랩 , 공유 아이콘
       Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -201,6 +213,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         ],
       ),
       SizedBox(height: 6.w,),
+      //#. 광고 이미지
       SizedBox(
         width: double.infinity,
         height: 174.w,
@@ -210,10 +223,12 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         ),
       ),
       //TODO 개발중에 렉 줄이기 위해서 임시로 해제
+      //#. 분양 공고
       // Padding(
       //   padding: EdgeInsets.fromLTRB(25.w, 30.w, 25.w, 0),
       //   child: const FireStorageImageColum(path: "housing_notices/2024000001",),
       // ),
+      //#. 지도
       Padding(
         padding: EdgeInsets.fromLTRB(25.w, 10.w, 25.w, 10.w),
         child: Column(
@@ -265,6 +280,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         ),
       ),
       SizedBox(height: 24.w,),
+      //#. 현장리뷰 텍스트
       Row(
         children: [
           SizedBox(width: 25.w,), //TODO 패팅 확인하기
@@ -276,20 +292,21 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
           SizedBox(width: 2.w,),
           Expanded( //TODO 텍스트가 오버플로우 될때 어떻게 표현할지
             child: Text(
-              "${widget.notice.noticeDto?.houseName} 현장리뷰",
+              "현장리뷰",
               style: TextStyle(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.secondary,
-                  overflow: TextOverflow.ellipsis
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
         ],
       ),
+      //#. 현장리뷰
       SiteReviewWidget(notice: widget.notice,),
       //#. 댓글 위젯
       SizedBox(height: 24.w,),
+      //#. 댓글 탭바
       VisibilityDetector(
         key: const Key('CommentTabBarWidget'),
         onVisibilityChanged: _onVisibilityChanged,
@@ -298,10 +315,12 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
           child: CommentTabBarWidget(tabController: commentTabController),
         ),
       ),
+      //#. 댓글 정렬 위젯
       Padding(
         padding: EdgeInsets.fromLTRB(25.w, 5.w, 25.w, 0),
         child: CommentSortWidget(noticeId: widget.notice.id,),
       ),
+      //#. 댓글 입력 위젯
       Padding(
         padding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 5.w),
         child: CommentInputWidget(
@@ -315,6 +334,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
           },
         ),
       ),
+      //#. 댓글 목록 위젯
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 25.w),
         child: CommentTabChildWidget(noticeId: widget.notice.id,),
