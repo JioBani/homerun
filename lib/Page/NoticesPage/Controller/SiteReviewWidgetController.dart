@@ -37,5 +37,48 @@ class SiteReviewWidgetController extends GetxController{
     }
   }
 
+  //#. 리뷰 추가
+  // 사용자가 리뷰를 작성했을때 호출
+  void addReview(SiteReview siteReview){
+    if((loadingState == LoadingState.success || loadingState == LoadingState.noMoreData) &&
+        reviews != null
+    ){
+      reviews!.add(siteReview);
+      thumbnailWidgetCount = reviews!.length + 1;
+      update();
+    }
+  }
+  
+  //#. 리뷰 삭제
+  // 사용자가 리뷰를 삭제했을때 호출
+  void removeReview(SiteReview siteReview){
+    if((loadingState == LoadingState.success || loadingState == LoadingState.noMoreData) &&
+        reviews != null
+    ){
+      int index = reviews!.indexWhere((review) => review.id == siteReview.id);
+      if (index != -1) {
+        reviews!.removeAt(index);
+      }
+
+      thumbnailWidgetCount = reviews!.length + 1;
+      update();
+    }
+  }
+
+  //#. 리뷰 수정
+  // 사용자가 리뷰를 수정했을때 호출
+  void updateReview(SiteReview siteReview){
+    if((loadingState == LoadingState.success || loadingState == LoadingState.noMoreData) &&
+        reviews != null
+    ){
+      int index = reviews!.indexWhere((review) => review.id == siteReview.id);
+      if (index != -1) {
+        reviews![index] = siteReview;
+      }
+
+      thumbnailWidgetCount = reviews!.length + 1;
+      update();
+    }
+  }
 
 }
