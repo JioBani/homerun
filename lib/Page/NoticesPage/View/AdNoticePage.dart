@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/Widget/LoadableIcon.dart';
+import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
@@ -20,7 +21,7 @@ import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabBarWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabChildWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
 import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewWidget.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
 import 'package:homerun/Style/Fonts.dart';
@@ -471,7 +472,7 @@ class LikeIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return LoadableIcon<bool>(
         iconBuilder: (value , loadingState){
-          if(loadingState != LoadingState.success){
+          if(loadingState == LoadingState.loading || loadingState == LoadingState.before){
             return const CupertinoActivityIndicator();
           }
           else{
@@ -483,12 +484,30 @@ class LikeIconButton extends StatelessWidget {
             }
           }
         },
-        load: (currentValue){
-          return NoticeService.instance.getLikeState(noticeId);
+        load: (currentValue)async{
+          if(Get.find<AuthService>().tryGetUser() == null){
+            return Result.fromSuccess();
+          }
+          else{
+            return NoticeService.instance.getLikeState(noticeId);
+          }
         },
-        onTap: (currentValue){
+        onTap: (currentValue) async {
+          if(Get.find<AuthService>().tryGetUser() == null){
+            CustomSnackbar.show("오류" , "로그인이 필요합니다.");
+            return Result.fromFailure(ApplicationUnauthorizedException, StackTrace.current);
+          }
+
           if(currentValue != null){
-            return NoticeService.instance.like(noticeId ,!currentValue);
+            Result<bool> result = await NoticeService.instance.like(noticeId ,!currentValue);
+            if(!result.isSuccess){
+              CustomSnackbar.show("오류" , "좋아요에 실패했습니다.");
+            }
+            return result;
+          }
+          else{
+            CustomSnackbar.show("오류" , "좋아요를 할 수 없습니다.");
+            return Result.fromFailure(Exception('currentValue is null'), StackTrace.current);
           }
         },
         width: 15.sp,
