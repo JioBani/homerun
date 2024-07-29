@@ -477,7 +477,7 @@ class LikeIconButton extends StatelessWidget {
           }
           else{
             if(value == true){
-              return const Icon(Icons.favorite);
+              return const Icon(Icons.favorite , color: Colors.redAccent,);
             }
             else{
               return const Icon(Icons.favorite_border);
