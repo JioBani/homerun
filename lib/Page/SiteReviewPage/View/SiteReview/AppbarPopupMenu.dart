@@ -5,6 +5,7 @@ import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/Page/NoticesPage/Controller/SiteReviewWidgetController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Service/SiteReviewService.dart';
 
@@ -87,7 +88,16 @@ class AppbarPopupMenu extends StatelessWidget {
                   buttonText: "확인"
               );
 
-              Get.find<SiteReviewListPageController>(tag: siteReview.noticeId).removeReview(siteReview);
+              //#. 현장리뷰 리스트 페이지에서 제거
+              if(Get.isRegistered<SiteReviewListPageController>(tag: siteReview.noticeId)){
+                Get.find<SiteReviewListPageController>(tag: siteReview.noticeId).removeReview(siteReview);
+              }
+
+              //#. 공고 페이지의 현장리뷰 위젯에서 제거
+              if(Get.isRegistered<SiteReviewWidgetController>()){
+                Get.find<SiteReviewWidgetController>().removeReview(siteReview);
+              }
+
             }
             else{
               CustomSnackbar.show("오류" , "삭제에 실패했습니다.");
@@ -96,9 +106,9 @@ class AppbarPopupMenu extends StatelessWidget {
           else if(result == "수정"){
             Get.to(
                 SiteReviewWritePage(
-                    noticeId: siteReview.noticeId,
-                    updateTargetReview: siteReview,
-                    isUpdateMode : true
+                  noticeId: siteReview.noticeId,
+                  updateTargetReview: siteReview,
+                  isUpdateMode : true,
                 )
             );
           }
