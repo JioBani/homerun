@@ -81,7 +81,7 @@ class LoadableIconState<T> extends State<LoadableIcon<T>> {
           }
           else{
             loadingState = LoadingState.fail;
-            if(widget.isMaintainValueOnFail){
+            if(!widget.isMaintainValueOnFail){
               value = null;
             }
           }
@@ -100,23 +100,3 @@ class LoadableIconState<T> extends State<LoadableIcon<T>> {
     );
   }
 }
-
-// class LoadableIconController<T>{
-//   final LoadableIconState<T> widget;
-//
-//   LoadableIconController({required this.widget});
-//
-//   void update(){
-//     widget.refresh();
-//   }
-//
-//   void setValue(T newValue){
-//     widget.setValue(newValue);
-//   }
-//
-//   void setLoadingState(LoadingState newState){
-//     widget.setLoadingState(newState);
-//   }
-//
-//   get value => widget.value;
-// }
