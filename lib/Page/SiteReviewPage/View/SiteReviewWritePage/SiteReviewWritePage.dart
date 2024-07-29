@@ -10,7 +10,13 @@ import 'package:homerun/Style/Palette.dart';
 
 
 class SiteReviewWritePage extends StatefulWidget {
-  const SiteReviewWritePage({super.key, required this.noticeId, this.updateTargetReview, this.isUpdateMode = false});
+  const SiteReviewWritePage({
+    super.key,
+    required this.noticeId,
+    this.updateTargetReview,
+    this.isUpdateMode = false,
+  });
+
   final String noticeId;
   final SiteReview? updateTargetReview;
   final bool isUpdateMode;
@@ -36,7 +42,6 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
         noticeId: widget.noticeId,
         updateTarget: widget.updateTargetReview,
         updateMode: widget.updateTargetReview != null,
-
       ),
     );
 
