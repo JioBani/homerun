@@ -41,6 +41,15 @@ class ApplyhomeCodeConverter {
     '03': '국민',
   };
 
+  static String tryAptTypeDetailCodes(String? code) {
+    if(code == null){
+      return "";
+    }
+    else{
+      return aptTypeDetailCodes[code] ?? "";
+    }
+  }
+
   ///주택상세구분 코드(APT)
   static String convertAptDetailCode(String code) {
     return aptTypeDetailCodes[code] ?? 'Unknown Code';
