@@ -11,6 +11,7 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/Page/NoticesPage/Controller/SiteReviewWidgetController.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewListPageController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReviewWriteDto.dart';
@@ -133,13 +134,13 @@ class SiteReviewWritePageController extends GetxController{
     //#. 업로드
     UploadResultInfo result = await _handleUploadProgress(
         siteReviewWriteDto:  SiteReviewWriteDto(
-          noticeId: noticeId,
-          title: title,
-          content: content,
-          thumbnail: thumbnailFile?.name ?? images.keys.first,
-          date: Timestamp.now()
-        ),
-        context: context
+        noticeId: noticeId,
+        title: title,
+        content: content,
+        thumbnail: thumbnailFile?.name ?? images.keys.first,
+        date: Timestamp.now()
+      ),
+      context: context,
     );
 
     //#. 업로드 결과 취합
@@ -165,9 +166,17 @@ class SiteReviewWritePageController extends GetxController{
           false
         );
       }
-
       if(result.siteReview != null){
-        Get.find<SiteReviewListPageController>(tag: result.siteReview!.noticeId).addReview(result.siteReview!);
+
+        //리뷰 리스트 페이지에 리뷰 추가
+        if(Get.isRegistered<SiteReviewListPageController>(tag: result.siteReview!.noticeId)){
+          Get.find<SiteReviewListPageController>(tag: result.siteReview!.noticeId).addReview(result.siteReview!);
+        }
+
+        //공고 페이지의 리뷰 위젯에 추가
+        if(Get.isRegistered<SiteReviewWidgetController>()){
+          Get.find<SiteReviewWidgetController>().addReview(result.siteReview!);
+        }
       }
     }
     else{
@@ -244,7 +253,15 @@ class SiteReviewWritePageController extends GetxController{
       }
 
       if(result.siteReview != null){
-        Get.find<SiteReviewListPageController>(tag: result.siteReview!.noticeId).updateReview(result.siteReview!);
+        // 리뷰 리스트 페이지에서 수정
+        if(Get.isRegistered<SiteReviewListPageController>(tag: result.siteReview!.noticeId)){
+          Get.find<SiteReviewListPageController>(tag: result.siteReview!.noticeId).updateReview(result.siteReview!);
+        }
+
+        // 공고 페이지의 리뷰 위젯에 있으면 수정
+        if(Get.isRegistered<SiteReviewWidgetController>()){
+          Get.find<SiteReviewWidgetController>().updateReview(result.siteReview!);
+        }
       }
     }
     else{
