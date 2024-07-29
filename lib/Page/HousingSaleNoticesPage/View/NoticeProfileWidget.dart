@@ -65,7 +65,7 @@ class NoticeProfileWidget extends StatelessWidget {
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 4.w),
                             child: Text(
-                              notice.noticeDto?.info?.houseSectionName ?? '',
+                              notice.noticeDto?.info?.houseDetailSectionName ?? '',
                               style: TextStyle(
                                 fontSize: 8.sp,
                                 color: const Color(0xffFF4545)
