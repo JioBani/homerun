@@ -280,28 +280,6 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         ),
       ),
       SizedBox(height: 24.w,),
-      //#. 현장리뷰 텍스트
-      Row(
-        children: [
-          SizedBox(width: 25.w,), //TODO 패팅 확인하기
-          Image.asset(
-            NoticePageImages.siteReview,
-            width: 13.sp,
-            height: 13.sp,
-          ),
-          SizedBox(width: 2.w,),
-          Expanded( //TODO 텍스트가 오버플로우 될때 어떻게 표현할지
-            child: Text(
-              "현장리뷰",
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-          ),
-        ],
-      ),
       //#. 현장리뷰
       SiteReviewWidget(notice: widget.notice,),
       //#. 댓글 위젯

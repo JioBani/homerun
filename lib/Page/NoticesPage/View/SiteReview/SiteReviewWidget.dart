@@ -40,6 +40,27 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Row(
+          children: [
+            SizedBox(width: 25.w,), //TODO 패팅 확인하기
+            Image.asset(
+              NoticePageImages.siteReview,
+              width: 13.sp,
+              height: 13.sp,
+            ),
+            SizedBox(width: 2.w,),
+            Expanded( //TODO 텍스트가 오버플로우 될때 어떻게 표현할지
+              child: Text(
+                "현장리뷰",
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ),
+          ],
+        ),
         GetBuilder<SiteReviewWidgetController>(
             builder: (controller) {
               if(controller.loadingState == LoadingState.loading){
