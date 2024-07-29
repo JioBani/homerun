@@ -1,12 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Style/Fonts.dart';
-import 'package:homerun/Style/Palette.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.goHomeAfterLogin = false});
+  final bool goHomeAfterLogin;
 
   @override
   Widget build(BuildContext context) {
