@@ -5,10 +5,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Page/NoticesPage/Controller/SiteReviewWidgetController.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReviewListPage.dart';
+import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage/SiteReviewWritePage.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -59,6 +62,42 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
                 ),
               ),
             ),
+            InkWell(
+              onTap: (){
+                if(Get.find<AuthService>().tryGetUser() == null){
+                  CustomSnackbar.show("알림", "로그인이 필요합니다."); //TODO 로그인 페이지로 이동하도록
+                }
+                Get.to(SiteReviewWritePage(noticeId: widget.notice.id));
+              },
+              child: Container(
+                width: 70.w,
+                height: 20.w,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(10.w),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.edit,
+                      size: 11.sp,
+                      color: Colors.white
+                    ),
+                    SizedBox(width: 2.w,),
+                    Text(
+                      '글쓰기',
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(width: 25.sp,)
           ],
         ),
         GetBuilder<SiteReviewWidgetController>(
