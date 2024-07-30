@@ -1,14 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Widget/LoadingDialog.dart';
+import 'package:homerun/Common/Widget/Snackbar.dart';
+import 'package:homerun/Page/HousingSaleNoticesPage/View/HousingSaleNoticesPage.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
+import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Style/Fonts.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key, this.goHomeAfterLogin = false});
   final bool goHomeAfterLogin;
 
+  Future<void> login(
+      BuildContext context ,
+      SocialProvider provider
+  )async {
+    final authService = Get.find<AuthService>();
+
+    var (bool result , _) = await LoadingDialog.showLoadingDialogWithFuture<bool>(
+        context,
+        authService.signIn(provider)
+    );
+
+    if(result){
+      if(context.mounted){
+        Navigator.pop(context);
+      }
+
+      if(goHomeAfterLogin){
+        Get.to(const HousingSaleNoticesPage());
+      }
+    }
+
+    CustomSnackbar.show("알림", "로그인에 성공했습니다.");
+  }
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -47,9 +78,7 @@ class LoginPage extends StatelessWidget {
             SizedBox(height: 57.w,),
             //#. 카카오로 시작하기
             InkWell(
-              onTap: (){
-
-              },
+              onTap: () => login(context , SocialProvider.kakao),
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 25.w),
                 height: 40.w,
@@ -79,9 +108,7 @@ class LoginPage extends StatelessWidget {
             SizedBox(height: 17.w,),
             //#. 네이버로 시작하기
             InkWell(
-              onTap: (){
-
-              },
+              onTap: () => login(context , SocialProvider.naver),
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 25.w),
                 height: 40.w,
