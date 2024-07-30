@@ -117,36 +117,6 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            //#. 회원가입
-            InkWell(
-              onTap: (){
-
-              },
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 25.w),
-                height: 45.w,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(10.r),
-                  boxShadow: [BoxShadow(
-                    blurRadius: 2.sp,
-                    offset: Offset(0,2.w),
-                    color: Colors.black.withOpacity(0.25)
-                  )]
-                ),
-                child: Center(
-                  child: Text(
-                    "회원가입",
-                    style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white
-                    ),
-                  ),
-                ),
-              ),
-            ),
             SizedBox(height: 13.w,),
             //#. 로그인 없이 계속하기
             InkWell(
