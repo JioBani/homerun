@@ -17,4 +17,17 @@ extension GenderExtension on Gender {
         throw Exception('Unknown gender: $gender');
     }
   }
+
+  String toEnumString() {
+    switch (this) {
+      case Gender.male:
+        return "male";
+      case Gender.female:
+        return "female";
+      case Gender.none:
+        return "none";
+      default:
+        throw Exception('Unknown gender: $this');
+    }
+  }
 }
