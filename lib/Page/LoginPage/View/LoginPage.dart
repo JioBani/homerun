@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Page/HousingSaleNoticesPage/View/HousingSaleNoticesPage.dart';
+import 'package:homerun/Page/LoginPage/View/AgreementPage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Style/Fonts.dart';
@@ -18,12 +19,12 @@ class LoginPage extends StatelessWidget {
   )async {
     final authService = Get.find<AuthService>();
 
-    var (bool result , _) = await LoadingDialog.showLoadingDialogWithFuture<bool>(
+    var (SignInResult result , _) = await LoadingDialog.showLoadingDialogWithFuture<SignInResult>(
         context,
         authService.signIn(provider)
     );
 
-    if(result){
+    if(result == SignInResult.success){
       if(context.mounted){
         Navigator.pop(context);
       }
@@ -31,15 +32,19 @@ class LoginPage extends StatelessWidget {
       if(goHomeAfterLogin){
         Get.to(const HousingSaleNoticesPage());
       }
+      CustomSnackbar.show("알림", "로그인에 성공했습니다.");
     }
-
-    CustomSnackbar.show("알림", "로그인에 성공했습니다.");
+    else if(result == SignInResult.userNotFoundFailure){
+      CustomSnackbar.show("알림", "회원가입이 필요합니다.");
+      Get.to(const AgreementPage());
+    }
+    else{
+      CustomSnackbar.show("오류", "로그인에 실패했습니다.");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       body: SafeArea(
         child: Column(
