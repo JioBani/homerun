@@ -60,3 +60,7 @@ class InternalServerError extends HttpError {
     String message = 'Internal Server Error',
   }) : super(status: 500, code: code, message: message);
 }
+
+class ServerErrorCodes{
+  static int userNotFoundError = 40104;
+}
