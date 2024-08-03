@@ -9,6 +9,7 @@ class Palette{
   static final AssessmentPagePalette assessmentPage = AssessmentPagePalette();
   static final FontPalette font = FontPalette();
   static const Color defaultSkyBlue =  Color(0xff35C5F0);
+  static const Color defaultOrange =  Color(0xffFF9C32);
   static const primary = Color(0xff35C5F0);
   static ColorMode brightMode = BrightMode();
 
