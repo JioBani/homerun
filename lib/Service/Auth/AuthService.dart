@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/ApiResponse.dart';
 import 'package:homerun/Service/Auth/HttpError.dart';
@@ -39,6 +40,14 @@ enum SignInState{
   loading,
 }
 
+enum SignInResult{
+  socialLoginFailure,
+  getCustomTokenFailure,
+  userNotFoundFailure,
+  signInWithCustomTokenFailure,
+  success,
+}
+
 class AuthService extends GetxService{
 
   KakaoLoginService kakaoLoginService = KakaoLoginService();
@@ -49,59 +58,104 @@ class AuthService extends GetxService{
   StreamSubscription<DocumentSnapshot>? userSubscription;
   Rx<SignInState> signInState = Rx(SignInState.signOut);
 
-  Future<bool> signIn(SocialProvider socialProvider) async {
-    try{
-      signInState.value = SignInState.loading;
+  Future<SignInResult> signIn(SocialProvider socialProvider) async {
+    signInState.value = SignInState.loading;
 
-      //#1. 소셜로그인
-      //#2. 커스텀 토큰 가져오기
+    //#1. 소셜로그인
+    //#2. 커스텀 토큰 가져오기
 
-      final String customToken;
+    final String customToken;
 
-      ApiResponse<String> tokenResponse;
+    //#. signInWithSocialProvider
 
-      if(socialProvider == SocialProvider.kakao){
+    late final ApiResponse<String> tokenResponse;
+
+    if(socialProvider == SocialProvider.kakao){
+      try{
         var (kakao.OAuthToken token , kakao.User user) = await kakaoLoginService.signIn();
-        tokenResponse = await getCustomTokenByKakao(user , token.accessToken);
+        tokenResponse = await _getCustomToken(socialProvider, token.accessToken);
+      }catch(e){
+        signInState.value = SignInState.signInFailure;
+        return SignInResult.socialLoginFailure;
+        //TODO 로그인 실패 예외처리
       }
-      else if(socialProvider == SocialProvider.naver){
-        NaverLoginResult naverLoginResult = await naverLoginService.signIn();
-        tokenResponse = await getCustomTokenByNaver(naverLoginResult);
-      }
-      else{
-        throw Exception('알 수 없는 로그인 요청');
-      }
-
-      if(tokenResponse.status != 200){
-        throw tokenResponse.error ?? Exception('알 수 없는 오류');
-      }
-      else if(tokenResponse.data == null){
-        throw Exception('알 수 없는 오류');
-      }
-      else{
-        customToken = tokenResponse.data!;
-      }
-
-      //#3. 커스텀 토큰으로 firebase 로그인
-      await FirebaseAuth.instance.signInWithCustomToken(customToken);
-
-      //#4. 유저 정보 가져오기
-      await listenUserSnapshot();
-
-      StaticLogger.logger.i('[SignInService.signIn()] 로그인 성공 ');
-      signInState.value = SignInState.signInSuccess;
-      return true;
-
-    }catch(e,s){
-      StaticLogger.logger.e('[SignInService.signIn()] 로그인에 실패하였습니다. : $e');
-      StaticLogger.logger.e('[SignInService.signIn()] $s');
-      signInState.value = SignInState.signInFailure;
-
-      if(e is HttpError){
-        StaticLogger.logger.e('[SignInService.signIn()]: ${e.code} : ${e.message}');
-      }
-      return false;
     }
+    else if(socialProvider == SocialProvider.naver){
+      NaverLoginResult naverLoginResult = await naverLoginService.signIn();
+      if(naverLoginResult.status != NaverLoginStatus.loggedIn){
+        signInState.value = SignInState.signInFailure;
+        return SignInResult.socialLoginFailure;
+        //TODO 로그인 실패 예외처리
+      }
+
+      NaverAccessToken accessToken = await FlutterNaverLogin.currentAccessToken;
+      tokenResponse = await _getCustomToken(socialProvider, accessToken.accessToken);
+    }
+    else{
+      throw Exception('알 수 없는 로그인 요청');
+    }
+
+    //#. 로그인 결과 해석
+    if(tokenResponse.status != 200){
+      signInState.value = SignInState.signInFailure;
+      StaticLogger.logger.e("[AuthService.signIn()] ${tokenResponse.error?.message}");
+      if(tokenResponse.error != null && tokenResponse.error!.code == ServerErrorCodes.userNotFoundError){
+        return SignInResult.userNotFoundFailure;
+      }
+      else{
+        return SignInResult.getCustomTokenFailure;
+      }
+    }
+    else{
+      customToken = tokenResponse.data!;
+    }
+
+
+    //#3. 커스텀 토큰으로 firebase 로그인
+    try{
+      await FirebaseAuth.instance.signInWithCustomToken(customToken);
+    }catch(e,s){
+      StaticLogger.logger.e("[AuthService.signIn()] $e\n$s");
+      signInState.value = SignInState.signInFailure;
+      return SignInResult.userNotFoundFailure;
+    }
+
+    //#4. 유저 정보 가져오기
+    await listenUserSnapshot();
+
+    StaticLogger.logger.i('[SignInService.signIn()] 로그인 성공 ');
+    signInState.value = SignInState.signInSuccess;
+    return SignInResult.success;
+  }
+
+  Future<ApiResponse<String?>> signUp({
+    required SocialProvider socialProvider,
+    required String accessToken,
+    required String displayName,
+    required String birth,
+    required Gender gender,
+  }) async {
+    final customTokenResponse = await http.post(Uri.parse(FirebaseFunctionEndpoints.signUp),
+        headers: {'Authorization': 'Bearer $accessToken'},
+        body: {
+          'social_provider' : socialProvider.toEnumString(),
+          'displayName' : displayName,
+          'birth' :birth,
+          'gender': gender.toEnumString(),
+        }
+    ).timeout(const Duration(seconds: 10));
+
+    return ApiResponse<String?>.fromMap(jsonDecode(customTokenResponse.body));
+  }
+
+  Future<ApiResponse<String>> _getCustomToken(SocialProvider socialProvider , String accessToken) async {
+    //String url = "http://10.0.2.2:3000/auth";
+    final customTokenResponse = await http.post(Uri.parse(FirebaseFunctionEndpoints.signIn),
+        headers: {'Authorization': 'Bearer $accessToken'},
+        body: {'social_provider' : socialProvider.toEnumString()}
+    ).timeout(const Duration(seconds: 10));
+
+    return ApiResponse<String>.fromMap(jsonDecode(customTokenResponse.body));
   }
 
   Future<bool> signOut(SocialProvider socialProvider) async {
