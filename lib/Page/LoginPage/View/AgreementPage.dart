@@ -95,6 +95,35 @@ class AgreementPage extends StatelessWidget {
                   ],
                 ),
               ),
+              const Spacer(),
+              InkWell(
+                onTap: () => {},
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 25.w),
+                  height: 40.w,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(10.r),
+                    boxShadow: [BoxShadow(
+                      color: Colors.black.withOpacity(0.25) ,
+                      offset: Offset(0,2.w),
+                      blurRadius: 2.r
+                    )]
+                  ),
+                  child: Center(
+                    child: Text(
+                      "동의하고 계속하기",
+                      style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 36.w,)
             ],
           ),
         ),
