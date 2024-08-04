@@ -46,7 +46,9 @@ class MenuItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //TODO 아이콘 및 글자 크기 회의
     return InkWell(
-      onTap: onTap(),
+      onTap: (){
+        onTap();
+      },
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 25.w , vertical: 5.w),
         child: Row(
