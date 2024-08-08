@@ -1,33 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/instance_manager.dart';
 import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
+import 'package:homerun/Page/NoticesPage/Service/NoticeService.dart';
 import 'package:homerun/Page/ScapPage/Model/NoticeScrapDto.dart';
-import 'package:homerun/Page/ScapPage/Model/Scrap.dart';
 import 'package:homerun/Page/ScapPage/ScrapReferences.dart';
 import 'package:homerun/Page/ScapPage/Value/NoticeScrapDtoFields.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 
+import '../Model/NoticeScrap.dart';
+
 class ScrapService{
-  Future<Result> scrapNotification(String noticeId){
-    return Result.handleFuture(
+
+  static ScrapService? _instance;
+
+  ScrapService._();
+
+  static ScrapService get instance {
+    _instance ??= ScrapService._();
+    return _instance!;
+  }
+
+
+  Future<Result<void>> scrapNotification(String noticeId){
+    return Result.handleFuture<void>(
       action: () async {
         UserDto userDto = Get.find<AuthService>().getUser();
         CollectionReference collection = ScrapReferences.getNoticeCollection(userDto.uid);
         await collection.doc(noticeId).set({
-          'date' : FieldValue.serverTimestamp(),
-          'id' : noticeId
+          NoticeScrapDtoFields.date : FieldValue.serverTimestamp(),
+          NoticeScrapDtoFields.noticeId : noticeId
         });
         return;
       }
     );
   }
 
-  Future<Result<List<NoticeScrapDto>>> getScrapNotifications({
+  Future<Result<List<NoticeScrap>>> getScrapNotifications({
     required int? index,
     required NoticeScrap? startAfter,
   }){
-    return Result.handleFuture<List<NoticeScrapDto>>(
+    return Result.handleFuture<List<NoticeScrap>>(
       action: () async {
         //#. 유저 정보 가져오기
         UserDto userDto = Get.find<AuthService>().getUser(); //#. 유저가 로그인되어있지 않을 시 예외 발생
@@ -45,10 +59,17 @@ class ScrapService{
 
         QuerySnapshot querySnapshot = await query.get();
 
-        return querySnapshot.docs.map(
-                (e) => NoticeScrapDto.fromMap(e.data() as Map<String , dynamic>)
-        ).toList();
+        return Future.wait(querySnapshot.docs.map((doc) async {
+          NoticeScrapDto noticeScrapDto = NoticeScrapDto.fromDocumentSnapshot(doc);
+          Notice? notice = await _getNotice(noticeScrapDto.noticeId);
+          return NoticeScrap(documentSnapshot: doc, noticeScrapDto:noticeScrapDto , notice: notice);
+        }));
       }
     );
+  }
+
+  Future<Notice?> _getNotice(String noticeId) async {
+    Result<Notice> result = await NoticeService.instance.getNotice(noticeId: noticeId);
+    return result.content;
   }
 }
