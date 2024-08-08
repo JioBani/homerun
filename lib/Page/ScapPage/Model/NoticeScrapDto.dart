@@ -13,4 +13,8 @@ class NoticeScrapDto{
         date: map[NoticeScrapDtoFields.date]
     );
   }
+
+  factory NoticeScrapDto.fromDocumentSnapshot(DocumentSnapshot documentSnapshot){
+    return NoticeScrapDto.fromMap(documentSnapshot.data() as Map<String,dynamic>);
+  }
 }
