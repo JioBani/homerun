@@ -22,7 +22,7 @@ class ScrapService{
     return _instance!;
   }
 
-
+  //#. 공고 스크랩
   Future<Result<void>> scrapNotification(String noticeId){
     return Result.handleFuture<void>(
       action: () async {
@@ -37,6 +37,7 @@ class ScrapService{
     );
   }
 
+  //#. 공고 스크랩 리스트 가져오기
   Future<Result<List<NoticeScrap>>> getScrapNotifications({
     required int? index,
     required NoticeScrap? startAfter,
@@ -68,8 +69,8 @@ class ScrapService{
     );
   }
 
+  //#. 공고 가져오기
   Future<Notice?> _getNotice(String noticeId) async {
-    Result<Notice> result = await NoticeService.instance.getNotice(noticeId: noticeId);
-    return result.content;
+    return (await NoticeService.instance.getNotice(noticeId: noticeId)).content;
   }
 }
