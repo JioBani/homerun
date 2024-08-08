@@ -1,12 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Widget/HouseDetailTypeBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/View/AdNoticePage.dart';
+import 'package:homerun/Page/ScapPage/Controller/ScrapPageController.dart';
 import 'package:homerun/Page/ScapPage/Model/NoticeScrap.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Style/TestImages.dart';
@@ -23,6 +22,7 @@ class _NoticeScrapItemWidgetState extends State<NoticeScrapItemWidget> {
   @override
   Widget build(BuildContext context) {
     Notice? notice = widget.noticeScrap.notice;
+    var controller = Get.find<ScrapPageController>();
 
     return Padding(
       padding: EdgeInsets.only(bottom: 25.w),
@@ -99,15 +99,20 @@ class _NoticeScrapItemWidgetState extends State<NoticeScrapItemWidget> {
             ),
             SizedBox(width : 7.w),
             //#. 삭제버튼
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 7.w),
-              decoration: BoxDecoration(
-                border: Border.all(color: Palette.brightMode.mediumText),
-                borderRadius: BorderRadius.circular(10.r)
-              ),
-              child: Text(
-                "삭제",
-                style: TextStyle(fontSize: 9.sp),
+            InkWell(
+              onTap: (){
+                controller.deleteScrap(widget.noticeScrap);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 7.w),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Palette.brightMode.mediumText),
+                  borderRadius: BorderRadius.circular(10.r)
+                ),
+                child: Text(
+                  "삭제",
+                  style: TextStyle(fontSize: 9.sp),
+                ),
               ),
             )
           ],
