@@ -73,8 +73,20 @@ class ScrapService{
     );
   }
 
+  //#. 공고 삭제하기
+  Future<Result<void>> deleteNoticeScrap(NoticeScrap scrap){
+    return Result.handleFuture<void>(
+      action: () async {
+        Get.find<AuthService>().getUser();
+        await scrap.documentSnapshot.reference.delete();
+      }
+    );
+  }
+
   //#. 공고 가져오기
   Future<Notice?> _getNotice(String noticeId) async {
     return (await NoticeService.instance.getNotice(noticeId: noticeId)).content;
   }
+
+
 }
