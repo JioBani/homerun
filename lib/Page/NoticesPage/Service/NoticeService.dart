@@ -52,7 +52,7 @@ class NoticeService{
     });
   }
 
-  Future<Result<List<Notice>>> getNotice({
+  Future<Result<List<Notice>>> getNotices({
     required int count,
     required OrderType orderType,
     Notice? startAfter,
@@ -84,6 +84,16 @@ class NoticeService{
 
         return notices;
       }
+    );
+  }
+
+  Future<Result<Notice>> getNotice({
+    required noticeId,
+  }){
+    return Result.handleFuture<Notice>(
+        action: () async {
+          return Notice.fromDocumentSnapshot(await NoticeReferences.getNoticeCollection().doc(noticeId).get());
+        }
     );
   }
 }
