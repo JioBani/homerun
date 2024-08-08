@@ -39,7 +39,7 @@ class ScrapService{
 
   //#. 공고 스크랩 리스트 가져오기
   Future<Result<List<NoticeScrap>>> getScrapNotifications({
-    required int? index,
+    required int? count,
     required NoticeScrap? startAfter,
   }){
     return Result.handleFuture<List<NoticeScrap>>(
@@ -56,6 +56,10 @@ class ScrapService{
         //#. startAfter 쿼리 생성
         if(startAfter != null){
           query = query.startAfterDocument(startAfter.documentSnapshot);
+        }
+
+        if(count != null){
+          query = query.limit(count);
         }
 
         QuerySnapshot querySnapshot = await query.get();
