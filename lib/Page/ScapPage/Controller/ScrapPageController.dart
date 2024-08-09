@@ -58,4 +58,31 @@ class ScrapPageController extends GetxController{
     }
     update();
   }
+
+  //#. 스크랩 전체 삭제
+  Future<void> deleteAllScrap() async {
+    //#. 스크랩이 비어있을 경우
+    if(scarps.isEmpty){
+      CustomSnackbar.show("오류", "삭제할 스크랩이 없습니다.");
+      return;
+    }
+    
+    //#. 스크랩 삭제
+    Result result = await ScrapService.instance.deleteAllNoticeScrap();
+    
+    //#. 결과 출력
+    if(result.isSuccess){
+      scarps = [];
+      update();
+      CustomSnackbar.show("알림", "공고 스크랩을 삭제했습니다.");
+    }
+    else{
+      if(result.exception is ApplicationUnauthorizedException){
+        CustomSnackbar.show("오류", "로그인이 되어있지 않습니다.");
+      }
+      else{
+        CustomSnackbar.show("오류", "삭제에 실패했습니다.");
+      }
+    }
+  }
 }
