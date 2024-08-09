@@ -1,9 +1,7 @@
 import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/ScapPage/Service/ScrapService.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 
@@ -40,7 +38,7 @@ class ScrapPageController extends GetxController{
   //#. 공고 삭제
   //TODO 삭제 취소를 만들어야할지
   Future<void> deleteScrap(NoticeScrap noticeScrap) async{
-    Result result = await ScrapService.instance.deleteNoticeScrap(noticeScrap);
+    Result result = await ScrapService.instance.deleteNoticeScrap(noticeScrap.documentSnapshot.id);
     if(result.isSuccess){
       scarps.remove(noticeScrap);
       CustomSnackbar.show("알림", "공고 스크랩을 삭제했습니다.");
