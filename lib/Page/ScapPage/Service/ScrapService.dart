@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/instance_manager.dart';
+import 'package:homerun/Common/ApiResponse/ApiResult.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
@@ -11,6 +12,7 @@ import 'package:homerun/Page/ScapPage/Model/NoticeScrapDto.dart';
 import 'package:homerun/Page/ScapPage/ScrapReferences.dart';
 import 'package:homerun/Page/ScapPage/Value/NoticeScrapDtoFields.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
+import 'package:homerun/Common/ApiResponse/ApiResponse.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:http/http.dart' as http;
@@ -121,7 +123,6 @@ class ScrapService{
   }
 
   //#. 스크랩 유무 가져오기
-
   Future<Result<bool>> isNoticeScraped(String noticeId)async{
     return Result.handleFuture<bool>(
       action: ()async{
@@ -137,5 +138,29 @@ class ScrapService{
         return documentSnapshot.exists;
       }
     );
+  }
+
+  //#. 모든 스크랩 삭제하기
+  Future<Result<void>> deleteAllNoticeScrap(){
+    return Result.handleFuture<void>(action: ()async{
+      String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+
+      if(idToken == null){
+        throw ApplicationUnauthorizedException();
+      }
+
+      ApiResult<void> apiResult = await ApiResult.handleRequest<void>(http.post(
+        Uri.parse(FirebaseFunctionEndpoints.deleteAllNoticeScrap),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+      ));
+
+      if(!apiResult.isSuccess){
+        StaticLogger.logger.e("${apiResult.error}\n${apiResult.stackTrace}");
+        throw apiResult.error!;
+      }
+    });
   }
 }
