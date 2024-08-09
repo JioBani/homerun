@@ -107,7 +107,7 @@ class ScrapService{
       throw ApplicationUnauthorizedException();
     }
 
-    var res = await http.post(
+    await http.post(
       Uri.parse(FirebaseFunctionEndpoints.updateNoticeScrapCount),
       headers: {
         'Content-Type': 'application/json',
