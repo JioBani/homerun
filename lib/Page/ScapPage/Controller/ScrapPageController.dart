@@ -12,7 +12,7 @@ class ScrapPageController extends GetxController{
 
   List<NoticeScrap> scarps = [];
 
-  Future<void> getScraps({bool isReset = false}) async {
+  Future<void> getScraps(int count,{bool isReset = false}) async {
     loadingState = LoadingState.loading;
     update();
 
@@ -21,13 +21,18 @@ class ScrapPageController extends GetxController{
     }
 
     Result<List<NoticeScrap>> result = await ScrapService.instance.getScrapNotifications(
-        count: 10,
+        count: count,
         startAfter: scarps.isEmpty ? null : scarps.last
     );
 
     if(result.isSuccess){
+      if(result.content!.length < count){
+        loadingState = LoadingState.noMoreData;
+      }
+      else{
+        loadingState = LoadingState.success;
+      }
       scarps.addAll(result.content!);
-      loadingState = LoadingState.success;
     }
     else{
       loadingState = LoadingState.fail;
