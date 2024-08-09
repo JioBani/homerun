@@ -1,10 +1,27 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Page/ScapPage/Controller/ScrapPageController.dart';
+import 'package:homerun/Page/ScapPage/View/NoticeScrapItemWidget.dart';
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Palette.dart';
 
-class ScrapPage extends StatelessWidget {
+class ScrapPage extends StatefulWidget {
   const ScrapPage({super.key});
+
+  @override
+  State<ScrapPage> createState() => _ScrapPageState();
+}
+
+class _ScrapPageState extends State<ScrapPage> {
+
+  @override
+  void initState() {
+    Get.put(ScrapPageController()).getScraps(isReset: true);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +70,30 @@ class ScrapPage extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: ListView(
-                  children: [],
+                child: GetBuilder<ScrapPageController>(
+                  builder: (controller) {
+                    return ListView(
+                      children:[
+                        ...controller.scarps.map((e) => NoticeScrapItemWidget(noticeScrap: e)).toList(),
+                        Builder(
+                          builder: (_){
+                            if(controller.loadingState == LoadingState.success){
+                              return const Text("더 불러오기");
+                            }
+                            else if(
+                              controller.loadingState == LoadingState.success ||
+                              controller.loadingState == LoadingState.noMoreData
+                            ){
+                              return const CupertinoActivityIndicator();
+                            }
+                            else{
+                              return const Text("오류");
+                            }
+                          }
+                        )
+                      ],
+                    );
+                  }
                 ),
               )
             ],
