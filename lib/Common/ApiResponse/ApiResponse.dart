@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Service/Auth/HttpError.dart';
 import 'package:http/http.dart';
 
-import 'HttpError.dart';
 
 class ApiResponse<T> {
   final int status;
