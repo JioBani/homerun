@@ -19,7 +19,7 @@ class _ScrapPageState extends State<ScrapPage> {
 
   @override
   void initState() {
-    Get.put(ScrapPageController()).getScraps(isReset: true);
+    Get.put(ScrapPageController()).getScraps(1 , isReset: true);
     super.initState();
   }
 
@@ -45,6 +45,7 @@ class _ScrapPageState extends State<ScrapPage> {
           padding: EdgeInsets.symmetric(horizontal: 25.w),
           child: Column(
             children: [
+              //#. 전체 삭제 버튼
               Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
@@ -69,25 +70,33 @@ class _ScrapPageState extends State<ScrapPage> {
                   ),
                 ),
               ),
+              //#. 스크랩 리스트
               Expanded(
                 child: GetBuilder<ScrapPageController>(
                   builder: (controller) {
                     return ListView(
                       children:[
+                        //#. 스크랩 리스트
                         ...controller.scarps.map((e) => NoticeScrapItemWidget(noticeScrap: e)).toList(),
+                        //#. 불러오기 버튼
                         Builder(
                           builder: (_){
                             if(controller.loadingState == LoadingState.success){
-                              return const Text("더 불러오기");
+                              return TextButton(
+                                onPressed: (){
+                                  controller.getScraps(1);
+                                },
+                                child: const Text("더 불러오기")
+                              );
                             }
-                            else if(
-                              controller.loadingState == LoadingState.success ||
-                              controller.loadingState == LoadingState.noMoreData
-                            ){
-                              return const CupertinoActivityIndicator();
+                            else if(controller.loadingState == LoadingState.noMoreData){
+                              return const SizedBox();
+                            }
+                            else if(controller.loadingState == LoadingState.loading){
+                              return const Center(child: CupertinoActivityIndicator());
                             }
                             else{
-                              return const Text("오류");
+                              return const Center(child: Text("데이터를 불러 올 수 없습니다."));
                             }
                           }
                         )
