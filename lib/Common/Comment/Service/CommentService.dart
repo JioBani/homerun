@@ -10,7 +10,7 @@ import 'package:homerun/Common/Comment/CommentReferences.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
-import 'package:homerun/Service/Auth/ApiResponse.dart';
+import 'package:homerun/Common/ApiResponse/ApiResponse.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:http/http.dart' as http;
