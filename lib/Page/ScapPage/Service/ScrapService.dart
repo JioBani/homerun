@@ -143,12 +143,14 @@ class ScrapService{
   //#. 모든 스크랩 삭제하기
   Future<Result<void>> deleteAllNoticeScrap(){
     return Result.handleFuture<void>(action: ()async{
+      //#. idToken 가져오기
       String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
       if(idToken == null){
         throw ApplicationUnauthorizedException();
       }
 
+      //#. 스크랩 삭제
       ApiResult<void> apiResult = await ApiResult.handleRequest<void>(http.post(
         Uri.parse(FirebaseFunctionEndpoints.deleteAllNoticeScrap),
         headers: {
@@ -157,6 +159,7 @@ class ScrapService{
         },
       ));
 
+      //#. 실패하면 실패 예외 throw
       if(!apiResult.isSuccess){
         StaticLogger.logger.e("${apiResult.error}\n${apiResult.stackTrace}");
         throw apiResult.error!;
