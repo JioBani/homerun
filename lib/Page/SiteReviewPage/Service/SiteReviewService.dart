@@ -15,7 +15,7 @@ import 'package:homerun/Page/SiteReviewPage/Service/UploadResult.dart';
 import 'package:homerun/Page/SiteReviewPage/SiteReviewReferences.dart';
 import 'package:homerun/Page/SiteReviewPage/Value/Values.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
-import 'package:homerun/Service/Auth/ApiResponse.dart';
+import 'package:homerun/Common/ApiResponse/ApiResponse.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:image_picker/image_picker.dart';

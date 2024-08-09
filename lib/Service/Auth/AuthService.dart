@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
-import 'package:homerun/Service/Auth/ApiResponse.dart';
+import 'package:homerun/Common/ApiResponse/ApiResponse.dart';
 import 'package:homerun/Service/Auth/HttpError.dart';
 import 'package:homerun/Service/Auth/KakaoLoginService.dart';
 import 'package:homerun/Service/Auth/NaverLoginService.dart';
@@ -135,6 +135,7 @@ class AuthService extends GetxService{
     required String birth,
     required Gender gender,
   }) async {
+    //TODO 파라미터 Fields로 변경
     final customTokenResponse = await http.post(Uri.parse(FirebaseFunctionEndpoints.signUp),
         headers: {'Authorization': 'Bearer $accessToken'},
         body: {
