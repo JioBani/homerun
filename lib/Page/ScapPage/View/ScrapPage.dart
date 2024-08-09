@@ -22,7 +22,7 @@ class _ScrapPageState extends State<ScrapPage> {
 
   @override
   void initState() {
-    Get.put(ScrapPageController()).getScraps(1 , isReset: true);
+    Get.put(ScrapPageController()).getScraps(10 , isReset: true);
     super.initState();
   }
 
@@ -77,34 +77,39 @@ class _ScrapPageState extends State<ScrapPage> {
               Expanded(
                 child: GetBuilder<ScrapPageController>(
                   builder: (controller) {
-                    return ListView(
-                      children:[
-                        //#. 스크랩 리스트
-                        ...controller.scarps.map((e) => NoticeScrapItemWidget(noticeScrap: e)).toList(),
-                        //#. 불러오기 버튼
-                        Builder(
-                          builder: (_){
-                            if(controller.loadingState == LoadingState.success){
-                              return TextButton(
-                                onPressed: (){
-                                  controller.getScraps(1);
-                                },
-                                child: const Text("더 불러오기")
-                              );
-                            }
-                            else if(controller.loadingState == LoadingState.noMoreData){
-                              return const SizedBox();
-                            }
-                            else if(controller.loadingState == LoadingState.loading){
-                              return const Center(child: CupertinoActivityIndicator());
-                            }
-                            else{
-                              return const Center(child: Text("데이터를 불러 올 수 없습니다."));
-                            }
-                          }
-                        )
-                      ],
-                    );
+                    if(controller.loadingState == LoadingState.noMoreData && controller.scarps.isEmpty){
+                      return const Center(child: Text("스크랩 된 공고가 없습니다."),);
+                    }
+                    else{
+                      return ListView(
+                        children:[
+                          //#. 스크랩 리스트
+                          ...controller.scarps.map((e) => NoticeScrapItemWidget(noticeScrap: e)).toList(),
+                          //#. 불러오기 버튼
+                          Builder(
+                              builder: (_){
+                                if(controller.loadingState == LoadingState.success){
+                                  return TextButton(
+                                      onPressed: (){
+                                        controller.getScraps(10);
+                                      },
+                                      child: const Text("더 불러오기")
+                                  );
+                                }
+                                else if(controller.loadingState == LoadingState.noMoreData){
+                                  return const SizedBox();
+                                }
+                                else if(controller.loadingState == LoadingState.loading){
+                                  return const Center(child: CupertinoActivityIndicator());
+                                }
+                                else{
+                                  return const Center(child: Text("데이터를 불러 올 수 없습니다."));
+                                }
+                              }
+                          )
+                        ],
+                      );
+                    }
                   }
                 ),
               )
