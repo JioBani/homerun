@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/Widget/Snackbar.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/ScapPage/Controller/ScrapPageController.dart';
+import 'package:homerun/Page/ScapPage/Service/ScrapService.dart';
 import 'package:homerun/Page/ScapPage/View/NoticeScrapItemWidget.dart';
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Palette.dart';
@@ -50,7 +53,7 @@ class _ScrapPageState extends State<ScrapPage> {
                 alignment: Alignment.centerRight,
                 child: InkWell(
                   onTap: (){
-
+                    Get.find<ScrapPageController>().deleteAllScrap();
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 9.w , vertical: 0.5.w),
