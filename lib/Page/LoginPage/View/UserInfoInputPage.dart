@@ -44,13 +44,40 @@ class UserInfoInputPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 15.w,),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100.w),
-                  child: Image.asset(
-                    TestImages.irelia_6,
-                    width: 100.w,
-                    height: 100.w,
-                    fit: BoxFit.cover,
+                //#. 프로필 설정
+                SizedBox(
+                  width: 100.w,
+                  height: 100.w,
+                  child: Stack(
+                    children: [
+                      //#. 프로필 이미지
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(100.w),
+                        child: Image.asset(
+                          TestImages.irelia_6,
+                          width: 100.w,
+                          height: 100.w,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      //#. 프로필 설정 버튼
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Container(
+                          width: 25.w,
+                          height: 25.w,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white , width: 1.w),
+                            borderRadius: BorderRadius.circular(25.w),
+                            color: Colors.black
+                          ),
+                          child: const Icon(
+                            Icons.settings,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 )
               ],
