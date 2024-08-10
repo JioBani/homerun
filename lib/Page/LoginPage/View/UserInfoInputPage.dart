@@ -17,69 +17,75 @@ class UserInfoInputPage extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 35.w),
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 53.w,),
                 //#. 정보 입력해주세요.
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "나의 정보를 입력해주세요.",
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Text(
+                  "나의 정보를 입력해주세요.",
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 15.w,),
                 //#. 정보 관리 문구
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "청약 공고 추천등에 활용되며 입력한 정보는 외부에 표시되지 않습니다.",
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Palette.brightMode.mediumText
-                    ),
+                Text(
+                  "청약 공고 추천등에 활용되며 입력한 정보는 외부에 표시되지 않습니다.",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Palette.brightMode.mediumText
                   ),
                 ),
                 SizedBox(height: 15.w,),
                 //#. 프로필 설정
-                SizedBox(
-                  width: 100.w,
-                  height: 100.w,
-                  child: Stack(
-                    children: [
-                      //#. 프로필 이미지
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(100.w),
-                        child: Image.asset(
-                          TestImages.irelia_6,
-                          width: 100.w,
-                          height: 100.w,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      //#. 프로필 설정 버튼
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Container(
-                          width: 25.w,
-                          height: 25.w,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white , width: 1.w),
-                            borderRadius: BorderRadius.circular(25.w),
-                            color: Colors.black
-                          ),
-                          child: const Icon(
-                            Icons.settings,
-                            color: Colors.white,
+                Center(
+                  child: SizedBox(
+                    width: 100.w,
+                    height: 100.w,
+                    child: Stack(
+                      children: [
+                        //#. 프로필 이미지
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(100.w),
+                          child: Image.asset(
+                            TestImages.irelia_6,
+                            width: 100.w,
+                            height: 100.w,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                    ],
+                        //#. 프로필 설정 버튼
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            width: 25.w,
+                            height: 25.w,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white , width: 1.w),
+                              borderRadius: BorderRadius.circular(25.w),
+                              color: Colors.black
+                            ),
+                            child: const Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )
+                ),
+                //#. 닉네임
+                Text(
+                  "닉네임",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15.sp,
+                      color: Palette.brightMode.mediumText
+                  ),
+                ),
               ],
             ),
           ),
