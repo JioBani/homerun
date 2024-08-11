@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -44,6 +45,7 @@ class CustomDialog{
     required Function(BuildContext) onTap,
     required String title,
     required String buttonText,
+    EdgeInsets? padding,
     Size? buttonSize,
     double? height,
     double? width,
@@ -57,16 +59,17 @@ class CustomDialog{
         barrierDismissible: barrierDismissible,
         builder: (dialogContext){
           return Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.w),
+            padding: padding ?? EdgeInsets.symmetric(vertical: 5.w),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text(
+                AutoSizeText(
                   title,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 14.sp,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 InkWell(
                   onTap: ()  {
@@ -83,13 +86,14 @@ class CustomDialog{
                       color: Theme.of(dialogContext).primaryColor,
                     ),
                     child: Center(
-                      child: Text(
+                      child: AutoSizeText(
                         buttonText,
                         style: buttonTextStyle ?? TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12.sp,
-                            color: Colors.white
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.sp,
+                          color: Colors.white
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
