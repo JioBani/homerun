@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:homerun/Page/LoginPage/Controller/UserInfoPageController.dart';
 import 'package:homerun/Style/Palette.dart';
@@ -19,6 +22,8 @@ class UserInfoInputPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.put(UserInfoPageController());
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -58,27 +63,45 @@ class UserInfoInputPage extends StatelessWidget {
                         //#. 프로필 이미지
                         ClipRRect(
                           borderRadius: BorderRadius.circular(100.w),
-                          child: Image.asset(
-                            TestImages.irelia_6,
-                            width: 100.w,
-                            height: 100.w,
-                            fit: BoxFit.cover,
-                          ),
+                          child: GetBuilder<UserInfoPageController>(
+                            builder: (controller) {
+                              if(controller.profileImage == null){
+                                return Container(
+                                  color: Colors.grey,
+                                  width: 100.w,
+                                  height: 100.w,
+                                );
+                              }
+                              else{
+                                return Image.file(
+                                  File(controller.profileImage!.path),
+                                  width: 100.w,
+                                  height: 100.w,
+                                  fit: BoxFit.cover,
+                                );
+                              }
+                            }
+                          )
                         ),
                         //#. 프로필 설정 버튼
                         Align(
                           alignment: Alignment.bottomRight,
-                          child: Container(
-                            width: 25.w,
-                            height: 25.w,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white , width: 1.w),
-                              borderRadius: BorderRadius.circular(25.w),
-                              color: Colors.black
-                            ),
-                            child: const Icon(
-                              Icons.settings,
-                              color: Colors.white,
+                          child: InkWell(
+                            onTap: (){
+                              controller.setProfileImage();
+                            },
+                            child: Container(
+                              width: 25.w,
+                              height: 25.w,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white , width: 1.w),
+                                borderRadius: BorderRadius.circular(25.w),
+                                color: Colors.black
+                              ),
+                              child: const Icon(
+                                Icons.settings,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -217,7 +240,35 @@ class UserInfoInputPage extends StatelessWidget {
                         SizedBox(width: 84.w,height: 40.w,)
                       ]
                   ),
-                )
+                ),
+                SizedBox(height: 22.w,),
+
+                //#. 다음 버튼
+                InkWell(
+                  onTap: (){
+                    
+                  },
+                  child: Container(
+                    height: 45.w,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(10.r),
+                      boxShadow: [BoxShadow(offset: Offset(0,2.w),blurRadius: 2.r, color: Colors.black.withOpacity(0.25))]
+                    ),
+                    child: Center(
+                      child: Text(
+                        "다음으로",
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 36.w,),
               ],
             ),
           ),
