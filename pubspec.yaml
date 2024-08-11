@@ -72,6 +72,7 @@ dependencies:
   flutter_list_view: ^1.1.28
   gradient_borders: ^1.0.1
   auto_size_text: ^3.0.0
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:
