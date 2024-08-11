@@ -47,3 +47,7 @@ class BrightMode implements ColorMode{
   Color lightText = const Color(0xffD9D9D9);
 
 }
+
+class Gradients{
+  static LinearGradient skyBlueOrange = const LinearGradient(colors: [Palette.defaultSkyBlue, Color(0xffFF9C32)]);
+}
