@@ -5,7 +5,7 @@ import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
 
 class CustomSearchBar extends StatelessWidget {
-  CustomSearchBar({super.key});
+  const CustomSearchBar({super.key});
 
   final String hintText = "원하는 정보를 빨리 탐색 할 수 있어요.";
 
