@@ -6,19 +6,11 @@ import 'package:get/get.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:homerun/Page/LoginPage/Controller/UserInfoPageController.dart';
 import 'package:homerun/Style/Palette.dart';
-import 'package:homerun/Style/TestImages.dart';
 
 import 'SelectBoxWidget.dart';
 
 class UserInfoInputPage extends StatelessWidget {
   UserInfoInputPage({super.key});
-
-  final SelectBoxController<String> genderController = SelectBoxController<String>();
-  final SelectBoxController<String> ageController = SelectBoxController<String>();
-  final SelectBoxController<String> locationController = SelectBoxController<String>(isCanSelectMulti: true);
-
-  final List<String> ages = ["20대","30대","40대","50대","60대"];
-  final List<String> locations = ["서울","경기·인천","부산","대구·울산","충청","강원","경북"];
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +158,7 @@ class UserInfoInputPage extends StatelessWidget {
                       text: "남자",
                       onTap: (_){},
                       letterSpacing: 3.w,
-                      controller: genderController,
+                      controller: controller.genderController,
                       textPadding: EdgeInsets.only(left: 22.w),
                     ),
                     SelectBoxWidget<String>(
@@ -175,7 +167,7 @@ class UserInfoInputPage extends StatelessWidget {
                       text: "여자",
                       onTap: (_){},
                       letterSpacing: 3.w,
-                      controller: genderController,
+                      controller: controller.genderController,
                       textPadding: EdgeInsets.only(left: 22.w),
                     ),
                   ],
@@ -198,13 +190,13 @@ class UserInfoInputPage extends StatelessWidget {
                     alignment: WrapAlignment.spaceBetween,
                     runSpacing: 9.w,
                     children : [
-                     ...ages.map((age) => SelectBoxWidget(
+                     ...controller.ages.map((age) => SelectBoxWidget(
                         value: age,
                         width: 84.w,
                         text: age,
                         onTap: (_){},
                         letterSpacing: 3.w,
-                        controller: ageController,
+                        controller: controller.ageController,
                       )).toList(),
                       SizedBox(width: 84.w,height: 40.w,)
                     ]
@@ -228,12 +220,12 @@ class UserInfoInputPage extends StatelessWidget {
                       alignment: WrapAlignment.spaceBetween,
                       runSpacing: 9.w,
                       children : [
-                        ...locations.map((location) => SelectBoxWidget(
+                        ...controller.locations.map((location) => SelectBoxWidget(
                           value: location,
                           width: 86.w,
                           text: location,
                           onTap: (_){},
-                          controller: locationController,
+                          controller: controller.locationController,
                           hasIcon: false,
                           textPadding: EdgeInsets.zero,
                         )).toList(),
@@ -246,7 +238,7 @@ class UserInfoInputPage extends StatelessWidget {
                 //#. 다음 버튼
                 InkWell(
                   onTap: (){
-                    
+
                   },
                   child: Container(
                     height: 45.w,

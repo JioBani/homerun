@@ -2,11 +2,21 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../View/UserInfoInputPage/SelectBoxWidget.dart';
+
 class UserInfoPageController extends GetxController{
   XFile? profileImage;
 
   final ImagePicker picker = ImagePicker();
   final double maxSizeMb = 3;
+
+  final SelectBoxController<String> genderController = SelectBoxController<String>();
+  final SelectBoxController<String> ageController = SelectBoxController<String>();
+  final SelectBoxController<String> locationController = SelectBoxController<String>(isCanSelectMulti: true);
+
+  final List<String> ages = ["20대","30대","40대","50대","60대"];
+  final List<String> locations = ["서울","경기·인천","부산","대구·울산","충청","강원","경북"];
+
 
   /// 프로필 이미지 추가
   Future<void> setProfileImage() async {
