@@ -11,8 +11,6 @@ extension SocialProviderExtension on SocialProvider {
         return SocialProvider.kakao;
       case 'naver':
         return SocialProvider.naver;
-      case 'other':
-        return SocialProvider.other;
       default:
         throw Exception('Unknown social provider: $provider');
     }
@@ -24,8 +22,6 @@ extension SocialProviderExtension on SocialProvider {
         return "kakao";
       case SocialProvider.naver:
         return "naver";
-      case SocialProvider.other:
-        return "other";
       default:
         throw Exception('Unknown social provider: $this');
     }
