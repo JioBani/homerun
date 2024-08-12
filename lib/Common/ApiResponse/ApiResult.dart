@@ -14,23 +14,23 @@ class ApiResult<T>{
   final StackTrace? stackTrace;
 
   /// ApiResponse 제작중 파싱 에러가 발생하였는지
-  final bool isParsingError;
+  final bool parsingFailed;
 
   /// 성공여부
   /// statusCode와 통신 에러에 따라서 결정
   final bool isSuccess;
 
-  ApiResult({required this.isSuccess,this.apiResponse, this.error,this.stackTrace ,this.isParsingError = false});
+  ApiResult({required this.isSuccess,this.apiResponse, this.error,this.stackTrace ,this.parsingFailed = false});
 
   ///HTTP Request를 실행하고 결과를 ApiResult로 반환하는 함수
-  static Future<ApiResult> handleRequest<T>(Future<Response> request) async {
+  static Future<ApiResult<T>> handleRequest<T>(Future<Response> request , {Duration timeout = const Duration(minutes: 1)}) async {
     //#. request 수행
     Response response;
     try{
-      response = await request;
+      response = await request.timeout(timeout);
     }catch(e,s){ //#. request 실패시 실패 반환
       StaticLogger.logger.e("$e,$s");
-      return ApiResult<T>.fromFailure(e,s);
+      return ApiResult<T>.fromFailure(e,s,true);
     }
 
     //#. ApiResponse 및 ApiResult 생성
@@ -49,29 +49,18 @@ class ApiResult<T>{
       }
     }
     catch(e , s){ //#. ApiResponse 제작중 예외 발생
-      if(response.statusCode == 200 || response.statusCode == 300){
-        return ApiResult(
-            isSuccess: true,
-            apiResponse: null,
-            error: e,
-            stackTrace: s,
-            isParsingError: true
-        );
-      }
-      else{
-        return ApiResult<T>(
-            isSuccess: false,
-            apiResponse: null,
-            error: e,
-            stackTrace: s,
-            isParsingError: true
-        );
-      }
+      return ApiResult(
+          isSuccess: response.statusCode == 200 || response.statusCode == 300,
+          apiResponse: null,
+          error: e,
+          stackTrace: s,
+          parsingFailed: true
+      );
     }
   }
 
-  factory ApiResult.fromFailure(Object error , StackTrace stackTrace) {
-    return ApiResult(apiResponse: null, error: error, isSuccess: false,stackTrace: stackTrace);
+  factory ApiResult.fromFailure(Object error , StackTrace stackTrace , bool parsingFailed) {
+    return ApiResult(apiResponse: null, error: error, isSuccess: false,stackTrace: stackTrace, parsingFailed : parsingFailed);
   }
 
   Map<String,dynamic> toMap(){
@@ -79,7 +68,7 @@ class ApiResult<T>{
       'apiResponse' : apiResponse?.toMap(),
       'error' : error,
       'stackTrace' : stackTrace,
-      'isParsingError' : isParsingError,
+      'isParsingError' : parsingFailed,
       'isSuccess' : isSuccess,
     };
   }
