@@ -423,7 +423,7 @@ class SiteReviewWritePageController extends GetxController{
           );
         },
         context: context
-    );
+    ).route;
   }
 
   Future<void> setUploadedData(BuildContext context) async {
