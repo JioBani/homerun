@@ -19,7 +19,6 @@ class CustomDialog{
     EdgeInsets? margin,
     bool barrierDismissible = true
   }){
-    StaticLogger.logger.i(maxWidth);
     final route = DialogRoute<T>(
       context: context,
       barrierDismissible: barrierDismissible,
