@@ -19,12 +19,12 @@ class LoginPage extends StatelessWidget {
   )async {
     final authService = Get.find<AuthService>();
 
-    var (SignInResult result , _) = await LoadingDialog.showLoadingDialogWithFuture<SignInResult>(
+    var (LoginResult result , _) = await LoadingDialog.showLoadingDialogWithFuture<LoginResult>(
         context,
-        authService.signIn(provider)
+        authService.login(provider)
     );
 
-    if(result == SignInResult.success){
+    if(result == LoginResult.success){
       if(context.mounted){
         Navigator.pop(context);
       }
@@ -34,12 +34,23 @@ class LoginPage extends StatelessWidget {
       }
       CustomSnackbar.show("알림", "로그인에 성공했습니다.");
     }
-    else if(result == SignInResult.userNotFoundFailure){
+    else if(result == LoginResult.userDoNotExistFailure){
       CustomSnackbar.show("알림", "회원가입이 필요합니다.");
-      Get.to(const AgreementPage());
+      bool? result = await Get.to<bool>(const AgreementPage());
+      if(result == true){
+        if(context.mounted){
+          Navigator.pop(context);
+        }
+
+        if(goHomeAfterLogin){
+          Get.to(const HousingSaleNoticesPage());
+        }
+
+        CustomSnackbar.show("알림", "회원가입에 성공했습니다.");
+      }
     }
     else{
-      CustomSnackbar.show("오류", "로그인에 실패했습니다.");
+      CustomSnackbar.show("오류", "로그인에 실패했습니다. $result");
     }
   }
 
