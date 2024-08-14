@@ -1,8 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 
 class CustomDialog{
+
+  /// 명세
 
   /// Returns : 다이얼로그의 값과 DialogRoute를 포함한 [DialogResult]를 반환합니다.
   static DialogResult show<T>({
@@ -10,28 +14,38 @@ class CustomDialog{
     required BuildContext context,
     double? height,
     double? width,
+    double? maxHeight,
+    double? maxWidth,
+    EdgeInsets? margin,
     bool barrierDismissible = true
   }){
+    StaticLogger.logger.i(maxWidth);
     final route = DialogRoute<T>(
       context: context,
       barrierDismissible: barrierDismissible,
-      builder: (dialogContext) =>  UnconstrainedBox(
-        constrainedAxis: Axis.vertical,
-        child: SizedBox(
-          width: width ?? 200.w,
-          height: height ?? 100.w,
-          child: Dialog(
-            insetPadding: EdgeInsets.zero,
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.r),
+      builder: (dialogContext) =>  Container(
+        constraints: BoxConstraints(
+          minWidth: width ?? 200.w,
+          minHeight: height ?? 100.w,
+          maxWidth: maxWidth ?? 200.w,
+          maxHeight: maxHeight ?? 100.w,
+        ),
+        margin: margin ?? EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
+        child: Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.r),
+          ),
+          child: Container(
+            constraints: BoxConstraints(
+              minWidth: width ?? 200.w,
+              minHeight: height ?? 100.w,
+              maxWidth: maxWidth ?? 200.w,
+              maxHeight: maxHeight ?? 100.w,
             ),
-            child: SizedBox(
-              width: width ?? 200.w,
-              height: height ?? 100.w,
-              child: builder(dialogContext),
-            ),
+            child: builder(dialogContext),
           ),
         ),
       )
@@ -42,6 +56,7 @@ class CustomDialog{
 
   /// [onTap] 버튼을 누른 후 액션(다이얼로그가 닫힌 후 실행됨)
   ///
+  /// [buttonGap] 텍스트와 버튼 사이의 간격
   /// Returns : 다이얼로그의 값과 DialogRoute를 포함한 [DialogResult]를 반환합니다.
   static DialogResult defaultDialog<T>({
     required BuildContext context,
@@ -49,22 +64,30 @@ class CustomDialog{
     required String title,
     required String buttonText,
     EdgeInsets? padding,
+    EdgeInsets? margin,
     Size? buttonSize,
     double? height,
     double? width,
+    double? maxHeight,
+    double? maxWidth,
     TextStyle? buttonTextStyle,
     bool closedOnTap = true,
-    bool barrierDismissible = true
+    bool barrierDismissible = true,
+    double buttonGap = 0,
   }){
     return CustomDialog.show(
         height: height,
         width: width,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth,
         barrierDismissible: barrierDismissible,
+        margin : margin,
         builder: (dialogContext){
           return Padding(
             padding: padding ?? EdgeInsets.symmetric(vertical: 5.w),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 AutoSizeText(
                   title,
@@ -74,6 +97,7 @@ class CustomDialog{
                   ),
                   textAlign: TextAlign.center,
                 ),
+                Gap(buttonGap),
                 InkWell(
                   onTap: ()  {
                     if(closedOnTap && dialogContext.mounted){
