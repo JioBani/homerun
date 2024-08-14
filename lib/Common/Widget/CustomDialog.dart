@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomDialog{
-  static DialogRoute show({
+
+  /// Returns : 다이얼로그의 값과 DialogRoute를 포함한 [DialogResult]를 반환합니다.
+  static DialogResult show<T>({
     required Widget Function(BuildContext) builder,
     required BuildContext context,
     double? height,
     double? width,
     bool barrierDismissible = true
   }){
-    final route = DialogRoute(
+    final route = DialogRoute<T>(
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (dialogContext) =>  UnconstrainedBox(
@@ -35,14 +37,15 @@ class CustomDialog{
       )
     );
 
-    Navigator.of(context).push(route);
-
-    return route;
+    return DialogResult(Navigator.of(context).push(route) , route);
   }
 
-  static DialogRoute defaultDialog({
+  /// [onTap] 버튼을 누른 후 액션(다이얼로그가 닫힌 후 실행됨)
+  ///
+  /// Returns : 다이얼로그의 값과 DialogRoute를 포함한 [DialogResult]를 반환합니다.
+  static DialogResult defaultDialog<T>({
     required BuildContext context,
-    required Function(BuildContext) onTap,
+    Function(BuildContext)? onTap,
     required String title,
     required String buttonText,
     EdgeInsets? padding,
@@ -76,7 +79,9 @@ class CustomDialog{
                     if(closedOnTap && dialogContext.mounted){
                       Navigator.pop(context);
                     }
-                    onTap(dialogContext);
+                    if(onTap != null){
+                      onTap(dialogContext);
+                    }
                   },
                   child: Container(
                     width: buttonSize?.width ?? 75.w,
@@ -105,4 +110,19 @@ class CustomDialog{
         context: context
     );
   }
+}
+
+/// 커스텀 다이얼로그의 결과를 담는 객체입니다.
+///
+/// [result] : 다이얼로그의 결과값
+///
+/// [route] : DialogRoute
+class DialogResult<T>{
+  /// 다이얼로그의 결과값
+  final Future<T?> result;
+
+  /// 다이얼로그 루트
+  final DialogRoute<T> route;
+
+  DialogResult(this.result, this.route);
 }
