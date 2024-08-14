@@ -1,4 +1,5 @@
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 
 import 'SocialLoginService.dart';
@@ -22,6 +23,15 @@ class NaverLoginService implements SocialLoginService{
   }
 
   @override
+  Future<void> logout() async {
+    try{
+      await FlutterNaverLogin.logOut();
+    }catch(e,s){
+      StaticLogger.logger.i("[NaverLoginService.logout()] 로그아웃 실패 : $e\n$s");
+    }
+  }
+
+  @override
   Future<Result<String>> getAccessToken() async{
     return Result.handleFuture<String>(
         timeout: const Duration(seconds: 30),
@@ -30,5 +40,7 @@ class NaverLoginService implements SocialLoginService{
         }
     );
   }
+
+
 }
 
