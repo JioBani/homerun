@@ -5,8 +5,12 @@ abstract class SocialLoginService{
     ///로그인
     Future<Result<void>> login();
 
+    ///로그아웃
+    Future<void> logout();
+
     ///엑세스 토큰 얻기
     Future<Result<String>> getAccessToken();
+
 }
 
 class SocialLoginServiceException implements Exception{
