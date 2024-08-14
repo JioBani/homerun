@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/Widget/Snackbar.dart';
+import 'package:homerun/Common/enum/Gender.dart';
+import 'package:homerun/Page/HousingSaleNoticesPage/View/HousingSaleNoticesPage.dart';
+import 'package:homerun/Common/ApiResponse/ApiResponse.dart';
+import 'package:homerun/Page/LoginPage/View/UserInfoInputPage/UserInfoInputPage.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
+import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Style/Palette.dart';
 
 class AgreementPage extends StatelessWidget {
@@ -97,7 +106,12 @@ class AgreementPage extends StatelessWidget {
               ),
               const Spacer(),
               InkWell(
-                onTap: () => {},
+                onTap: () async {
+                   bool? result = await Get.to(UserInfoInputPage());
+                   if(result == true){
+                     Get.back(result:true);
+                   }
+                },
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 25.w),
                   height: 40.w,
