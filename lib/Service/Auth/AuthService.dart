@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/ApiResponse/ApiResult.dart';
 import 'package:homerun/Common/StaticLogger.dart';
@@ -14,7 +13,6 @@ import 'package:homerun/Service/Auth/NaverLoginService.dart';
 import 'package:homerun/Service/Auth/SocialLoginService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:http/http.dart' as http;
 
 
@@ -128,21 +126,17 @@ class AuthService extends GetxService{
   }
 
   /// 로그아웃
-  /// TOOD 소셜로그인 서비스 로그아웃 및 currentLoginService 초기화 구현해야함
-  Future<bool> signOut(SocialProvider socialProvider) async {
+  Future<bool> logout() async {
     try {
       signInState.value = SignInState.loading;
 
-      // #1. Firebase에서 로그아웃
+      //#1. Firebase에서 로그아웃
       await FirebaseAuth.instance.signOut();
 
-      // #2. Kakao 로그아웃
-      if (socialProvider == SocialProvider.kakao) {
-        await kakao.UserApi.instance.logout();
-      }
-      // #3. Naver 로그아웃
-      else if (socialProvider == SocialProvider.naver) {
-        await FlutterNaverLogin.logOut();
+      //#2. 소셜 로그아웃
+      if(currentLoginProvider != null){
+        await loginServices[currentLoginProvider]!.logout();
+        currentLoginProvider = null;
       }
 
       // #4. 유저 상태 초기화
@@ -279,6 +273,7 @@ enum LoginResult{
   success,
 }
 
+//TODO 오류추적을 위해 객체를 만들지
 enum SignUpResult{
   success,
   currentLoginDoNotExistFailure,
