@@ -6,6 +6,7 @@ import 'package:homerun/Common/ApiResponse/ApiResult.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/Page/LoginPage/View/LoginPage.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/HttpError.dart';
 import 'package:homerun/Service/Auth/KakaoLoginService.dart';
@@ -255,6 +256,33 @@ class AuthService extends GetxService{
     return userDto.value;
   }
 
+  /// 로그인을 체크하면서 실행하기
+  ///
+  /// [action] : 실행할 코드. 만약 [afterLoggedIn]이 null이 아니라면 로그인 후에 실행 되지 않습니다.
+  ///
+  /// [afterLoggedIn] : 로그인이 필요한 경우, 로그인 후에 실행할 코드. 로그인 후 [action] 대신 실행됩니다.
+  static runWithAuthCheck(
+    Function action,
+    {Function? afterLoggedIn,}
+  ){
+    if(FirebaseAuth.instance.currentUser == null){
+
+      Get.to(const LoginPage())?.then((value){
+        if(afterLoggedIn != null){
+          afterLoggedIn();
+        }
+        else{
+          action();
+        }
+      });
+
+      return false;
+    }
+    else{
+      action();
+      return true;
+    }
+  }
 }
 
 enum FirebaseLoginResult{
