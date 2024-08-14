@@ -6,11 +6,12 @@ import 'package:get/get.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:homerun/Page/LoginPage/Controller/UserInfoPageController.dart';
 import 'package:homerun/Style/Palette.dart';
-
 import 'SelectBoxWidget.dart';
 
+//TODO 스크롤해야한다는 것을 어떻게 알릴 것인지
+
 class UserInfoInputPage extends StatelessWidget {
-  UserInfoInputPage({super.key});
+  const UserInfoInputPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -237,8 +238,8 @@ class UserInfoInputPage extends StatelessWidget {
 
                 //#. 다음 버튼
                 InkWell(
-                  onTap: (){
-
+                  onTap: () async {
+                    controller.signUp(context);
                   },
                   child: Container(
                     height: 45.w,
