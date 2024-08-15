@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
-import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/enum/Gender.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/LoginPage/View/SignUpSuccessPage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserInfoService.dart';
+import 'package:homerun/Value/AgeRange.dart';
+import 'package:homerun/Value/Region.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../View/UserInfoInputPage/SelectBoxWidget.dart';
@@ -19,12 +21,8 @@ class UserInfoPageController extends GetxController{
   final double maxSizeMb = 3;
 
   final SelectBoxController<String> genderController = SelectBoxController<String>();
-  final SelectBoxController<String> ageController = SelectBoxController<String>();
-  final SelectBoxController<String> locationController = SelectBoxController<String>(isCanSelectMulti: true);
-
-  final List<String> ages = ["20대","30대","40대","50대","60대"];
-  final List<String> locations = ["서울","경기·인천","부산","대구·울산","충청","강원","경북"];
-
+  final SelectBoxController<AgeRange> ageController = SelectBoxController<AgeRange>();
+  final SelectBoxController<Region> regionController = SelectBoxController<Region>(isCanSelectMulti: true);
 
   /// 프로필 이미지 추가
   Future<void> setProfileImage() async {
@@ -80,7 +78,7 @@ class UserInfoPageController extends GetxController{
     }
 
     //#. 관심지역 확인
-    if(locationController.values.isEmpty){
+    if(regionController.values.isEmpty){
       CustomDialog.defaultDialog(
           context: context,
           title: "관심 지역을 하나 이상\n선택해주세요",
@@ -91,7 +89,7 @@ class UserInfoPageController extends GetxController{
     }
 
     //#. 관심지역 선택 초과 확인
-    if(locationController.values.length > 3){
+    if(regionController.values.length > 3){
       CustomDialog.defaultDialog(
           context: context,
           title: "관심 지역은 3개 이하로\n선택해주세요",
@@ -113,20 +111,37 @@ class UserInfoPageController extends GetxController{
     }
 
     //#. 회원가입
-    var (SignUpResult result, _) = await LoadingDialog.showLoadingDialogWithFuture<SignUpResult>(
-      context,
-      Get.find<AuthService>().signUp(
-          displayName: "dd",
-          birth: "2000-10-22",
-          gender: Gender.male
+    //TODO 실제 값으로 변경
+    Result result = await CustomDialog.showLoadingDialog<SignUpResult>(
+      context: context,
+      future: Get.find<AuthService>().signUp(
+        displayName: "dd",
+        gender: Gender.male,
+        ageRages: ageController.value!.label,
+        regions: regionController.values.map((e) => e.label).toList()
       )
     );
 
+    if(!result.isSuccess){
+      if(context.mounted){
+        CustomDialog.defaultDialog(
+          context: context,
+          title: "회원가입에 실패했습니다. 인터넷 문제 혹은 서버 문제일 수 있습니다.",
+          buttonText: "확인",
+          padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 10.w),
+          buttonGap: 7.w,
+          maxWidth: 220.w,
+          maxHeight: double.infinity,
+        );
+      }
+      return;
+    }
+
     //#. 실패 피드백
     //#. 성공하면 이미 로그인이 된 상태
-    if(result != SignUpResult.success){
+    if(result.content != SignUpResult.success){
       String text = "";
-      switch(result){
+      switch(result.content!){
         case SignUpResult.userAlreadyExistsFailure :
           text = "동일한 아이디로 회원가입한 아이디가 이미 존재합니다. 계속해서 이 메세지가 발생하면 고객센터로 문의해주세요.";
 

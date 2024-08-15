@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:homerun/Page/LoginPage/Controller/UserInfoPageController.dart';
 import 'package:homerun/Style/Palette.dart';
+import 'package:homerun/Value/AgeRange.dart';
+import 'package:homerun/Value/Region.dart';
 import 'SelectBoxWidget.dart';
 
 //TODO 스크롤해야한다는 것을 어떻게 알릴 것인지
@@ -191,10 +193,10 @@ class UserInfoInputPage extends StatelessWidget {
                     alignment: WrapAlignment.spaceBetween,
                     runSpacing: 9.w,
                     children : [
-                     ...controller.ages.map((age) => SelectBoxWidget(
+                     ...AgeRange.values.map((age) => SelectBoxWidget<AgeRange>(
                         value: age,
                         width: 84.w,
-                        text: age,
+                        text: age.label,
                         onTap: (_){},
                         letterSpacing: 3.w,
                         controller: controller.ageController,
@@ -221,12 +223,12 @@ class UserInfoInputPage extends StatelessWidget {
                       alignment: WrapAlignment.spaceBetween,
                       runSpacing: 9.w,
                       children : [
-                        ...controller.locations.map((location) => SelectBoxWidget(
-                          value: location,
+                        ...Region.values.map((region) => SelectBoxWidget<Region>(
+                          value: region,
                           width: 86.w,
-                          text: location,
+                          text: region.label,
                           onTap: (_){},
-                          controller: controller.locationController,
+                          controller: controller.regionController,
                           hasIcon: false,
                           textPadding: EdgeInsets.zero,
                         )).toList(),
