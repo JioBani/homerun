@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -157,10 +158,12 @@ class AuthService extends GetxService{
   }
 
   /// 회원가입
+  //TODO 지역하고 연령대 values로 수정하기
   Future<SignUpResult> signUp({
     required String displayName,
-    required String birth,
     required Gender gender,
+    required String ageRages,
+    required List<String> regions,
   })async{
 
     //#. 소셜 로그인 체크
@@ -178,14 +181,17 @@ class AuthService extends GetxService{
     //#. 회원가입
     final ApiResult<String> apiResult = await ApiResult.handleRequest<String>(
       http.post(Uri.parse(FirebaseFunctionEndpoints.signUp),
-        headers: {'Authorization': 'Bearer ${accessTokenResult.content}'},
-        body: {
+        headers: {
+          'Authorization': 'Bearer ${accessTokenResult.content}',
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode({
           'social_provider' : currentLoginProvider!.toEnumString(),
-          //'social_provider' : currentLoginProvider.toString(),
           'displayName' : displayName,
-          'birth' :birth,
           'gender': gender.toEnumString(),
-        }
+          'ageRange': ageRages,
+          'interestedRegions': regions,
+        })
       ),
       timeout: const Duration(minutes: 1)
     );
@@ -194,6 +200,10 @@ class AuthService extends GetxService{
     if(!apiResult.isSuccess){
       if(!apiResult.parsingFailed && apiResult.apiResponse!.error!.code == ServerErrorCodes.userAlreadyExistsError){
         return SignUpResult.userAlreadyExistsFailure;
+      }
+      else if(apiResult.parsingFailed){
+        StaticLogger.logger.e("${apiResult.error}\n${apiResult.stackTrace}");
+        return SignUpResult.serverSignUpFailure;
       }
       else{
         StaticLogger.logger.e(apiResult.apiResponse?.error?.message);
