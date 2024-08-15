@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,20 +35,15 @@ class _SiteReviewListPageState extends State<SiteReviewListPage> {
         elevation: 0,
         centerTitle: true,
         backgroundColor: Colors.white,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              widget.notice.noticeDto?.houseName ?? '',
-              style: TextStyle(
-                fontSize:  16.sp,
-                fontWeight: FontWeight.bold,
-                fontFamily: Fonts.BCCard,
-                color: Theme.of(context).primaryColor
-              ),
-            ),
-          ],
+        title: AutoSizeText(
+          widget.notice.noticeDto?.houseName ?? '',
+          style: TextStyle(
+              fontSize:  16.sp,
+              fontWeight: FontWeight.bold,
+              fontFamily: Fonts.BCCard,
+              color: Theme.of(context).primaryColor
+          ),
+          maxLines: 1,
         ),
         actions: [
           IconButton(
