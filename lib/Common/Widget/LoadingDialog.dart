@@ -30,6 +30,7 @@ class LoadingDialog extends StatelessWidget {
     );
   }
 
+  /// [future]가 너무 빨리 종료될 경우 다이얼로그가 자동으로 pop되지 않는 문제가 있으므로 [CustomDialog] 사용 권장
   static Future<(T, bool)> showLoadingDialogWithFuture<T>(
       BuildContext context ,
       Future<T> future,
