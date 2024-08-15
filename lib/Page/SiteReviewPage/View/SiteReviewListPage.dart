@@ -1,12 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Page/LoginPage/View/LoginPage.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/SiteReviewPage/Controller/SiteReviewListPageController.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReviewListItemWidget.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage/SiteReviewWritePage.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Fonts.dart';
 
 class SiteReviewListPage extends StatefulWidget {
@@ -18,6 +21,7 @@ class SiteReviewListPage extends StatefulWidget {
 }
 
 class _SiteReviewListPageState extends State<SiteReviewListPage> {
+
   @override
   Widget build(BuildContext context) {
     Get.put(SiteReviewListPageController(
@@ -49,7 +53,7 @@ class _SiteReviewListPageState extends State<SiteReviewListPage> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              Get.to(SiteReviewWritePage(noticeId:widget.notice.id,));
+              AuthService.runWithAuthCheck(()=>Get.to(SiteReviewWritePage(noticeId:widget.notice.id,)));
             },
           )
         ],
