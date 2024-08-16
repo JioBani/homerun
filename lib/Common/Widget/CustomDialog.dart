@@ -85,7 +85,7 @@ class CustomDialog{
         margin : margin,
         builder: (dialogContext){
           return Padding(
-            padding: padding ?? EdgeInsets.symmetric(vertical: 5.w),
+            padding: padding ?? EdgeInsets.symmetric(vertical: 5.w , horizontal: 10.w),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               mainAxisSize: MainAxisSize.min,
