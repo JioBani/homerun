@@ -182,7 +182,7 @@ class AuthService extends GetxService{
 
     //#. 회원가입
     final ApiResult<String> apiResult = await ApiResult.handleRequest<String>(
-      http.post(Uri.parse(FirebaseFunctionEndpoints.signUpLocal),
+      http.post(Uri.parse(FirebaseFunctionEndpoints.signUp),
         headers: {
           'Authorization': 'Bearer ${accessTokenResult.content}',
           'Content-Type': 'application/json'
