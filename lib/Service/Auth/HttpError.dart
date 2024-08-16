@@ -64,4 +64,5 @@ class InternalServerError extends HttpError {
 class ServerErrorCodes{
   static int userNotFoundError = 40104;
   static int userAlreadyExistsError = 40901;
+  static int displayNameAlreadyExistsError = 40902;
 }
