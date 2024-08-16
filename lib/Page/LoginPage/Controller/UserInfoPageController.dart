@@ -11,6 +11,7 @@ import 'package:homerun/Service/Auth/UserInfoService.dart';
 import 'package:homerun/Value/AgeRange.dart';
 import 'package:homerun/Value/Region.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:korean_profanity_filter/korean_profanity_filter.dart';
 
 import '../View/UserInfoInputPage/SelectBoxWidget.dart';
 
@@ -23,6 +24,7 @@ class UserInfoPageController extends GetxController{
   final SelectBoxController<String> genderController = SelectBoxController<String>();
   final SelectBoxController<AgeRange> ageController = SelectBoxController<AgeRange>();
   final SelectBoxController<Region> regionController = SelectBoxController<Region>(isCanSelectMulti: true);
+  final TextEditingController nickNameController = TextEditingController();
 
   /// 프로필 이미지 추가
   Future<void> setProfileImage() async {
@@ -55,6 +57,12 @@ class UserInfoPageController extends GetxController{
   
   /// 회원가입 데이터 유효성 확인
   bool checkData(BuildContext context){
+
+    //#. 닉네임 체크
+    if(!checkNickName(nickNameController.text, context)){
+      return false;
+    }
+
     //#. 성별 확인
     if(genderController.value == null){
       if(context.mounted){
@@ -102,6 +110,90 @@ class UserInfoPageController extends GetxController{
     return true;
   }
 
+  /// 닉네임 체크
+  bool checkNickName(String displayName, BuildContext context){
+
+    //#. 닉네임 길이 체크
+    String? text = checkNickNameLength(displayName);
+    if(text != null){
+      CustomDialog.defaultDialog(
+          context : context,
+          title: text,
+          buttonText: "확인"
+      );
+
+      return false;
+    }
+
+    //#. 닉네임 단어 체크
+    if(displayName.containsBadWords){
+      CustomDialog.defaultDialog(
+          context : context,
+          title: "사용할 수 없는 닉네임 입니다.",
+          buttonText: "확인"
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+
+  /// 닉네임 길이 체크 함수
+  ///
+  /// [returns] : 사용할 수 있는 닉네임인 경우 null을 반환합니다.
+  /// 사용할 수 없는 닉네임인 경우 경고 메세지를 반환합니다.
+  String? checkNickNameLength(String nickname){
+    
+    //#. 비어있는 경우
+    if(nickname.isEmpty){
+      return "닉네임을 입력해주세요.";
+    }
+
+    int koreanMin = 2,  koreanMax = 12, engMin = 3, engMax = 16;
+    // 한글 패턴
+    final koreanPattern = RegExp(r'[가-힣]');
+    // 영문 패턴
+    final englishPattern = RegExp(r'[a-zA-Z]');
+    // 숫자 패턴
+    final numberPattern = RegExp(r'[0-9]');
+
+    bool hasKorean = koreanPattern.hasMatch(nickname);
+    bool hasEnglish = englishPattern.hasMatch(nickname);
+    bool hasNumber = numberPattern.hasMatch(nickname);
+
+
+    int length = nickname.length;
+
+    //#. 한글,영문,숫자만 포함
+    if(!(hasNumber || hasKorean || hasEnglish)){
+      return "닉네임에는 한글,영문,숫자만 포함될 수 있습니다.";
+    }
+
+    if(hasKorean){ //#. 한글 포함
+      if(length < koreanMin){
+        return "한글 닉네임은 $koreanMin글자 이상이어야 합니다.";
+      }
+      else if(length > koreanMax){
+        return "한글 닉네임은 $koreanMax글자 이하이어야 합니다.";
+      }
+      else{
+        return null;
+      }
+    }
+    else{ //#. 영문과 숫자만
+      if(length < engMin){
+        return "영문 또는 숫자 닉네임은 $engMin글자 이상이어야 합니다.";
+      }
+      else if(length > engMax){
+        return "영문 또는 숫자 닉네임은 $engMax글자 이하이어야 합니다.";
+      }
+      else{
+        return null;
+      }
+    }
+  }
+
   ///회원가입
   Future<void> signUp(BuildContext context)async{
 
@@ -115,7 +207,7 @@ class UserInfoPageController extends GetxController{
     Result result = await CustomDialog.showLoadingDialog<SignUpResult>(
       context: context,
       future: Get.find<AuthService>().signUp(
-        displayName: "dd",
+        displayName: nickNameController.text,
         gender: Gender.male,
         ageRages: ageController.value!.label,
         regions: regionController.values.map((e) => e.label).toList()
@@ -143,17 +235,20 @@ class UserInfoPageController extends GetxController{
       String text = "";
       switch(result.content!){
         case SignUpResult.userAlreadyExistsFailure :
-          text = "동일한 아이디로 회원가입한 아이디가 이미 존재합니다. 계속해서 이 메세지가 발생하면 고객센터로 문의해주세요.";
-
+          text = "동일한 아이디로 회원가입한 아이디가 이미 존재합니다. 계속해서 이 메세지가 발생하면 고객센터로 문의해주세요."; break;
+          
+        case SignUpResult.displayNameAlreadyExistsFailure :
+          text = "동일한 닉네임이 존재합니다."; break;
+          
         case SignUpResult.serverSignUpFailure :
-          text = "오류가 발생하였습니다. 잠시 후 다시 시도해주세요.";
+          text = "오류가 발생하였습니다. 잠시 후 다시 시도해주세요."; break;
 
         case SignUpResult.accessTokenFailure :
         case SignUpResult.currentLoginDoNotExistFailure :
-          text = "소셜 로그인 정보가 정확하지 않습니다. 계속해서 이 메세지가 발생하면 고객센터로 문의해주세요.";
+          text = "소셜 로그인 정보가 정확하지 않습니다. 계속해서 이 메세지가 발생하면 고객센터로 문의해주세요."; break;
 
         case SignUpResult.firebaseLoginFailure :
-          text = "로그인에 실패하였습니다. 계속해서 이 오류가 발생하면 고객센터로 문의해주세요.";
+          text = "로그인에 실패하였습니다. 계속해서 이 오류가 발생하면 고객센터로 문의해주세요."; break;
 
         default : {}
       }
