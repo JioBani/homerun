@@ -17,6 +17,8 @@ import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:http/http.dart' as http;
 
+import 'UserFields.dart';
+
 
 class AuthService extends GetxService{
 
@@ -180,17 +182,17 @@ class AuthService extends GetxService{
 
     //#. 회원가입
     final ApiResult<String> apiResult = await ApiResult.handleRequest<String>(
-      http.post(Uri.parse(FirebaseFunctionEndpoints.signUp),
+      http.post(Uri.parse(FirebaseFunctionEndpoints.signUpLocal),
         headers: {
           'Authorization': 'Bearer ${accessTokenResult.content}',
           'Content-Type': 'application/json'
         },
         body: jsonEncode({
-          'social_provider' : currentLoginProvider!.toEnumString(),
-          'displayName' : displayName,
-          'gender': gender.toEnumString(),
-          'ageRange': ageRages,
-          'interestedRegions': regions,
+          UserFields.socialProvider : currentLoginProvider!.toEnumString(),
+          UserFields.displayName : displayName,
+          UserFields.gender : gender.toEnumString(),
+          UserFields.ageRange : ageRages,
+          UserFields.interestedRegions : regions,
         })
       ),
       timeout: const Duration(minutes: 1)
@@ -198,15 +200,20 @@ class AuthService extends GetxService{
 
     //#. 회원가입 결과 해석
     if(!apiResult.isSuccess){
-      if(!apiResult.parsingFailed && apiResult.apiResponse!.error!.code == ServerErrorCodes.userAlreadyExistsError){
-        return SignUpResult.userAlreadyExistsFailure;
-      }
-      else if(apiResult.parsingFailed){
-        StaticLogger.logger.e("${apiResult.error}\n${apiResult.stackTrace}");
-        return SignUpResult.serverSignUpFailure;
+      if(!apiResult.parsingFailed){
+        if(apiResult.apiResponse!.error!.code == ServerErrorCodes.userAlreadyExistsError){
+          return SignUpResult.userAlreadyExistsFailure;
+        }
+        else if(apiResult.apiResponse!.error!.code == ServerErrorCodes.displayNameAlreadyExistsError){
+          return SignUpResult.displayNameAlreadyExistsFailure;
+        }
+        else{
+          StaticLogger.logger.e(apiResult.apiResponse?.error?.message);
+          return SignUpResult.serverSignUpFailure;
+        }
       }
       else{
-        StaticLogger.logger.e(apiResult.apiResponse?.error?.message);
+        StaticLogger.logger.e("${apiResult.error}\n${apiResult.stackTrace}");
         return SignUpResult.serverSignUpFailure;
       }
     }
@@ -254,8 +261,11 @@ class AuthService extends GetxService{
   }
 
   UserDto getUser(){
-    if(FirebaseAuth.instance.currentUser == null || userDto.value == null){
+    if(FirebaseAuth.instance.currentUser == null){
       throw ApplicationUnauthorizedException();
+    }
+    else if(userDto.value == null){
+      throw UserInfoNotFoundException();
     }
     else{
       return userDto.value!;
@@ -317,6 +327,7 @@ enum SignUpResult{
   currentLoginDoNotExistFailure,
   accessTokenFailure,
   userAlreadyExistsFailure,
+  displayNameAlreadyExistsFailure,
   serverSignUpFailure,
   firebaseLoginFailure,
 }
@@ -337,6 +348,11 @@ class AuthServiceException implements Exception{
 class ApplicationUnauthorizedException extends AuthServiceException{
   ApplicationUnauthorizedException()
       : super('Application is not logged in.');
+}
+
+class UserInfoNotFoundException extends AuthServiceException{
+  UserInfoNotFoundException()
+      : super("Can't get user info.");
 }
 
 class CurrentLoginNotExistException extends AuthServiceException{
