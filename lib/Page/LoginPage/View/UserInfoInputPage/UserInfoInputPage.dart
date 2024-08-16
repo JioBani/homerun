@@ -117,6 +117,7 @@ class UserInfoInputPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10.w,),
                 TextFormField(
+                  controller: controller.nickNameController,
                   style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500
