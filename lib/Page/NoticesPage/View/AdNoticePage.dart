@@ -24,6 +24,7 @@ import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabBarWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabChildWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
 import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewWidget.dart';
+import 'package:homerun/Page/ScapPage/Service/ScrapService.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
@@ -206,7 +207,19 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
             ],
           ),
           SizedBox(width: 4.w,),
-          SmallIconButton(iconPath: Images.scrap, text: "스크랩", onTap: (){}),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ScrapIconButton(noticeId: widget.notice.id,),
+              SizedBox(height: 3.w,),
+              Text(
+                "스크랩",
+                style: TextStyle(
+                    fontSize: 7.sp
+                ),
+              )
+            ],
+          ),
           SizedBox(width: 4.w,),
           SmallIconButton(iconPath: Images.share, text: "공유", onTap: (){}),
           SizedBox(width: 17.w,)
@@ -482,18 +495,20 @@ class LikeIconButton extends StatelessWidget {
             }
           }
         },
-        load: (currentValue)async{
+        load: (currentValue , controller)async{
           if(Get.find<AuthService>().tryGetUser() == null){
-            return Result.fromSuccess();
+            controller.success();
+            return null;
           }
           else{
-            return NoticeService.instance.getLikeState(noticeId);
+            return controller.fromResult(await NoticeService.instance.getLikeState(noticeId));
           }
         },
-        onTap: (currentValue) async {
+        onTap: (currentValue, controller) async {
           if(Get.find<AuthService>().tryGetUser() == null){
             CustomSnackbar.show("오류" , "로그인이 필요합니다.");
-            return Result.fromFailure(ApplicationUnauthorizedException, StackTrace.current);
+            controller.failure();
+            return null;
           }
 
           if(currentValue != null){
@@ -501,11 +516,80 @@ class LikeIconButton extends StatelessWidget {
             if(!result.isSuccess){
               CustomSnackbar.show("오류" , "좋아요에 실패했습니다.");
             }
-            return result;
+            return controller.fromResult(result);
           }
           else{
             CustomSnackbar.show("오류" , "좋아요를 할 수 없습니다.");
-            return Result.fromFailure(Exception('currentValue is null'), StackTrace.current);
+            controller.failure();
+            return null;
+          }
+        },
+        width: 15.sp,
+        height: 15.sp
+    );
+  }
+}
+
+
+//#. 스크랩 버튼
+class ScrapIconButton extends StatelessWidget {
+  const ScrapIconButton({super.key, required this.noticeId});
+
+  final String noticeId;
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadableIcon<bool>(
+        iconBuilder: (value , loadingState){
+          if(loadingState == LoadingState.loading || loadingState == LoadingState.loading){
+            return const CupertinoActivityIndicator();
+          }
+          else if(value == null || !value){
+            return const Icon(Icons.bookmark_border_outlined);
+          }
+          else{
+            return Icon(Icons.bookmark , color: Theme.of(context).primaryColor,);
+          }
+        },
+        load: (currentValue , controller) async{
+          //#. 스크랩 확인
+          return controller.fromResult(await ScrapService.instance.isNoticeScraped(noticeId));
+        },
+        onTap: (currentValue , controller) async {
+          //#. 스크랩 로딩 성공시
+          if(currentValue != null){
+            //#. 로그인 체크
+            if(Get.find<AuthService>().tryGetUser() == null){
+              CustomSnackbar.show("오류" , "로그인이 필요합니다.");
+              controller.failure();
+              return null;
+            }
+
+            if(currentValue){ //#. 스크랩 취소
+              Result result = await ScrapService.instance.deleteNoticeScrap(noticeId);
+              if(!result.isSuccess){
+                CustomSnackbar.show("오류" , "스크랩 삭제에 실패했습니다.");
+              }
+              else{
+                CustomSnackbar.show("알림", "스크랩을 삭제 했습니다.");
+              }
+              return controller.fromResultAndValue(result, false);
+            }
+            else{ //#. 스크랩
+              Result result = await ScrapService.instance.scrapNotification(noticeId);
+              if(!result.isSuccess){
+                CustomSnackbar.show("오류" , "스크랩에 실패했습니다.");
+              }
+              else{
+                CustomSnackbar.show("알림", "스크랩했습니다.");
+              }
+              return controller.fromResultAndValue(result, true);
+            }
+          }
+          else{
+            CustomSnackbar.show("오류" , "스크랩을 할 수 없습니다.");
+            controller.failure();
+            return null;
           }
         },
         width: 15.sp,
