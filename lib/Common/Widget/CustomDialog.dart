@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:homerun/Common/StaticLogger.dart';
@@ -165,6 +166,127 @@ class CustomDialog{
     }
 
     return result;
+  }
+
+  /// 확인 다이얼로그
+  ///
+  /// 확인 또는 취소 등의 2지선다 확인이 필요할때 사용합니다.
+  ///
+  /// [onConfirm] : 확인 버튼을 누른 경우 다이얼로그가 닫히고 실행됩니다.
+  ///
+  /// [returns] : confirm = true, cancel = false, backButton = null
+  static Future<bool?> showConfirmationDialog({
+    required BuildContext context,
+    required String content,
+    required Function() onConfirm,
+    TextStyle? contentTextStyle,
+    String confirmText = "확인",
+    String cancelText = "취소",
+    Color? confirmTextColor,
+  }){
+    const Color borderColor = Color(0xffA4A4A6);
+
+    final route = DialogRoute<bool>(
+        context: context,
+        barrierDismissible: true,
+        builder: (dialogContext) =>  Container(
+          height: 114.w,
+          width: double.infinity,
+          margin: EdgeInsets.symmetric(horizontal: 35.w),
+          child: Dialog(
+            insetPadding: EdgeInsets.zero,
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.r),
+            ),
+            child: SizedBox(
+              height: 114.w,
+              width: double.infinity,
+              child: Column(
+                children: [
+                  //#. 내용
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        content,
+                        style: contentTextStyle ?? TextStyle(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    )
+                  ),
+                  //#. 버튼
+                  Row(
+                    children: [
+                      //#. 취소
+                      Expanded(
+                        child: InkWell(
+                          onTap: (){
+                            if(dialogContext.mounted && Navigator.canPop(dialogContext)){
+                              Navigator.pop(dialogContext , false);
+                            }
+                          },
+                          child: Container(
+                            height: 33.w,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(width: 0.7.w,color: borderColor),
+                                right: BorderSide(width: 0.35.w , color: borderColor),
+                              )
+                            ),
+                            child: Center(
+                              child: Text(
+                                cancelText,
+                                style: TextStyle(
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
+                          ),
+                        ),
+                      ),
+                      //#. 확인
+                      Expanded(
+                        child: InkWell(
+                          onTap: (){
+                            if(dialogContext.mounted && Navigator.canPop(dialogContext)){
+                              Navigator.pop(dialogContext , true);
+                            }
+                            onConfirm();
+                          },
+                          child: Container(
+                            height: 33.w,
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(width: 0.7.w , color: borderColor),
+                                  left: BorderSide(width: 0.35.w , color: borderColor),
+                                )
+                            ),
+                            child: Center(
+                              child: Text(
+                                confirmText,
+                                style: TextStyle(
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: confirmTextColor ?? Theme.of(context).primaryColor
+                                ),
+                              ),
+                            )
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        )
+    );
+    return Navigator.of(context).push<bool>(route);
   }
 }
 
