@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Style/Palette.dart';
 
@@ -23,6 +23,8 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
 
   @override
   bool get wantKeepAlive => true;
+
+  late final NaverMapController? naverMapController;
 
   Future<void> moveMapCameraToAddress(NaverMapController controller) async {
     try {
@@ -67,19 +69,65 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
       );
     }
     else{
-      return NaverMap(
-        onMapReady: (controller){
-          moveMapCameraToAddress(controller);
-        },
+      return Stack(
+        children: [
+          NaverMap(
+            forceGesture: true,
+            onMapReady: (controller){
+              naverMapController = controller;
+              moveMapCameraToAddress(controller);
+            },
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 5.w, right: 5.w),
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: InkWell(
+                onTap: (){
+                  if(naverMapController != null){
+                    moveMapCameraToAddress(naverMapController!);
+                  }
+                },
+                child: Container(
+                  width: 32.sp,
+                  height: 32.sp,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5.r)
+                  ),
+                  child: Icon(
+                    Icons.my_location,
+                    size: 20.sp,
+                    color: Palette.defaultSkyBlue,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+                iconSize: 25.sp,
+                onPressed: (){
+                  showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => Dialog.fullscreen(
+                          child:FullLocationMap(notice: widget.notice)
+                      )
+                  );
+                },
+                icon: const Icon(Icons.fullscreen_rounded)
+            ),
+          ),
+        ],
       );
     }
   }
 }
 
 class FullLocationMap extends StatelessWidget {
-  FullLocationMap({super.key, required this.geocodeService, required this.notice});
+   FullLocationMap({super.key, required this.notice});
   final Notice notice;
-  final NaverGeocodeService geocodeService;
   NaverMapController? naverMapController;
 
   Future<void> moveMapCameraToAddress() async {
@@ -88,7 +136,7 @@ class FullLocationMap extends StatelessWidget {
         return;
       }
 
-      final geocodeData = await geocodeService.fetchGeocode(notice.noticeDto?.info?.supplyLocationAddress  ?? '');
+      final geocodeData = await NaverGeocodeService.instance.fetchGeocode(notice.noticeDto?.info?.supplyLocationAddress  ?? '');
 
       if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
         var position = NLatLng(
