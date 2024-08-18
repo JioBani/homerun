@@ -269,10 +269,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
             SizedBox(
                 width: double.infinity,
                 height: 150.w,
-                child: LocationMap(
-                  notice : widget.notice ,
-                  geocodeService: _geocodeService,
-                )
+                child: LocationMap(notice : widget.notice)
             ),
           ],
         ),
