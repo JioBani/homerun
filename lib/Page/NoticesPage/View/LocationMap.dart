@@ -10,10 +10,8 @@ import 'package:homerun/Style/Palette.dart';
 import '../Model/Notice.dart';
 
 class LocationMap extends StatefulWidget {
-  const LocationMap({super.key, required this.geocodeService, required this.notice});
+  const LocationMap({super.key, required this.notice});
   final Notice notice;
-
-  final NaverGeocodeService geocodeService;
 
   @override
   State<LocationMap> createState() => _LocationMapState();
@@ -32,7 +30,7 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
         return;
       }
 
-      final geocodeData = await widget.geocodeService.fetchGeocode(widget.notice.noticeDto?.info?.supplyLocationAddress ?? '');
+      final geocodeData = await NaverGeocodeService.instance.fetchGeocode(widget.notice.noticeDto?.info?.supplyLocationAddress ?? '');
       if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
         var position = NLatLng(
             double.parse(geocodeData.addresses![0].y ?? ''),
