@@ -4,18 +4,17 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
 import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/LoadableIcon.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
 import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
-import 'package:homerun/Page/NoticesPage/ApplyhomeCodeConverter.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/Service/NoticeService.dart';
@@ -48,6 +47,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       clientId,
       clientSecret
   );
+
 
   final FlutterListViewController _scrollController = FlutterListViewController();
   late final TabController commentTabController = TabController(length: 2 , vsync: this);
@@ -192,7 +192,6 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          //SmallIconButton(iconPath: Images.heart, text: "좋아요", onTap: (){}),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -267,27 +266,13 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
               ],
             ),
             SizedBox(height: 5.w,),
-            Stack(
-              alignment: Alignment.topRight,
-              children: [
-                SizedBox(
-                    width: double.infinity,
-                    height: 150.w,
-                    child: LocationMap(notice : widget.notice ,geocodeService: _geocodeService,)
-                ),
-                IconButton(
-                    iconSize: 25.sp,
-                    onPressed: (){
-                      showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => Dialog.fullscreen(
-                              child:FullLocationMap(notice: widget.notice,geocodeService: _geocodeService,)
-                          )
-                      );
-                    },
-                    icon: const Icon(Icons.fullscreen_rounded)
-                ),
-              ],
+            SizedBox(
+                width: double.infinity,
+                height: 150.w,
+                child: LocationMap(
+                  notice : widget.notice ,
+                  geocodeService: _geocodeService,
+                )
             ),
           ],
         ),
