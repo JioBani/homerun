@@ -48,73 +48,80 @@ class _NoticeScrapItemWidgetState extends State<NoticeScrapItemWidget> {
             SizedBox(width: 7.w,),
             //#. 정보
             Expanded(
-              child: SizedBox(
-                height: 64.w,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    //#. 지역 및 분양 상세 정보
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Row(
-                        children: [
-                          //#. 지역
-                          Text( //TODO 텍스트가 너무 작은듯?
-                            "서울",
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                            ),
+              child: Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  //#. 내용
+                  SizedBox(
+                    height: 64.w,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //#. 지역 및 분양 상세 정보
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Row(
+                            children: [
+                              //#. 지역
+                              Text( //TODO 텍스트가 너무 작은듯?
+                                "서울",
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                ),
+                              ),
+                              SizedBox(width:  2.w),
+                              //#. 분양상세정보
+                              HouseDetailTypeBoxWidget(text: notice?.noticeDto?.info?.houseDetailSectionName ?? '',)
+                            ],
                           ),
-                          SizedBox(width:  2.w),
-                          //#. 분양상세정보
-                          HouseDetailTypeBoxWidget(text: notice?.noticeDto?.info?.houseDetailSectionName ?? '',)
-                        ],
+                        ),
+                        SizedBox(height: 9.w,),
+                        //#. 아파트명
+                        Expanded(
+                          child: AutoSizeText(
+                            notice?.noticeDto?.houseName ?? "",
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Palette.brightMode.darkText,
+                            ),
+                            maxLines: 2,
+                            minFontSize: 9,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        //#. 스크랩 날짜 및 청약 상태
+                        Text( //TODO 텍스트가 너무 작은듯?
+                          "2024년 5월 01일 | 무순위 줍줍",
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            color: Palette.brightMode.mediumText
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //#. 삭제버튼
+                  InkWell(
+                    onTap: (){
+                      controller.deleteScrap(widget.noticeScrap);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 7.w),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Palette.brightMode.mediumText),
+                          borderRadius: BorderRadius.circular(10.r)
+                      ),
+                      child: Text(
+                        "삭제",
+                        style: TextStyle(fontSize: 9.sp),
                       ),
                     ),
-                    SizedBox(height: 9.w,),
-                    //#. 아파트명
-                    AutoSizeText(
-                      notice?.noticeDto?.houseName ?? "",
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Palette.brightMode.darkText,
-                      ),
-                      maxLines: 2,
-                      minFontSize: 9,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Spacer(),
-                    //#. 스크랩 날짜 및 청약 상태
-                    Text( //TODO 텍스트가 너무 작은듯?
-                      "2024년 5월 01일 | 무순위 줍줍",
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        color: Palette.brightMode.mediumText
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             SizedBox(width : 7.w),
-            //#. 삭제버튼
-            InkWell(
-              onTap: (){
-                controller.deleteScrap(widget.noticeScrap);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 7.w),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Palette.brightMode.mediumText),
-                  borderRadius: BorderRadius.circular(10.r)
-                ),
-                child: Text(
-                  "삭제",
-                  style: TextStyle(fontSize: 9.sp),
-                ),
-              ),
-            )
           ],
         ),
       ),
