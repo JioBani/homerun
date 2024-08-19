@@ -14,8 +14,6 @@ class UserInfoService{
   Future<Result> updateProfile(XFile xFile){
     return Result.handleFuture(action: ()async{
 
-      StaticLogger.logger.i(FirebaseAuth.instance.currentUser);
-
       //#1. 로그인 확인
       UserDto userDto = Get.find<AuthService>().getUser();
 
@@ -26,7 +24,7 @@ class UserInfoService{
       //#3. 이미지 업로드
       Result uploadResult = await _uploadImage(
         image: xFile,
-        userId: userDto.uid
+        userId: FirebaseAuth.instance.currentUser!.uid
       );
 
       if(uploadResult.isSuccess){
