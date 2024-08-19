@@ -15,7 +15,9 @@ import 'package:homerun/Service/Auth/NaverLoginService.dart';
 import 'package:homerun/Service/Auth/SocialLoginService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
+import 'package:homerun/Service/Auth/UserInfoService.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import 'UserFields.dart';
 
@@ -166,6 +168,7 @@ class AuthService extends GetxService{
     required Gender gender,
     required String ageRages,
     required List<String> regions,
+    XFile? profileImage,
   })async{
 
     //#. 소셜 로그인 체크
@@ -224,11 +227,20 @@ class AuthService extends GetxService{
     try{
       await FirebaseAuth.instance.signInWithCustomToken(customToken);
       StaticLogger.logger.i("[AuthService.signUp()] 성공");
-      return SignUpResult.success;
     }catch(e,s){
       StaticLogger.logger.e("[AuthService.signUp()] $e\n$s");
       return SignUpResult.firebaseLoginFailure;
     }
+
+    //#3. 유저 데이터 가져오기
+    await listenUserSnapshot();
+
+    //#4. 프로필 업데이트
+    if(profileImage != null){
+      await UserInfoService().updateProfile(profileImage);
+    }
+
+    return SignUpResult.success;
   }
 
   /// 유저 데이터 가져오기
