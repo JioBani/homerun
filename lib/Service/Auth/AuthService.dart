@@ -26,6 +26,8 @@ class AuthService extends GetxService{
 
   KakaoLoginService kakaoLoginService = KakaoLoginService();
   NaverLoginService naverLoginService = NaverLoginService();
+
+  UserInfoService _userInfoService = UserInfoService();
   
   late Map<SocialProvider , SocialLoginService> loginServices = {
     SocialProvider.kakao : kakaoLoginService,
@@ -237,7 +239,7 @@ class AuthService extends GetxService{
 
     //#4. 프로필 업데이트
     if(profileImage != null){
-      await UserInfoService().updateProfile(profileImage);
+      await _userInfoService.updateProfile(profileImage);
     }
 
     return SignUpResult.success;
