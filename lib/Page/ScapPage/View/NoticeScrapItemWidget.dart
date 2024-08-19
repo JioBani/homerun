@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/HouseDetailTypeBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/View/AdNoticePage.dart';
@@ -104,7 +105,11 @@ class _NoticeScrapItemWidgetState extends State<NoticeScrapItemWidget> {
                   //#. 삭제버튼
                   InkWell(
                     onTap: (){
-                      controller.deleteScrap(widget.noticeScrap);
+                      CustomDialog.showConfirmationDialog(
+                          context: context,
+                          content: "삭제하시겠습니까?",
+                          onConfirm: ()=>controller.deleteScrap(widget.noticeScrap)
+                      );
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 7.w),
