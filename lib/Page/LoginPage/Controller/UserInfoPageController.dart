@@ -21,7 +21,7 @@ class UserInfoPageController extends GetxController{
   final ImagePicker picker = ImagePicker();
   final double maxSizeMb = 3;
 
-  final SelectBoxController<String> genderController = SelectBoxController<String>();
+  final SelectBoxController<Gender> genderController = SelectBoxController<Gender>();
   final SelectBoxController<AgeRange> ageController = SelectBoxController<AgeRange>();
   final SelectBoxController<Region> regionController = SelectBoxController<Region>(isCanSelectMulti: true);
   final TextEditingController nickNameController = TextEditingController();
@@ -208,7 +208,7 @@ class UserInfoPageController extends GetxController{
       context: context,
       future: Get.find<AuthService>().signUp(
         displayName: nickNameController.text,
-        gender: Gender.male,
+        gender: genderController.value!,
         ageRages: ageController.value!.label,
         regions: regionController.values.map((e) => e.label).toList()
       )
