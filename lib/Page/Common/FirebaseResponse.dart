@@ -12,7 +12,7 @@ class FirebaseResponse<T>{
   static Future<FirebaseResponse<T>> handleRequest<T>({
     required Future<T> Function() action,
     void Function(Object , StackTrace)? onError,
-    Duration timeout = const Duration(seconds: 5), //TODO 적절한 시간으로 수정
+    Duration timeout = const Duration(minutes: 1), //TODO 적절한 시간으로 수정
   }) async {
     try {
       return FirebaseResponse(
