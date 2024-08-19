@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Page/LoginPage/Controller/UserInfoPageController.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Value/AgeRange.dart';
@@ -156,8 +157,8 @@ class UserInfoInputPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    SelectBoxWidget<String>(
-                      value: "남자",
+                    SelectBoxWidget<Gender>(
+                      value: Gender.male,
                       width: 130.w,
                       text: "남자",
                       onTap: (_){},
@@ -165,8 +166,8 @@ class UserInfoInputPage extends StatelessWidget {
                       controller: controller.genderController,
                       textPadding: EdgeInsets.only(left: 22.w),
                     ),
-                    SelectBoxWidget<String>(
-                      value: "여자",
+                    SelectBoxWidget<Gender>(
+                      value: Gender.female,
                       width: 130.w,
                       text: "여자",
                       onTap: (_){},
