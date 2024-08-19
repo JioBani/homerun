@@ -100,7 +100,6 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> with SingleTick
                   ),
                   Gap(5.w),
                   //#. 아이콘
-                  //TODO 360도 도는 문제
                   RotationTransition(
                     turns: _iconAnimation,
                     child: const Icon(Icons.expand_more),
