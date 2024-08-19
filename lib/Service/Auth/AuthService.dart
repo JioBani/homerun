@@ -300,11 +300,13 @@ class AuthService extends GetxService{
     if(FirebaseAuth.instance.currentUser == null){
 
       Get.to(const LoginPage())?.then((value){
-        if(afterLoggedIn != null){
-          afterLoggedIn();
-        }
-        else{
-          action();
+        if(value == true){
+          if(afterLoggedIn != null){
+            afterLoggedIn();
+          }
+          else{
+            action();
+          }
         }
       });
 
