@@ -64,10 +64,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
             ),
             InkWell(
               onTap: (){
-                if(Get.find<AuthService>().tryGetUser() == null){
-                  CustomSnackbar.show("알림", "로그인이 필요합니다."); //TODO 로그인 페이지로 이동하도록
-                }
-                Get.to(SiteReviewWritePage(noticeId: widget.notice.id));
+                AuthService.runWithAuthCheck(()=>Get.to(SiteReviewWritePage(noticeId: widget.notice.id)));
               },
               child: Container(
                 width: 70.w,
