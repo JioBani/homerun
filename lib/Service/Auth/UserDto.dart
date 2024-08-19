@@ -3,7 +3,8 @@ import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Value/AgeRange.dart';
 import 'package:homerun/Value/Region.dart';
 
-//TODO UserInfo Values
+import 'UserFields.dart';
+
 class UserDto {
   final String uid;
   final SocialProvider socialProvider;
@@ -23,23 +24,23 @@ class UserDto {
 
   factory UserDto.fromMap(Map<String, dynamic> map) {
     return UserDto(
-      uid: map['uid'] as String,
-      socialProvider: SocialProviderExtension.fromString(map['socialProvider']),
-      displayName: map['displayName'] as String,
-      gender: GenderExtension.fromString(map['gender'] as String),
-      ageRange: AgeRange.fromString(map['ageRange'] as String),
-      interestedRegions: List<String>.from(map['interestedRegions'] as List).map((region) => Region.fromString(region)).toList(),
+      uid: map[UserFields.uid] as String,
+      socialProvider: SocialProviderExtension.fromString(map[UserFields.socialProvider]),
+      displayName: map[UserFields.displayName] as String,
+      gender: GenderExtension.fromString(map[UserFields.gender] as String),
+      ageRange: AgeRange.fromString(map[UserFields.ageRange] as String),
+      interestedRegions: List<String>.from(map[UserFields.interestedRegions] as List).map((region) => Region.fromString(region)).toList(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'socialProvider': socialProvider.name,
-      'uid': uid,
-      'displayName': displayName,
-      'gender': gender?.name,
-      'ageRange': ageRange?.name,
-      'interestedRegions': interestedRegions,
+      UserFields.socialProvider: socialProvider.name,
+      UserFields.uid: uid,
+      UserFields.displayName: displayName,
+      UserFields.gender: gender?.name,
+      UserFields.ageRange: ageRange?.name,
+      UserFields.interestedRegions: interestedRegions,
     };
   }
 }
