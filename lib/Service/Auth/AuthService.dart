@@ -22,12 +22,13 @@ import 'package:image_picker/image_picker.dart';
 import 'UserFields.dart';
 
 
+//TODO 로그인 상태 저장 , firebase로그인 유지 관련 작업
 class AuthService extends GetxService{
 
-  KakaoLoginService kakaoLoginService = KakaoLoginService();
-  NaverLoginService naverLoginService = NaverLoginService();
+  final KakaoLoginService kakaoLoginService = KakaoLoginService();
+  final NaverLoginService naverLoginService = NaverLoginService();
 
-  UserInfoService _userInfoService = UserInfoService();
+  final UserInfoService _userInfoService = UserInfoService();
   
   late Map<SocialProvider , SocialLoginService> loginServices = {
     SocialProvider.kakao : kakaoLoginService,
