@@ -3,17 +3,18 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/model/Result.dart';
+import 'package:homerun/FirebaseReferences/UserInfoReferences.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/HttpError.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
-import 'package:homerun/Style/TestImages.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../Service/CommentService.dart';
@@ -142,11 +143,21 @@ class _CommentWidgetState extends State<CommentWidget> {
                   //#. 프로필 사진
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30.w),
-                    child: Image.asset(
-                      TestImages.ashe_43, //TODO 프로필 이미지로 교체
-                      width: 30.w,
-                      height: 30.w,
-                    ),
+                    child: Builder(
+                      builder: (_) {
+                        if(userDto == null){
+                          return SizedBox(width: 30.w,height: 30.w);
+                        }
+                        else{
+                          return FireStorageImage(
+                            width: 30.w,
+                            height: 30.w,
+                            path: UserInfoReferences.getUserProfileImagePath(userDto!.uid),
+                            fit: BoxFit.cover,
+                          );
+                        }
+                      }
+                    )
                   ),
                   SizedBox(
                     width: 6.w,
@@ -238,6 +249,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           ),
                         ),
                         //#. 댓글 아래 아이콘들
+                        //TODO 좋아요 싫어요 반영 안되는 문제 있음
                         SizedBox(
                           height: 12.w,
                           child: Row(
