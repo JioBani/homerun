@@ -40,6 +40,14 @@ class AuthService extends GetxService{
   StreamSubscription<DocumentSnapshot>? userSubscription;
   Rx<SignInState> signInState = Rx(SignInState.signOut);
 
+  @override
+  void onInit() {
+    if(FirebaseAuth.instance.currentUser != null){
+      listenUserSnapshot();
+    }
+    super.onInit();
+  }
+
   /// 최근 로그인한 소셜 프로바이더
   SocialProvider? currentLoginProvider;
 
