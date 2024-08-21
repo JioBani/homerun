@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.7.10' //2.0.10에서는 오류 발생
     repositories {
         google()
         mavenCentral()
@@ -22,6 +22,21 @@ allprojects {
 }
 
 rootProject.buildDir = '../build'
+
+//#. apk 빌드 실패 때문에 추가
+// https://github.com/transistorsoft/flutter_background_fetch/issues/369
+subprojects {
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin("com.android.application") ||
+                project.plugins.hasPlugin("com.android.library")) {
+            project.android {
+                compileSdkVersion 34
+                buildToolsVersion "34.0.0"
+            }
+        }
+    }
+}
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
