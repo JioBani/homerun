@@ -30,6 +30,7 @@ class _ScrapPageState extends State<ScrapPage> {
         elevation: 0,
         centerTitle: true,
         backgroundColor: Colors.white,
+        surfaceTintColor : Colors.white,
         title: Text(
           "공고 스크랩",
           style: TextStyle(
