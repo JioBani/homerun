@@ -104,14 +104,10 @@ class LoadableIconState<T> extends State<LoadableIcon<T>> {
           setState(() {});
         }
       },
-      child: Column(
-        children: [
-          SizedBox(
-            width: widget.width,
-            height: widget.height,
-            child: widget.iconBuilder(value, loadingState),
-          ),
-        ],
+      child: SizedBox(
+        width: widget.width,
+        height: widget.height,
+        child: widget.iconBuilder(value, loadingState),
       ),
     );
   }
