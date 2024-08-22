@@ -130,3 +130,4 @@ lib/Security/
 lib/Service/APTAnnouncementApiService/Security/
 lib/Unused/
 lib/Page/Test/
+*.env
