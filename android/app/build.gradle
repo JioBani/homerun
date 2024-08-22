@@ -46,6 +46,9 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    //#. 프로퍼티 불러오기
+    def kakaoNativeAppKey = localProperties.getProperty('KAKAO_NATIVE_APP_KEY')
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.homerun.app.homerun"
@@ -55,6 +58,9 @@ android {
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        //#. 빌드 변수 삽입
+        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = kakaoNativeAppKey
     }
 
     buildTypes {
