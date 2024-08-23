@@ -114,6 +114,9 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
                         if(widget.onTapClosed != null){
                           widget.onTapClosed!(context);
                         }
+                        if(_focusNode.hasFocus){
+                          _focusNode.unfocus();
+                        }
                       }
                     ),
                     SizedBox(width: 5.w,),
