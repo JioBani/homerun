@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Common/StaticLogger.dart';
@@ -124,9 +123,9 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
 }
 
 class FullLocationMap extends StatelessWidget {
-   FullLocationMap({super.key, required this.notice});
+  FullLocationMap({super.key, required this.notice});
   final Notice notice;
-  NaverMapController? naverMapController;
+  late final NaverMapController? naverMapController;
 
   Future<void> moveMapCameraToAddress() async {
     try {
