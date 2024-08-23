@@ -110,120 +110,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
 
   List<Widget> getListViewChildren(){
     return [
-      SizedBox(height: 17.w,),
-      //#. 상단 아이콘바
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(width: 25.w,),
-          InkWell(
-            onTap: ()=>Get.back(),
-            child: SizedBox(
-              width: 24.sp,
-              height: 24.sp,
-              child: Image.asset(
-                Images.backIcon,
-              ),
-            ),
-          ),
-          const Expanded(child: SizedBox.shrink()),
-          LargeIconButton(iconPath: Images.partnershipAd, text: "제휴광고",onTap: (){},),
-          SizedBox(width: 7.w,),
-          LargeIconButton(iconPath: Images.adInquiry, text: "광고문의",onTap: (){},),
-          SizedBox(width: 25.w,)
-        ],
-      ),
-      SizedBox(height: 22.w,),
-      //#. 지역명 & 주택상세구분
-      Padding(
-        padding: EdgeInsets.only(left: 25.w),
-        child: Row(
-          children: [
-            Text(widget.notice.noticeDto?.info?.subscriptionAreaName ?? "알수없음"),
-            SizedBox(width: 4.w,),
-            Container(
-              padding: EdgeInsets.fromLTRB(4.w, 0, 4.w, 0),
-              decoration: BoxDecoration(
-                border: Border.all(color: typeColor),
-                borderRadius: BorderRadius.circular(3.r), // radius가 약하게 보여서 2인데 3으로 변경
-              ),
-              child: Text(
-                widget.notice.noticeDto?.info?.houseDetailSectionName ?? "알수없음",
-                style: TextStyle(
-                    color: typeColor,
-                    fontWeight: FontWeight.w700 //폰트 굵기가 미디움인데 작게 보여서 bold로 변경
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(height: 6.w,),
-      //#. 주택 이름
-      Padding(
-        padding: EdgeInsets.only(left: 25.w),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 12.sp,
-              height: 12.sp,
-              child: Image.asset(
-                  HousingSaleNoticesPageImages.pinMap
-              ),
-            ),
-            SizedBox(width: 4.w,),
-            Expanded(
-              child: AutoSizeText(
-                widget.notice.noticeDto?.houseName ?? "알수없음",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15.sp,
-                ),
-                minFontSize: 13,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(height: 3.w,),
-      //#. 좋아요, 스크랩 , 공유 아이콘
-      Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              LikeIconButton(noticeId: widget.notice.id,),
-              SizedBox(height: 3.w,),
-              Text(
-                "좋아요",
-                style: TextStyle(
-                    fontSize: 7.sp
-                ),
-              )
-            ],
-          ),
-          SizedBox(width: 4.w,),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ScrapIconButton(noticeId: widget.notice.id,),
-              SizedBox(height: 3.w,),
-              Text(
-                "스크랩",
-                style: TextStyle(
-                    fontSize: 7.sp
-                ),
-              )
-            ],
-          ),
-          SizedBox(width: 4.w,),
-          SmallIconButton(iconPath: Images.share, text: "공유", onTap: (){}),
-          SizedBox(width: 17.w,)
-        ],
-      ),
+      SizedBox(height: 100.w,), //temp
       SizedBox(height: 6.w,),
       //#. 광고 이미지
       SizedBox(
@@ -322,6 +209,88 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
     List<Widget> list = getListViewChildren();
     inputIndex = list.length;
     return Scaffold(
+      appBar:AppBar(
+        toolbarHeight: 58.w,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        surfaceTintColor : Colors.white,
+        titleSpacing: 0,
+        shadowColor: Colors.black.withOpacity(0.5),
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            //#. 아파트 정보
+            Expanded(
+              child: Column(
+                children : [
+                  //#. 아파트 정보
+                  Row(
+                    children: [
+                      Text(
+                        widget.notice.noticeDto?.info?.subscriptionAreaName ?? "알수없음",
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w700
+                        ),
+                      ),
+                      SizedBox(width: 4.w,),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(4.w, 0, 4.w, 0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: typeColor),
+                          borderRadius: BorderRadius.circular(3.r), // radius가 약하게 보여서 2인데 3으로 변경
+                        ),
+                        child: Text(
+                          widget.notice.noticeDto?.info?.houseDetailSectionName ?? "알수없음",
+                          style: TextStyle(
+                            color: typeColor,
+                            fontWeight: FontWeight.w700, //폰트 굵기가 미디움인데 작게 보여서 bold로 변경,
+                            fontSize: 10.sp
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 6.w,),
+                  //#. 주택 이름
+                  Row(
+                    children: [
+                      // SizedBox(
+                      //   width: 12.sp,
+                      //   height: 12.sp,
+                      //   child: Image.asset(
+                      //       HousingSaleNoticesPageImages.pinMap
+                      //   ),
+                      // ),
+                      //SizedBox(width: 4.w,),
+                      Expanded(
+                        child: AutoSizeText(
+                          widget.notice.noticeDto?.houseName ?? "알수없음",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18.sp,
+                            color: Theme.of(context).primaryColor
+                          ),
+                          minFontSize: 13,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ]
+              ),
+            ),
+            
+            //#. 좋아요 버튼
+            //TODO 세로 가운데인지 확인 필요
+            Padding(
+              padding: EdgeInsets.only(right: 15.w,left: 7.w),
+              child: LikeIconButton(noticeId: widget.notice.id,),
+            )
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Stack(
           alignment: Alignment.bottomCenter,
