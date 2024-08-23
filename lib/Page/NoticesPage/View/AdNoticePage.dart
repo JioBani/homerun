@@ -332,7 +332,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
                 return list[index];
               },
             ),
-            BottomBar(stream: _streamController.stream,),
+            BottomBar(stream: _streamController.stream,noticeId: widget.notice.id,),
           ],
         ),
       ),
@@ -341,8 +341,9 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
 }
 
 class BottomBar extends StatefulWidget {
-  const BottomBar({super.key, required this.stream});
+  const BottomBar({super.key, required this.stream, required this.noticeId});
   final Stream<bool> stream;
+  final String noticeId;
 
   @override
   State<BottomBar> createState() => _BottomBarState();
@@ -374,21 +375,19 @@ class _BottomBarState extends State<BottomBar> {
         child: Material(
           elevation: 10,
           child: Container(
-            padding: EdgeInsets.only(left: 43.w , right: 26.w),
+            padding: EdgeInsets.only(left: 16.w , right: 26.w),
             width: double.infinity,
             color: Theme.of(context).colorScheme.background,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: 20.sp,
-                  height: 20.sp,
-                  child: Icon(
-                    Icons.folder_copy_outlined,
-                    color: Palette.brightMode.mediumText,
-                    size: 20.sp,
-                  ),
-                ),
+                //#. 스크랩
+                ScrapIconButton(noticeId: widget.noticeId,),
+                //#. 공유
+                Icon(Icons.share ,size: 22.sp,),
+
+                //#. 관심등록
                 Container(
                   width: 120.w,
                   height: 35.w,
@@ -416,6 +415,8 @@ class _BottomBarState extends State<BottomBar> {
                     ],
                   ),
                 ),
+
+                //#. 전화문의
                 Container(
                   width: 120.w,
                   height: 35.w,
