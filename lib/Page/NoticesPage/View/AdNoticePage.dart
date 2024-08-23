@@ -470,10 +470,17 @@ class LikeIconButton extends StatelessWidget {
           }
           else{
             if(value == true){
-              return const Icon(Icons.favorite , color: Colors.redAccent,);
+              return  Icon(
+                Icons.favorite ,
+                color: Colors.redAccent,
+                size: 22.w,
+              );
             }
             else{
-              return const Icon(Icons.favorite_border);
+              return Icon(
+                Icons.favorite_border ,
+                size: 22.w,
+              );
             }
           }
         },
@@ -506,8 +513,8 @@ class LikeIconButton extends StatelessWidget {
             return null;
           }
         },
-        width: 15.sp,
-        height: 15.sp
+        width: 22.sp,
+        height: 22.sp
     );
   }
 }
@@ -583,8 +590,7 @@ class ScrapIconButton extends StatelessWidget {
             return null;
           }
         },
-        width: 15.sp,
-        height: 15.sp
+
     );
   }
 }
