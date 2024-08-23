@@ -522,15 +522,24 @@ class ScrapIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoadableIcon<bool>(
+        width: 22.sp,
+        height: 22.sp,
         iconBuilder: (value , loadingState){
           if(loadingState == LoadingState.loading || loadingState == LoadingState.loading){
             return const CupertinoActivityIndicator();
           }
           else if(value == null || !value){
-            return const Icon(Icons.bookmark_border_outlined);
+            return Icon(
+              Icons.bookmark_border_outlined,
+              size: 22.sp,
+            );
           }
           else{
-            return Icon(Icons.bookmark , color: Theme.of(context).primaryColor,);
+            return Icon(
+              Icons.bookmark ,
+              color: Theme.of(context).primaryColor,
+              size: 22.sp,
+            );
           }
         },
         load: (currentValue , controller) async{
