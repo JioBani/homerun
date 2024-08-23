@@ -280,13 +280,9 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       //#. 댓글 위젯
       SizedBox(height: 24.w,),
       //#. 댓글 탭바
-      VisibilityDetector(
-        key: const Key('CommentTabBarWidget'),
-        onVisibilityChanged: _onVisibilityChanged,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25.w),
-          child: CommentTabBarWidget(tabController: commentTabController),
-        ),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: CommentTabBarWidget(tabController: commentTabController),
       ),
       //#. 댓글 정렬 위젯
       Padding(
@@ -306,6 +302,11 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
             }
           },
         ),
+      ),
+      VisibilityDetector(
+        key: const Key('ShowBottomBar'),
+        onVisibilityChanged: _onVisibilityChanged,
+        child: SizedBox(height: 5.w,),
       ),
       //#. 댓글 목록 위젯
       Padding(
