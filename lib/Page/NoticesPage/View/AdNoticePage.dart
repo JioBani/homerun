@@ -43,12 +43,6 @@ class AdNoticePage extends StatefulWidget {
 class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMixin{
   final Color typeColor = const Color(0xffFF4545);
 
-  final NaverGeocodeService _geocodeService = NaverGeocodeService.getInstanceWithInit(
-      clientId,
-      clientSecret
-  );
-
-
   final FlutterListViewController _scrollController = FlutterListViewController();
   late final TabController commentTabController = TabController(length: 2 , vsync: this);
   late final CommentViewWidgetController commentViewWidgetController;
