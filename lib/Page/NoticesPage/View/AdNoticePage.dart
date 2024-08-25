@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
 import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/LoadableIcon.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
@@ -429,57 +430,65 @@ class LikeIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoadableIcon<bool>(
-        iconBuilder: (value , loadingState){
-          if(loadingState == LoadingState.loading || loadingState == LoadingState.before){
-            return const CupertinoActivityIndicator();
+      iconBuilder: (value , loadingState){
+        if(loadingState == LoadingState.loading || loadingState == LoadingState.before){
+          return SizedBox(
+            width: 22.sp,
+            height: 22.sp,
+            child: const CupertinoActivityIndicator()
+          );
+        }
+        else{
+          if(value == true){
+            return Icon(
+              Icons.favorite ,
+              color: Colors.redAccent,
+              size: 22.w,
+            );
           }
           else{
-            if(value == true){
-              return  Icon(
-                Icons.favorite ,
-                color: Colors.redAccent,
-                size: 22.w,
-              );
-            }
-            else{
-              return Icon(
-                Icons.favorite_border ,
-                size: 22.w,
-              );
-            }
+            return Icon(
+              Icons.favorite_border ,
+              size: 22.w,
+            );
           }
-        },
-        load: (currentValue , controller)async{
-          if(Get.find<AuthService>().tryGetUser() == null){
-            controller.success();
-            return null;
+        }
+      },
+      load: (currentValue)async{
+        if(Get.find<AuthService>().tryGetUser() == null){
+          return (null , LoadingState.fail);
+        }
+        else{
+          Result<bool> result = await NoticeService.instance.getLikeState(noticeId);
+          if(result.isSuccess){
+            return (result.content! , LoadingState.success);
           }
           else{
-            return controller.fromResult(await NoticeService.instance.getLikeState(noticeId));
+            return (null , LoadingState.fail);
           }
-        },
-        onTap: (currentValue, controller) async {
-          if(Get.find<AuthService>().tryGetUser() == null){
-            CustomSnackbar.show("오류" , "로그인이 필요합니다.");
-            controller.failure();
-            return null;
-          }
+        }
+      },
+      onTap: (currentValue, controller) async {
+        if(Get.find<AuthService>().tryGetUser() == null){
+          CustomSnackbar.show("오류" , "로그인이 필요합니다.");
+          return (null, LoadingState.fail);
+        }
 
-          if(currentValue != null){
-            Result<bool> result = await NoticeService.instance.like(noticeId ,!currentValue);
-            if(!result.isSuccess){
-              CustomSnackbar.show("오류" , "좋아요에 실패했습니다.");
-            }
-            return controller.fromResult(result);
+        if(currentValue != null){
+          Result<bool> result = await NoticeService.instance.like(noticeId ,!currentValue);
+          if(!result.isSuccess){
+            CustomSnackbar.show("오류" , "좋아요에 실패했습니다.");
+            return (null, LoadingState.fail);
           }
           else{
-            CustomSnackbar.show("오류" , "좋아요를 할 수 없습니다.");
-            controller.failure();
-            return null;
+            return (result.content!, LoadingState.success);
           }
-        },
-        width: 22.sp,
-        height: 22.sp
+        }
+        else{
+          CustomSnackbar.show("오류" , "좋아요를 할 수 없습니다.");
+          return (null, LoadingState.fail);
+        }
+      },
     );
   }
 }
@@ -494,11 +503,13 @@ class ScrapIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoadableIcon<bool>(
-        width: 22.sp,
-        height: 22.sp,
         iconBuilder: (value , loadingState){
           if(loadingState == LoadingState.loading || loadingState == LoadingState.loading){
-            return const CupertinoActivityIndicator();
+            return SizedBox(
+              width: 22.sp,
+              height: 22.sp,
+              child: const CupertinoActivityIndicator()
+            );
           }
           else if(value == null || !value){
             return Icon(
@@ -514,45 +525,51 @@ class ScrapIconButton extends StatelessWidget {
             );
           }
         },
-        load: (currentValue , controller) async{
+        load: (currentValue) async{
           //#. 스크랩 확인
-          return controller.fromResult(await ScrapService.instance.isNoticeScraped(noticeId));
+          Result<bool> result = await ScrapService.instance.isNoticeScraped(noticeId);
+          if(result.isSuccess){
+            return (result.content , LoadingState.success);
+          }
+          else{
+            return (null , LoadingState.fail);
+          }
         },
-        onTap: (currentValue , controller) async {
+        onTap: (currentValue , loadingState) async {
           //#. 스크랩 로딩 성공시
           if(currentValue != null){
             //#. 로그인 체크
             if(Get.find<AuthService>().tryGetUser() == null){
               CustomSnackbar.show("오류" , "로그인이 필요합니다.");
-              controller.failure();
-              return null;
+              return (null , LoadingState.fail);
             }
 
             if(currentValue){ //#. 스크랩 취소
               Result result = await ScrapService.instance.deleteNoticeScrap(noticeId);
               if(!result.isSuccess){
                 CustomSnackbar.show("오류" , "스크랩 삭제에 실패했습니다.");
+                return (true , LoadingState.fail);
               }
               else{
                 CustomSnackbar.show("알림", "스크랩을 삭제 했습니다.");
+                return (false , LoadingState.success);
               }
-              return controller.fromResultAndValue(result, false);
             }
             else{ //#. 스크랩
               Result result = await ScrapService.instance.scrapNotification(noticeId);
               if(!result.isSuccess){
                 CustomSnackbar.show("오류" , "스크랩에 실패했습니다.");
+                return (false , LoadingState.fail);
               }
               else{
                 CustomSnackbar.show("알림", "스크랩했습니다.");
+                return (true, LoadingState.success);
               }
-              return controller.fromResultAndValue(result, true);
             }
           }
           else{
             CustomSnackbar.show("오류" , "스크랩을 할 수 없습니다.");
-            controller.failure();
-            return null;
+            return (false, LoadingState.success);
           }
         },
 
