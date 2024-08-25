@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:homerun/Page/AnnouncementPage/View/AnnouncementPage.dart';
 import 'package:homerun/Page/ScapPage/View/ScrapPage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
-import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Style/Palette.dart';
 
 import 'ProfileWidget.dart';
