@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Page/AnnouncementPage/View/AnnouncementPage.dart';
 import 'package:homerun/Page/ScapPage/View/ScrapPage.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Palette.dart';
 
 import 'ProfileWidget.dart';
@@ -25,7 +26,7 @@ class MyPageDrawer extends StatelessWidget {
                 children: [
                   MenuItemWidget(iconData: Icons.bookmark_border_outlined, text: "스크랩", onTap: (){},),
                   MenuItemWidget(iconData: Icons.folder_outlined, text: "공고스크랩", onTap: (){
-                    Get.to(ScrapPage());
+                    AuthService.runWithAuthCheck(()=>Get.to(const ScrapPage()));
                   },),
                   MenuItemWidget(iconData: Icons.assignment_turned_in_outlined, text: "청약자격진단", onTap: (){},),
                   MenuItemWidget(iconData: Icons.settings_outlined, text: "설정", onTap: (){},),
@@ -79,5 +80,3 @@ class MenuItemWidget extends StatelessWidget {
     );
   }
 }
-
-
