@@ -9,12 +9,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
 import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/LoadableIcon.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/Common/Widget/LargetIconButton.dart';
-import 'package:homerun/Page/Common/Widget/SmallIconButton.dart';
 import 'package:homerun/Page/NoticesPage/Controller/CommentViewWidgetController.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/Service/NoticeService.dart';
@@ -25,13 +22,15 @@ import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
 import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewWidget.dart';
 import 'package:homerun/Page/ScapPage/Service/ScrapService.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
-import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
-import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+//TODO 바텀 메뉴바가 나타나지 않는 문제
+//댓글창 위에 스크랩 및 공유 넣어야할듯
+//댓글 탭바 보이자 마자 사라지는건 너무 이른듯?
+//TODO 댓글창 클릭시 열리는 속도가 키보드 애니메이션보다 빨라서 애니메이션이 망가짐
 class AdNoticePage extends StatefulWidget {
   const AdNoticePage({super.key, required this.notice});
   final Notice notice;
@@ -96,7 +95,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
 
   void scrollToCommentInput() {
     _scrollController.sliverController.animateToIndex(
-        inputIndex - 2,
+        inputIndex - 3, //#. 위젯 트리가 변경될때 직접 index를 입력해줘야함
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn
     );
@@ -175,6 +174,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         padding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 5.w),
         child: CommentInputWidget(
           onFocus: (context){scrollToCommentInput();},
+          hasCloseButton: true,
           onTapSubmit: (context , content, focusNode, textController) async {
             Result? result = await commentViewWidgetController.showingController.upload(content);
             if(result != null && result.isSuccess){
@@ -341,7 +341,7 @@ class _BottomBarState extends State<BottomBar> {
           child: Container(
             padding: EdgeInsets.only(left: 16.w , right: 26.w),
             width: double.infinity,
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
