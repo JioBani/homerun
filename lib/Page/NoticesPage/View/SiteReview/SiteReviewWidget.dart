@@ -2,6 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
@@ -17,6 +18,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../Model/Notice.dart';
 
+//TODO boxfit 수정
 class SiteReviewWidget extends StatefulWidget {
   const SiteReviewWidget({super.key, required this.notice});
   final Notice notice;
@@ -43,15 +45,18 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        //#. 현장리뷰 위젯 제목 및 글쓰기 버튼
         Row(
           children: [
             SizedBox(width: 25.w,), //TODO 패팅 확인하기
+            //#. 현장리뷰 아이콘
             Image.asset(
               NoticePageImages.siteReview,
               width: 13.sp,
               height: 13.sp,
             ),
             SizedBox(width: 2.w,),
+            //#. 현장리뷰 텍스트
             Expanded( //TODO 텍스트가 오버플로우 될때 어떻게 표현할지
               child: Text(
                 "현장리뷰",
@@ -62,6 +67,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
                 ),
               ),
             ),
+            //#. 글쓰기 버튼
             InkWell(
               onTap: (){
                 AuthService.runWithAuthCheck(()=>Get.to(SiteReviewWritePage(noticeId: widget.notice.id)));
@@ -97,6 +103,7 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
             SizedBox(width: 25.sp,)
           ],
         ),
+        //#. 현장리뷰 목록
         GetBuilder<SiteReviewWidgetController>(
             builder: (controller) {
               if(controller.loadingState == LoadingState.loading){
@@ -106,48 +113,95 @@ class _SiteReviewWidgetState extends State<SiteReviewWidget> {
                 );
               }
               else{
-                return SizedBox(
-                  height: 185.w,
-                  child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: controller.thumbnailWidgetCount,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        var scale = _currentIndex == index ? 1.0 : 0.8;
-                        return TweenAnimationBuilder(
-                            tween: Tween(begin: scale, end: scale),
-                            duration: const Duration(milliseconds: 350),
-                            child: Builder(
-                              builder: (context) {
-                                if(index == controller.thumbnailWidgetCount - 1){
-                                  return ShowAllButtonWidget(notice: widget.notice);
-                                }
-                                else{
-                                  return Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      child: ThumbnailWidget(siteReview: controller.reviews![index],)
-                                  );
-                                }
-                              }
+                if(controller.reviews?.isEmpty == true){
+                  //#. 현장리뷰가 없을때 작성 유도 위젯
+                  return SizedBox(
+                    height: 180.w,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "아직 현장 리뷰가 없습니다.",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold
                             ),
-                            builder: (context, double value, child) {
-                              return Transform.scale(
-                                scale: value,
-                                child: child,
-                              );
-                            });
-                      }),
-                );
+                          ),
+                          Gap(2.w),
+                          const Text("가장 먼저 현장리뷰를 작성해보세요!"),
+                          Gap(10.w),
+                          InkWell(
+                            onTap: (){
+                              AuthService.runWithAuthCheck(()=>Get.to(SiteReviewWritePage(noticeId: widget.notice.id)));
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 5.w),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(5.r),
+                              ),
+                              child: Text(
+                                "현장리뷰 작성하기",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12.sp
+                                ),
+                              )
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                else{
+                  //#. 현장리뷰가 있을때 리뷰들
+                  return SizedBox(
+                    height: 185.w,
+                    child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: controller.thumbnailWidgetCount,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          var scale = _currentIndex == index ? 1.0 : 0.8;
+                          return TweenAnimationBuilder(
+                              tween: Tween(begin: scale, end: scale),
+                              duration: const Duration(milliseconds: 350),
+                              child: Builder(
+                                  builder: (context) {
+                                    if(index == controller.thumbnailWidgetCount - 1){
+                                      return ShowAllButtonWidget(notice: widget.notice);
+                                    }
+                                    else{
+                                      return Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          child: ThumbnailWidget(siteReview: controller.reviews![index],)
+                                      );
+                                    }
+                                  }
+                              ),
+                              builder: (context, double value, child) {
+                                return Transform.scale(
+                                  scale: value,
+                                  child: child,
+                                );
+                              });
+                        }),
+                  );
+                }
               }
             }
         ),
         SizedBox(height: 10.w,),
+        //#. 페이지 인디케이터
         GetBuilder<SiteReviewWidgetController>(
             builder: (controller) {
               if(controller.reviews?.isEmpty == true){
