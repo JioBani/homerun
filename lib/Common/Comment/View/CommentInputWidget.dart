@@ -31,17 +31,11 @@ class CommentInputWidget extends StatefulWidget {
   State<CommentInputWidget> createState() => _CommentInputWidgetState();
 }
 
-///들어가야하는 기능
-/// - upload : Collection , content , replyTarget
-///   - onUpload
-/// - update : Comment , content
-/// - delete : Comment
-///  - update like state
-/// - upload의 서비스는
-
-class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProviderStateMixin {
+class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProviderStateMixin{
   final FocusNode _focusNode = FocusNode();
   final TextEditingController textEditingController = TextEditingController();
+  bool isMaxLinesChangeNeeded = false;
+  int maxLines = 1;
 
   @override
   void initState() {
@@ -61,6 +55,8 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
 
   void _toggleOpen() {
     setState(() {
+      maxLines = _focusNode.hasFocus ? 6 : 1;
+      isMaxLinesChangeNeeded = true;
       if(_focusNode.hasFocus){
         widget.onFocus?.call(context);
       }
@@ -71,31 +67,36 @@ class _CommentInputWidgetState extends State<CommentInputWidget> with TickerProv
   Widget build(BuildContext context) {
     return  Column(
       children: [
-        TextFormField(
-          controller: textEditingController,
-          cursorColor: const Color(0xFF35C5F0),
-          maxLines: _focusNode.hasFocus ? 6 : 1,
-          focusNode: _focusNode,
-          autofocus: widget.startWithOpen,
-          keyboardType: TextInputType.multiline,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: const Color(0x00FBFBFB),
-            hintText: ' 댓글을 입력해주세요.',
-            hintStyle: TextStyle(color: Palette.brightMode.lightText , fontSize: 14.sp),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(3.r),
-              borderSide: BorderSide(color: Palette.brightMode.lightText,width: 1.sp),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          alignment: Alignment.topCenter,
+          child: TextFormField(
+            controller: textEditingController,
+            cursorColor: const Color(0xFF35C5F0),
+            maxLines: maxLines,
+            focusNode: _focusNode,
+            autofocus: widget.startWithOpen,
+            keyboardType: TextInputType.multiline,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: const Color(0x00FBFBFB),
+              hintText: ' 댓글을 입력해주세요.',
+              hintStyle: TextStyle(color: Palette.brightMode.lightText , fontSize: 14.sp),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(3.r),
+                borderSide: BorderSide(color: Palette.brightMode.lightText,width: 1.sp),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(3.r),
+                borderSide: BorderSide(color: Palette.brightMode.lightText,width: 1.sp),
+              ),
+              contentPadding: EdgeInsets.symmetric(vertical: 4.w, horizontal: 6.w),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(3.r),
-              borderSide: BorderSide(color: Palette.brightMode.lightText,width: 1.sp),
+            style: TextStyle(
+                fontSize: 14.sp,
+                color: Palette.brightMode.mediumText
             ),
-            contentPadding: EdgeInsets.symmetric(vertical: 4.w, horizontal: 6.w),
-          ),
-          style: TextStyle(
-              fontSize: 14.sp,
-              color: Palette.brightMode.mediumText
           ),
         ),
         Align(
