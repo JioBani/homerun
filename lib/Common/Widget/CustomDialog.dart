@@ -176,11 +176,13 @@ class CustomDialog{
   static Future<bool?> showConfirmationDialog({
     required BuildContext context,
     required String content,
-    required Function() onConfirm,
+    Function()? onConfirm,
     TextStyle? contentTextStyle,
     String confirmText = "확인",
     String cancelText = "취소",
     Color? confirmTextColor,
+    EdgeInsets? padding,
+    TextAlign? contentAlignment,
   }){
     const Color borderColor = Color(0xffA4A4A6);
 
@@ -205,14 +207,18 @@ class CustomDialog{
                 children: [
                   //#. 내용
                   Expanded(
-                    child: Center(
-                      child: Text(
-                        content,
-                        style: contentTextStyle ?? TextStyle(
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )
+                    child: Padding(
+                      padding: padding ?? EdgeInsets.symmetric(horizontal: 5.w,vertical: 5.w),
+                      child: Center(
+                        child: Text(
+                          content,
+                          textAlign : contentAlignment,
+                          style: contentTextStyle ?? TextStyle(
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      ),
                     )
                   ),
                   //#. 버튼
@@ -253,7 +259,10 @@ class CustomDialog{
                             if(dialogContext.mounted && Navigator.canPop(dialogContext)){
                               Navigator.pop(dialogContext , true);
                             }
-                            onConfirm();
+
+                            if(onConfirm != null){
+                              onConfirm();
+                            }
                           },
                           child: Container(
                             height: 33.w,
