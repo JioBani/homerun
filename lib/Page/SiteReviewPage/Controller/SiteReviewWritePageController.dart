@@ -140,6 +140,13 @@ class SiteReviewWritePageController extends GetxController{
       return;
     }
 
+    //#. 포커스 없애기
+    if(titleFocusNode.hasFocus){
+      titleFocusNode.unfocus();
+    }
+    else if(contentFocusNode.hasFocus){
+      contentFocusNode.unfocus();
+    }
 
     //#. 업로드
     UploadResultInfo result = await _handleUploadProgress(
@@ -233,6 +240,14 @@ class SiteReviewWritePageController extends GetxController{
 
     if(!_checkValidation(title , content , true)){
       return;
+    }
+
+    //#. 포커스 없애기
+    if(titleFocusNode.hasFocus){
+      titleFocusNode.unfocus();
+    }
+    else if(contentFocusNode.hasFocus){
+      contentFocusNode.unfocus();
     }
 
     UpdateResultInfo result = await _handleUpdateProgress(
