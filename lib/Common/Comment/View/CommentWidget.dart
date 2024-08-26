@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
@@ -25,6 +27,8 @@ import 'CommentInputWidget.dart';
 import 'CommentPopupMenuButtonWidget.dart';
 import 'CommentSnackBar.dart';
 import 'ReplyCommentListWidget.dart';
+
+//TODO 댓글 디자인 전체적으로 수정
 
 class CommentWidget extends StatefulWidget {
   const CommentWidget({
@@ -55,6 +59,8 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   DateTime? lastClickTime;
   LoadingState loadingState = LoadingState.before;
+  LoadingState likeLoadingState = LoadingState.success;
+  LoadingState unlikeLoadingState = LoadingState.success;
 
   @override
   void initState() {
@@ -97,7 +103,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     setState(() {});
   }
 
-  Future<void> updateLikeState(int newLikeState) async {
+  Future<void> updateLikeState(bool isLike,int newLikeState) async {
     final now = DateTime.now();
     if (lastClickTime != null && now.difference(lastClickTime!) < cooldownDuration) {
       CommentSnackbar.show('오류', '잠시후 다시 시도해 주세요.');
@@ -106,13 +112,20 @@ class _CommentWidgetState extends State<CommentWidget> {
 
     lastClickTime = now;
 
+    if(isLike){
+      likeLoadingState = LoadingState.loading;
+    }
+    else{
+      unlikeLoadingState = LoadingState.loading;
+    }
+    setState(() {});
+
     Result<LikeState> result = await CommentService.instance.updateLikeState(widget.comment, newLikeState);
 
     if (result.isSuccess) {
       likeState = result.content!.likeState;
       likes += result.content!.likeChange;
       dislikes += result.content!.dislikeChange;
-      setState(() {});
     } else {
       StaticLogger.logger.e('[CommentWidget.updateLikeState()] ${result.exception}');
       if (result.exception is SocketException) {
@@ -125,6 +138,14 @@ class _CommentWidgetState extends State<CommentWidget> {
         CommentSnackbar.show('오류', '오류가 발생했습니다.');
       }
     }
+
+    if(isLike){
+      likeLoadingState = LoadingState.success;
+    }
+    else{
+      unlikeLoadingState = LoadingState.success;
+    }
+    setState(() {});
   }
 
   @override
@@ -249,7 +270,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                           ),
                         ),
                         //#. 댓글 아래 아이콘들
-                        //TODO 좋아요 싫어요 반영 안되는 문제 있음
                         SizedBox(
                           height: 12.w,
                           child: Row(
@@ -259,22 +279,61 @@ class _CommentWidgetState extends State<CommentWidget> {
                               Builder(
                                 builder: (context){
                                   if(widget.comment.commentDto.likes != null && widget.commentController.hasLikes){
-                                    return CommentIconButton(
-                                      imagePath: NoticePageImages.comment.good,
-                                      content: likes.toString(),
-                                      iconDistance: 2.w,
-                                      onTap: () async {
-                                        if (likeState == 1) {
-                                          updateLikeState(0);
-                                        } else {
-                                          updateLikeState(1);
-                                        }
-                                      },
-                                      color: likeState == 1 ? Theme.of(context).primaryColor : null,
-                                    );
+                                    if(likeLoadingState == LoadingState.loading){
+                                      return SizedBox(
+                                          width : 45.w ,
+                                          child: Row(
+                                            children: [
+                                              Center(
+                                                  child: SizedBox(
+                                                    width: 11.sp,
+                                                    height: 11.sp,
+                                                    child: CupertinoActivityIndicator(),
+                                                  )
+                                              ),
+                                              Gap(2.w),
+                                              Text(
+                                                likes.toString(),
+                                                style: TextStyle(
+                                                  fontSize: 11.sp,
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                      );
+                                    }
+                                    else{
+                                      return CommentIconButton(
+                                        imagePath: NoticePageImages.comment.good,
+                                        content: likes.toString(),
+                                        iconDistance: 2.w,
+                                        onTap: () async {
+                                          if (likeState == 1) {
+                                            updateLikeState(true,0);
+                                          } else {
+                                            updateLikeState(true,1);
+                                          }
+                                        },
+                                        color: likeState == 1 ? Theme.of(context).primaryColor : null,
+                                      );
+                                    }
                                   }
                                   else{
-                                    return const SizedBox();
+                                    return SizedBox(
+                                        width : 45.w ,
+                                        child: Row(
+                                          children: [
+                                            const Center(child: CupertinoActivityIndicator()),
+                                            Gap(2.w),
+                                            Text(
+                                              dislikes.toString(),
+                                              style: TextStyle(
+                                                fontSize: 11.sp,
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                    );
                                   }
                                 }
                               ),
@@ -282,19 +341,39 @@ class _CommentWidgetState extends State<CommentWidget> {
                               Builder(
                                 builder: (context){
                                   if(widget.comment.commentDto.likes != null && widget.commentController.hasLikes){
-                                    return CommentIconButton(
-                                      imagePath: NoticePageImages.comment.bad,
-                                      content: dislikes.toString(),
-                                      iconDistance: 2.w,
-                                      onTap: () async {
-                                        if (likeState == -1) {
-                                          updateLikeState(0);
-                                        } else {
-                                          updateLikeState(-1);
-                                        }
-                                      },
-                                      color: likeState == -1 ? Theme.of(context).primaryColor : null,
-                                    );
+                                    if(unlikeLoadingState == LoadingState.loading){
+                                      return SizedBox(
+                                          width : 45.w ,
+                                          child: Row(
+                                            children: [
+                                              Center(
+                                                child: SizedBox(
+                                                  width: 11.sp,
+                                                  height: 11.sp,
+                                                  child: CupertinoActivityIndicator(),
+                                                )
+                                              ),
+                                              Gap(2.w),
+                                              Text(dislikes.toString())
+                                            ],
+                                          )
+                                      );
+                                    }
+                                    else{
+                                      return CommentIconButton(
+                                        imagePath: NoticePageImages.comment.bad,
+                                        content: dislikes.toString(),
+                                        iconDistance: 2.w,
+                                        onTap: () async {
+                                          if (likeState == -1) {
+                                            updateLikeState(false,0);
+                                          } else {
+                                            updateLikeState(false,-1);
+                                          }
+                                        },
+                                        color: likeState == -1 ? Theme.of(context).primaryColor : null,
+                                      );
+                                    }
                                   }
                                   else{
                                     return const SizedBox();
@@ -366,14 +445,16 @@ class _CommentWidgetState extends State<CommentWidget> {
 /// - `textTap = false` : 텍스트도 탭 가능하게 할지 여부.
 /// - `iconDistance = 2`: 아이콘과 텍스트 사이의 거리.
 class CommentIconButton extends StatelessWidget {
-  const CommentIconButton(
-      {super.key,
-      required this.content,
-      required this.onTap,
-      required this.imagePath,
-      this.color,
-      this.textTap = false,
-      this.iconDistance = 2});
+  const CommentIconButton({
+    super.key,
+    required this.content,
+    required this.onTap,
+    required this.imagePath,
+    this.color,
+    this.textTap = false,
+    this.iconDistance = 2
+  });
+
 
   final String content;
   final void Function() onTap;
@@ -542,3 +623,4 @@ class LoadingPlaceHolder extends StatelessWidget {
     );
   }
 }
+
