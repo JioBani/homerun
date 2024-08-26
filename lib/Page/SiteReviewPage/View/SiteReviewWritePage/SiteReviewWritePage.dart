@@ -8,7 +8,10 @@ import 'package:homerun/Page/SiteReviewPage/View/SiteReviewWritePage/ImageListWi
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Palette.dart';
 
-
+//TODO 사용자 경험 문제
+// - 업로드시 다이얼로그가 진행 될 때 마다 키보드가 올라왔따 내려갔다 함
+// - s22에서 작성할때의 글씨가 전반적으로 작음
+// - 등록 버튼등의 크기를 수정해야할거 같음
 class SiteReviewWritePage extends StatefulWidget {
   const SiteReviewWritePage({
     super.key,
@@ -31,6 +34,8 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
+  final FocusNode titleFocusNode = FocusNode();
+  final FocusNode contentFocusNode = FocusNode();
 
   late final SiteReviewWritePageController controller;
 
@@ -39,6 +44,10 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
   void initState() {
     controller = Get.put(
       SiteReviewWritePageController(
+        titleController : titleController,
+        contentController : contentController,
+        titleFocusNode : titleFocusNode,
+        contentFocusNode : contentFocusNode,
         noticeId: widget.noticeId,
         updateTarget: widget.updateTargetReview,
         updateMode: widget.updateTargetReview != null,
@@ -49,6 +58,9 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
       controller.setUploadedData(context);
       titleController.text = widget.updateTargetReview!.title;
       contentController.text = widget.updateTargetReview!.content;
+    }
+    else{
+      controller.loadTempReview(context);
     }
 
     super.initState();
@@ -81,7 +93,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
         actions: [
           TextButton(
             onPressed: () {
-
+              controller.saveReview(context);
             },
             child: Text(
               "임시저장",
@@ -121,6 +133,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                     controller: titleController,
                     hintText: "제목을 입력해주세요",
                     maxLines: 1,
+                    focusNode: titleFocusNode,
                   ),
                   SizedBox(height: 26.w,),
                   ImageListWidget(isUpdateMode: widget.isUpdateMode,),
@@ -143,6 +156,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                       controller: contentController,
                       hintText: "리뷰 내용을 작성해주세요.",
                       maxLines: 30,
+                      focusNode: contentFocusNode,
                     ),
                   ),
                   SizedBox(height: 14.w,),
@@ -175,7 +189,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                     },
                     child: Container(
                       width: double.infinity,
-                      height: 30.w,
+                      height: 40.w,
                       decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(5.r),
@@ -185,7 +199,7 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                           widget.isUpdateMode ? "수정완료" : "작성완료",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 15.sp,
+                            fontSize: 17.sp,
                             fontWeight: FontWeight.w600
                           ),
                         ),
@@ -202,18 +216,27 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
   }
 }
 
+//TODO 안쪽 색 변경 필요할거 같음
 class CustomTextFormField extends StatelessWidget {
-  const CustomTextFormField({super.key, required this.hintText, required this.maxLines, required this.controller});
+  const CustomTextFormField({
+    super.key,
+    required this.hintText,
+    required this.maxLines,
+    required this.controller,
+    this.focusNode
+  });
 
   static const Color subTitleColor = Color(0xff767676);
-  static const Color inputFillColor = Color(0xffFBFBFB);
+  static const Color inputFillColor = Colors.white;
   final String hintText;
   final int maxLines;
   final TextEditingController controller;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      focusNode: focusNode,
       controller: controller,
       maxLines: maxLines,
       cursorColor: const Color(0xFF35C5F0),
@@ -222,6 +245,7 @@ class CustomTextFormField extends StatelessWidget {
         fillColor: inputFillColor,
         hintText: hintText,
         hintStyle: TextStyle(color: subTitleColor , fontSize: 15.sp),
+        //labelStyle: TextStyle(fontSize: 15.sp),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6.r),
           borderSide: BorderSide(color: const Color(0xffA4A4A6),width: 1.sp),
@@ -233,7 +257,7 @@ class CustomTextFormField extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 6.w),
       ),
       style: TextStyle(
-          fontSize: 11.sp
+        fontSize: 15.sp
       ),
     );
   }
