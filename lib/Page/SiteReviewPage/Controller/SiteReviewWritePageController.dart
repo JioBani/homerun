@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +21,7 @@ import 'package:homerun/Page/SiteReviewPage/Service/UpdateResultInfo.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/SiteReviewPage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
+import 'package:homerun/Service/FileDataService.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../Service/UploadResult.dart';
@@ -30,6 +32,10 @@ class SiteReviewWritePageController extends GetxController{
   final String noticeId;
   final SiteReview? updateTarget;
   final bool updateMode;
+  final TextEditingController titleController;
+  final TextEditingController contentController;
+  final FocusNode titleFocusNode;
+  final FocusNode contentFocusNode;
 
   final double maxSizeMb = 10;
 
@@ -45,7 +51,11 @@ class SiteReviewWritePageController extends GetxController{
   LoadingState updateImageLoading = LoadingState.before;
 
   SiteReviewWritePageController({
-    required this.noticeId ,
+    required this.noticeId,
+    required this.titleController,
+    required this.contentController,
+    required this.titleFocusNode,
+    required this.contentFocusNode,
     this.updateTarget ,
     this.updateMode = false,
   });
@@ -513,4 +523,112 @@ class SiteReviewWritePageController extends GetxController{
     return true;
   }
 
+  //#. 임시저장
+  Future<bool> saveReview(BuildContext context) async {
+
+    if(titleFocusNode.hasFocus){
+      titleFocusNode.unfocus();
+    }
+    else if(contentFocusNode.hasFocus){
+      contentFocusNode.unfocus();
+    }
+
+    bool? confirm = await CustomDialog.showConfirmationDialog(
+      context: context,
+      content: "이미지는 저장되지 않습니다. 현재 공고에 이전에 임시저장된 현장리뷰는 덮어씌워집니다. 임시저장하시겠습니까?",
+      contentTextStyle: TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w500,
+      ),
+      padding: EdgeInsets.symmetric(vertical: 5.w,horizontal: 10.w),
+    );
+
+    if(confirm != true){
+      return false;
+    }
+
+    try{
+      Map<String,dynamic> data = {
+        "title" : titleController.text,
+        "content" : contentController.text,
+      };
+
+      await FileDataService.saveAsString("siteReview/$noticeId", jsonEncode(data));
+
+      if(context.mounted){
+        CustomDialog.defaultDialog(
+            context: context,
+            title: "임시저장했습니다.",
+            buttonText: "확인"
+        );
+      }
+
+      return true;
+    }catch(e,s){
+      if(context.mounted){
+        CustomDialog.defaultDialog(
+            context: context,
+            title: "임시저장에 실패했습니다.",
+            buttonText: "확인"
+        );
+      }
+      return false;
+    }
+  }
+
+  Future<bool> loadTempReview(BuildContext context) async {
+    try{
+      var (String? data,Object? error, StackTrace? stackTrace) = await FileDataService.readAsString("siteReview/$noticeId");
+
+      if(data == null){
+        return false;
+      }
+
+      if(titleFocusNode.hasFocus){
+        titleFocusNode.unfocus();
+      }
+      else if(contentFocusNode.hasFocus){
+        contentFocusNode.unfocus();
+      }
+
+      bool? confirm = await CustomDialog.showConfirmationDialog(
+        context: context,
+        content: "임시저장된 내용이 있습니다. 불러오시겠습니까?",
+        contentTextStyle: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
+        ),
+        padding: EdgeInsets.symmetric(vertical: 5.w,horizontal: 10.w),
+      );
+
+
+      if(confirm != true){
+        return false;
+      }
+
+      Map<String, dynamic> saveData = jsonDecode(data);
+
+      titleController.text = saveData['title']!;
+      contentController.text = saveData['content']!;
+
+      if(context.mounted){
+        CustomDialog.defaultDialog(
+            context: context,
+            title: "임시저장된 내용을 불러왔습니다.",
+            buttonText: "확인"
+        );
+      }
+
+      return true;
+    }catch(e,s){
+      if(context.mounted){
+        CustomDialog.defaultDialog(
+            context: context,
+            title: "임시저장된 내용을 불러오지 못했습니다.",
+            buttonText: "확인"
+        ); 
+      }
+      return false;
+    }
+  }
 }
