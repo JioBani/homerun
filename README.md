@@ -4,7 +4,7 @@
 >
 > 팀프로젝트(기획자1 , 디자이너1, 개발자1)
 
-![Group 481](README.assets/Group 481.png)
+<img src="README.assets/Group 481.png" />
 
 ## 🛠 Skills
 
