@@ -155,11 +155,12 @@ class _CommentWidgetState extends State<CommentWidget> {
       child: Builder(builder: (context) {
         if (loadingState == LoadingState.success) {
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //#. 댓글
+              //#. 프로필 및 메뉴아이콘
               Row(
                 mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   //#. 프로필 사진
                   ClipRRect(
@@ -181,233 +182,218 @@ class _CommentWidgetState extends State<CommentWidget> {
                     )
                   ),
                   SizedBox(
-                    width: 6.w,
+                    width: 10.w,
                   ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            //#. 유저이름
-                            Text(
-                              loadingState == LoadingState.success ? userDto!.displayName! : "알 수 없음",
-                              style: TextStyle(
-                                  fontSize: 11.sp, fontWeight: FontWeight.w600, color: Palette.brightMode.mediumText,
-                              )
-                            ),
-                            SizedBox(
-                              width: 7.w,
-                            ),
-                            //#. 작성 시간
-                            Text(
-                              TimeFormatter.formatTimeDifference(widget.comment.commentDto.date.toDate()),
-                              style: TextStyle(
-                                  fontSize: 11.sp, fontWeight: FontWeight.normal, color: Palette.brightMode.mediumText,
-                              ),
-                            ),
-                            const Spacer(),
-                            //#. 팝업 메뉴
-                            CommentPopupMenuButtonWidget(
-                                comment: widget.comment,
-                                commentListController: widget.commentController,
-                                onTapModify: (){
-                                  setState(() {
-                                    isModifyOpen = true;
-                                  });
-                                },
-                                replyTarget: widget.replyTarget,
-                                isMine : widget.comment.commentDto.uid == FirebaseAuth.instance.currentUser?.uid
-                            )
-                          ],
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          loadingState == LoadingState.success ? userDto!.displayName! : "알 수 없음",
+                          style: TextStyle(
+                            fontSize: 11.sp, fontWeight: FontWeight.w600, color: Palette.brightMode.mediumText,
+                          )
+                      ),
+                      Text(
+                        TimeFormatter.formatTimeDifference(widget.comment.commentDto.date.toDate()),
+                        style: TextStyle(
+                          fontSize: 11.sp, fontWeight: FontWeight.normal, color: Palette.brightMode.mediumText,
                         ),
-                        SizedBox(
-                          height: 7.w,
-                        ),
-                        //#. 댓글 내용 or 댓글 수정 위젯
-                        Padding(
-                          padding: EdgeInsets.only(left: 2.w),
-                          child: Builder(
-                            builder: (context){
-                              if(isModifyOpen){
-                                return CommentInputWidget(
-                                  //#. 취소 버튼 눌렀을때 isModifyOpen 변경
-                                  onTapClosed: (context) {
-                                    setState(() {
-                                      isModifyOpen = false;
-                                    });
-                                  },
-                                  //#. 성공하면 수정 위젯 닫기
-                                  onTapSubmit:(context , content , focusNode , textController) async {
-                                    Result? result = await widget.commentController.update(widget.comment, content);
-                                    if(result != null && result.isSuccess){
-                                      textController.clear();
-                                      setState(() {
-                                        isModifyOpen = false;
-                                      });
-                                    }
-                                  },
-                                  startString: widget.comment.commentDto.content,
-                                  startWithOpen: true,
-                                  maintainButtons: true,
-                                  hasCloseButton: true,
-                                );
-                              }
-                              else{
-                                //#. 댓글 내용 위젯
-                                return Text(
-                                  widget.comment.commentDto.content,
-                                  style: TextStyle(
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        //#. 댓글 아래 아이콘들
-                        SizedBox(
-                          height: 12.w,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              //#. 좋아요 버튼
-                              Builder(
-                                builder: (context){
-                                  if(widget.comment.commentDto.likes != null && widget.commentController.hasLikes){
-                                    if(likeLoadingState == LoadingState.loading){
-                                      return SizedBox(
-                                          width : 45.w ,
-                                          child: Row(
-                                            children: [
-                                              Center(
-                                                  child: SizedBox(
-                                                    width: 11.sp,
-                                                    height: 11.sp,
-                                                    child: CupertinoActivityIndicator(),
-                                                  )
-                                              ),
-                                              Gap(2.w),
-                                              Text(
-                                                likes.toString(),
-                                                style: TextStyle(
-                                                  fontSize: 11.sp,
-                                                ),
-                                              )
-                                            ],
-                                          )
-                                      );
-                                    }
-                                    else{
-                                      return CommentIconButton(
-                                        imagePath: NoticePageImages.comment.good,
-                                        content: likes.toString(),
-                                        iconDistance: 2.w,
-                                        onTap: () async {
-                                          if (likeState == 1) {
-                                            updateLikeState(true,0);
-                                          } else {
-                                            updateLikeState(true,1);
-                                          }
-                                        },
-                                        color: likeState == 1 ? Theme.of(context).primaryColor : null,
-                                      );
-                                    }
-                                  }
-                                  else{
-                                    return SizedBox(
-                                        width : 45.w ,
-                                        child: Row(
-                                          children: [
-                                            const Center(child: CupertinoActivityIndicator()),
-                                            Gap(2.w),
-                                            Text(
-                                              dislikes.toString(),
-                                              style: TextStyle(
-                                                fontSize: 11.sp,
-                                              ),
-                                            )
-                                          ],
-                                        )
-                                    );
-                                  }
-                                }
-                              ),
-                              //#. 싫어요 버튼
-                              Builder(
-                                builder: (context){
-                                  if(widget.comment.commentDto.likes != null && widget.commentController.hasLikes){
-                                    if(unlikeLoadingState == LoadingState.loading){
-                                      return SizedBox(
-                                          width : 45.w ,
-                                          child: Row(
-                                            children: [
-                                              Center(
-                                                child: SizedBox(
-                                                  width: 11.sp,
-                                                  height: 11.sp,
-                                                  child: CupertinoActivityIndicator(),
-                                                )
-                                              ),
-                                              Gap(2.w),
-                                              Text(dislikes.toString())
-                                            ],
-                                          )
-                                      );
-                                    }
-                                    else{
-                                      return CommentIconButton(
-                                        imagePath: NoticePageImages.comment.bad,
-                                        content: dislikes.toString(),
-                                        iconDistance: 2.w,
-                                        onTap: () async {
-                                          if (likeState == -1) {
-                                            updateLikeState(false,0);
-                                          } else {
-                                            updateLikeState(false,-1);
-                                          }
-                                        },
-                                        color: likeState == -1 ? Theme.of(context).primaryColor : null,
-                                      );
-                                    }
-                                  }
-                                  else{
-                                    return const SizedBox();
-                                  }
-                                }
-                              ),
-                              //#. 대댓글 버튼
-                              Builder(builder: (context) {
-                                if (widget.replyTarget == null && widget.commentController.hasReply) {
-                                  return CommentIconButton(
-                                    imagePath: NoticePageImages.comment.reply,
-                                    content: '대댓글 ${widget.comment.replyCount}',
-                                    color: isReplyOpen ? Theme.of(context).primaryColor : null,
-                                    iconDistance: 4.w,
-                                    textTap: true,
-                                    onTap: () {
-                                      if (widget.replyTarget == null) {
-                                        setState(() {
-                                          isReplyOpen = !isReplyOpen;
-                                        });
-                                      }
-                                    },
-                                  );
-                                } else {
-                                  return const SizedBox();
-                                }
-                              })
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  const Spacer(),
+                  //#. 팝업 메뉴
+                  CommentPopupMenuButtonWidget(
+                      comment: widget.comment,
+                      commentListController: widget.commentController,
+                      onTapModify: (){
+                        setState(() {
+                          isModifyOpen = true;
+                        });
+                      },
+                      replyTarget: widget.replyTarget,
+                      isMine : widget.comment.commentDto.uid == FirebaseAuth.instance.currentUser?.uid
+                  )
                 ],
+              ),
+              Gap(5.w),
+              //#. 본문
+              Padding(
+                padding: EdgeInsets.only(left: 2.w),
+                child: Builder(
+                  builder: (context){
+                    if(isModifyOpen){
+                      return CommentInputWidget(
+                        //#. 취소 버튼 눌렀을때 isModifyOpen 변경
+                        onTapClosed: (context) {
+                          setState(() {
+                            isModifyOpen = false;
+                          });
+                        },
+                        //#. 성공하면 수정 위젯 닫기
+                        onTapSubmit:(context , content , focusNode , textController) async {
+                          Result? result = await widget.commentController.update(widget.comment, content);
+                          if(result != null && result.isSuccess){
+                            textController.clear();
+                            setState(() {
+                              isModifyOpen = false;
+                            });
+                          }
+                        },
+                        startString: widget.comment.commentDto.content,
+                        startWithOpen: true,
+                        maintainButtons: true,
+                        hasCloseButton: true,
+                      );
+                    }
+                    else{
+                      //#. 댓글 내용 위젯
+                      return Text(
+                        widget.comment.commentDto.content,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+              Gap(5.w),
+              //#. 댓글 아래 아이콘
+              SizedBox(
+                height: 12.w,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    //#. 좋아요 버튼
+                    Builder(
+                        builder: (context){
+                          if(widget.comment.commentDto.likes != null && widget.commentController.hasLikes){
+                            if(likeLoadingState == LoadingState.loading){
+                              return SizedBox(
+                                  width : 45.w ,
+                                  child: Row(
+                                    children: [
+                                      Center(
+                                          child: SizedBox(
+                                            width: 11.sp,
+                                            height: 11.sp,
+                                            child: CupertinoActivityIndicator(),
+                                          )
+                                      ),
+                                      Gap(2.w),
+                                      Text(
+                                        likes.toString(),
+                                        style: TextStyle(
+                                          fontSize: 11.sp,
+                                        ),
+                                      )
+                                    ],
+                                  )
+                              );
+                            }
+                            else{
+                              return CommentIconButton(
+                                imagePath: NoticePageImages.comment.good,
+                                content: likes.toString(),
+                                iconDistance: 2.w,
+                                onTap: () async {
+                                  if (likeState == 1) {
+                                    updateLikeState(true,0);
+                                  } else {
+                                    updateLikeState(true,1);
+                                  }
+                                },
+                                color: likeState == 1 ? Theme.of(context).primaryColor : null,
+                              );
+                            }
+                          }
+                          else{
+                            return SizedBox(
+                                width : 45.w ,
+                                child: Row(
+                                  children: [
+                                    const Center(child: CupertinoActivityIndicator()),
+                                    Gap(2.w),
+                                    Text(
+                                      dislikes.toString(),
+                                      style: TextStyle(
+                                        fontSize: 11.sp,
+                                      ),
+                                    )
+                                  ],
+                                )
+                            );
+                          }
+                        }
+                    ),
+                    //#. 싫어요 버튼
+                    Builder(
+                        builder: (context){
+                          if(widget.comment.commentDto.likes != null && widget.commentController.hasLikes){
+                            if(unlikeLoadingState == LoadingState.loading){
+                              return SizedBox(
+                                  width : 45.w ,
+                                  child: Row(
+                                    children: [
+                                      Center(
+                                          child: SizedBox(
+                                            width: 11.sp,
+                                            height: 11.sp,
+                                            child: CupertinoActivityIndicator(),
+                                          )
+                                      ),
+                                      Gap(2.w),
+                                      Text(dislikes.toString())
+                                    ],
+                                  )
+                              );
+                            }
+                            else{
+                              return CommentIconButton(
+                                imagePath: NoticePageImages.comment.bad,
+                                content: dislikes.toString(),
+                                iconDistance: 2.w,
+                                onTap: () async {
+                                  if (likeState == -1) {
+                                    updateLikeState(false,0);
+                                  } else {
+                                    updateLikeState(false,-1);
+                                  }
+                                },
+                                color: likeState == -1 ? Theme.of(context).primaryColor : null,
+                              );
+                            }
+                          }
+                          else{
+                            return const SizedBox();
+                          }
+                        }
+                    ),
+                    //#. 대댓글 버튼
+                    Builder(builder: (context) {
+                      if (widget.replyTarget == null && widget.commentController.hasReply) {
+                        return CommentIconButton(
+                          imagePath: NoticePageImages.comment.reply,
+                          content: '대댓글 ${widget.comment.replyCount}',
+                          color: isReplyOpen ? Theme.of(context).primaryColor : null,
+                          iconDistance: 4.w,
+                          textTap: true,
+                          onTap: () {
+                            if (widget.replyTarget == null) {
+                              setState(() {
+                                isReplyOpen = !isReplyOpen;
+                              });
+                            }
+                          },
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    })
+                  ],
+                ),
               ),
               //#. 대댓글 리스트
               Builder(builder: (context) {
