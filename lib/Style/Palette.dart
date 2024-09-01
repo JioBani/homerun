@@ -13,6 +13,7 @@ class Palette{
   static const primary = Color(0xff35C5F0);
   static ColorMode brightMode = BrightMode();
   static const baseColor = Color(0xffFBFBFB);
+  static const defaultRed = Color(0xffFD4755);
 
 }
 
