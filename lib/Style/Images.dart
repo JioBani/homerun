@@ -21,6 +21,7 @@ class SearchBarImages{
 class HousingSaleNoticesPageImages{
   static const String pinMap = "assets/images/housing_sale_notices_page/pin_map.png";
   static const String map = "assets/images/housing_sale_notices_page/map.png";
+  static const String home = "assets/images/housing_sale_notices_page/home.png";
 }
 
 class NoticePageImages{
