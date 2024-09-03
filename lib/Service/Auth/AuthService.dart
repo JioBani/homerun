@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/ApiResponse/ApiResult.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/LoginPage/View/LoginPage.dart';
@@ -173,12 +174,12 @@ class AuthService extends GetxService{
   }
 
   /// 회원가입
-  //TODO 지역하고 연령대 values로 수정하기
   Future<SignUpResult> signUp({
     required String displayName,
     required Gender gender,
     required String ageRages,
     required List<String> regions,
+    required String birth,
     XFile? profileImage,
   })async{
 
@@ -207,6 +208,7 @@ class AuthService extends GetxService{
           UserFields.gender : gender.toEnumString(),
           UserFields.ageRange : ageRages,
           UserFields.interestedRegions : regions,
+          UserFields.birth : birth
         })
       ),
       timeout: const Duration(minutes: 1)
@@ -247,6 +249,7 @@ class AuthService extends GetxService{
     await listenUserSnapshot();
 
     //#4. 프로필 업데이트
+    //TOOD 프로필 없을떄 어떻게 할지
     if(profileImage != null){
       await _userInfoService.updateProfile(profileImage);
     }
@@ -279,6 +282,7 @@ class AuthService extends GetxService{
       }
     }catch(e , s){
       StaticLogger.logger.e("[SignInService.getUserDocumentSnashotStream()] 오류가 발생했습니다. : $e , $s");
+      CustomSnackbar.show("오류", "사용자 정보를 가져오지 못했습니다.");
       return false;
     }
   }
