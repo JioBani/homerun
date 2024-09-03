@@ -14,11 +14,15 @@ class TimeFormatter {
     } else if (difference.inHours < 24) {
       return '${difference.inHours}시간전';
     } else {
-      return DateFormat('yyyy.MM.dd').format(dateTime);
+      return _datFormat.format(dateTime);
     }
   }
 
   datStringToTime(String string){
     return _datFormat.parseStrict(string);
+  }
+
+  dateToDatString(DateTime dateTime){
+    return _datFormat.format(dateTime);
   }
 }
