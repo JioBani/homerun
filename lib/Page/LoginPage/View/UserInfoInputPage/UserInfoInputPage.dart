@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gradient_borders/gradient_borders.dart';
@@ -144,6 +145,48 @@ class UserInfoInputPage extends StatelessWidget {
                 ),
                 SizedBox(height: 20.w,),
 
+                //#. 생년월일
+                Text(
+                  "생년월일",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15.sp,
+                      color: Palette.brightMode.mediumText
+                  ),
+                ),
+                SizedBox(height: 10.w,),
+                TextFormField(
+                  controller: controller.birthController,
+                  keyboardType: TextInputType.datetime,
+                  onChanged: controller.onBirthTextChange,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500
+                  ),
+                  inputFormatters: [
+                    //#. .을 포함해서 10글자로 제한
+                    LengthLimitingTextInputFormatter(10),
+                  ],
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 10.w, horizontal: 20.w),
+                    hintText: "영문·한글 최대 10자까지 가능해요.",
+                    prefixIconConstraints: BoxConstraints(
+                      minWidth: 25.sp,
+                      minHeight: 25.sp,
+                    ),
+                    border: GradientOutlineInputBorder(
+                      gradient: const LinearGradient(colors: [Palette.defaultSkyBlue, Color(0xffFF9C32)]),
+                      width: 2.w,
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    hintStyle: TextStyle(
+                        color: Palette.brightMode.lightText,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.w,),
                 //#. 성별
                 Text(
                   "성별을 알려주세요!",
