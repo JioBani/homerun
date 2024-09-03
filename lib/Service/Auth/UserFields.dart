@@ -5,4 +5,5 @@ class UserFields{
   static String gender = "gender";
   static String ageRange = "ageRange";
   static String interestedRegions = "interestedRegions";
+  static String birth = "birth";
 }
