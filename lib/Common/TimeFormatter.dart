@@ -1,6 +1,8 @@
 import 'package:intl/intl.dart';
 
 class TimeFormatter {
+  static final DateFormat _datFormat = DateFormat('yyyy.MM.dd');
+
   static String formatTimeDifference(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
@@ -14,5 +16,9 @@ class TimeFormatter {
     } else {
       return DateFormat('yyyy.MM.dd').format(dateTime);
     }
+  }
+
+  static datStringToTime(String string){
+    return _datFormat.parseStrict(string);
   }
 }
