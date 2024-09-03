@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Common/TimeFormatter.dart';
+import 'package:homerun/Common/UserInfoValidator/UserInfoValidator.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/enum/Gender.dart';
@@ -13,7 +12,6 @@ import 'package:homerun/Service/Auth/UserInfoService.dart';
 import 'package:homerun/Value/AgeRange.dart';
 import 'package:homerun/Value/Region.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:korean_profanity_filter/korean_profanity_filter.dart';
 
 import '../View/UserInfoInputPage/SelectBoxWidget.dart';
 
@@ -21,8 +19,7 @@ class UserInfoPageController extends GetxController{
   XFile? profileImage;
 
   final ImagePicker picker = ImagePicker();
-  final double maxSizeMb = 3;
-  final TimeFormatter timeFormatter = TimeFormatter();
+  final UserInfoValidator userInfoValidator = UserInfoValidator();
 
   final SelectBoxController<Gender> genderController = SelectBoxController<Gender>();
   final SelectBoxController<AgeRange> ageController = SelectBoxController<AgeRange>();
@@ -44,8 +41,8 @@ class UserInfoPageController extends GetxController{
       }
 
       //#. 이미지 크기 제한 확인
-      if(await pickedFile.length() / (1024 * 1024) > maxSizeMb){
-        CustomSnackbar.show('오류', '프로필 이미지의 크기는 ${maxSizeMb}MB를 넘을 수 없습니다.');
+      if(await pickedFile.length() / (1024 * 1024) > userInfoValidator.maxProfileMbSize){
+        CustomSnackbar.show('오류', '프로필 이미지의 크기는 ${userInfoValidator.maxProfileMbSize}MB를 넘을 수 없습니다.');
         return;
       }
 
@@ -65,7 +62,15 @@ class UserInfoPageController extends GetxController{
   bool checkData(BuildContext context){
 
     //#. 닉네임 체크
-    if(!checkNickName(nickNameController.text, context)){
+    String? nameCheck = userInfoValidator.checkNickName(nickNameController.text);
+    if(nameCheck != null){
+      if(context.mounted){
+        CustomDialog.defaultDialog(
+            context:context,
+            title: nameCheck,
+            buttonText: "확인"
+        );
+      }
       return false;
     }
 
@@ -82,11 +87,7 @@ class UserInfoPageController extends GetxController{
     }
     
     //#. 생년월일 확인
-    try{
-      final result = timeFormatter.datStringToTime(birthController.text);
-      StaticLogger.logger.i(result);
-    }catch(e){
-      StaticLogger.logger.e(e);
+    if(userInfoValidator.checkBirthText(birthController.text)){
       if(context.mounted){
         CustomDialog.defaultDialog(
             context:context,
@@ -97,123 +98,20 @@ class UserInfoPageController extends GetxController{
       return false;
     }
 
-    //#. 연령대 확인
-    if(ageController.value == null){
-      CustomDialog.defaultDialog(
-          context: context,
-          title: "연령대를 선택해주세요",
-          buttonText: "확인"
-      );
-      return false;
-    }
-
     //#. 관심지역 확인
-    if(regionController.values.isEmpty){
-      CustomDialog.defaultDialog(
-          context: context,
-          title: "관심 지역을 하나 이상\n선택해주세요",
-          buttonText: "확인",
-          padding: EdgeInsets.symmetric(vertical: 3.w ,horizontal: 10.w)
-      );
-      return false;
-    }
-
-    //#. 관심지역 선택 초과 확인
-    if(regionController.values.length > 3){
-      CustomDialog.defaultDialog(
-          context: context,
-          title: "관심 지역은 3개 이하로\n선택해주세요",
-          buttonText: "확인",
-          padding: EdgeInsets.symmetric(vertical: 3.w ,horizontal: 10.w)
-      );
+    String? regionCheck = userInfoValidator.checkRegion(regionController.values);
+    if(regionCheck != null){
+      if(context.mounted){
+        CustomDialog.defaultDialog(
+            context:context,
+            title: regionCheck,
+            buttonText: "확인"
+        );
+      }
       return false;
     }
 
     return true;
-  }
-
-  /// 닉네임 체크
-  bool checkNickName(String displayName, BuildContext context){
-
-    //#. 닉네임 길이 체크
-    String? text = checkNickNameLength(displayName);
-    if(text != null){
-      CustomDialog.defaultDialog(
-          context : context,
-          title: text,
-          buttonText: "확인"
-      );
-
-      return false;
-    }
-
-    //#. 닉네임 단어 체크
-    if(displayName.containsBadWords){
-      CustomDialog.defaultDialog(
-          context : context,
-          title: "사용할 수 없는 닉네임 입니다.",
-          buttonText: "확인"
-      );
-      return false;
-    }
-
-    return true;
-  }
-
-
-  /// 닉네임 길이 체크 함수
-  ///
-  /// [returns] : 사용할 수 있는 닉네임인 경우 null을 반환합니다.
-  /// 사용할 수 없는 닉네임인 경우 경고 메세지를 반환합니다.
-  String? checkNickNameLength(String nickname){
-    
-    //#. 비어있는 경우
-    if(nickname.isEmpty){
-      return "닉네임을 입력해주세요.";
-    }
-
-    int koreanMin = 2,  koreanMax = 12, engMin = 3, engMax = 16;
-    // 한글 패턴
-    final koreanPattern = RegExp(r'[가-힣]');
-    // 영문 패턴
-    final englishPattern = RegExp(r'[a-zA-Z]');
-    // 숫자 패턴
-    final numberPattern = RegExp(r'[0-9]');
-
-    bool hasKorean = koreanPattern.hasMatch(nickname);
-    bool hasEnglish = englishPattern.hasMatch(nickname);
-    bool hasNumber = numberPattern.hasMatch(nickname);
-
-
-    int length = nickname.length;
-
-    //#. 한글,영문,숫자만 포함
-    if(!(hasNumber || hasKorean || hasEnglish)){
-      return "닉네임에는 한글,영문,숫자만 포함될 수 있습니다.";
-    }
-
-    if(hasKorean){ //#. 한글 포함
-      if(length < koreanMin){
-        return "한글 닉네임은 $koreanMin글자 이상이어야 합니다.";
-      }
-      else if(length > koreanMax){
-        return "한글 닉네임은 $koreanMax글자 이하이어야 합니다.";
-      }
-      else{
-        return null;
-      }
-    }
-    else{ //#. 영문과 숫자만
-      if(length < engMin){
-        return "영문 또는 숫자 닉네임은 $engMin글자 이상이어야 합니다.";
-      }
-      else if(length > engMax){
-        return "영문 또는 숫자 닉네임은 $engMax글자 이하이어야 합니다.";
-      }
-      else{
-        return null;
-      }
-    }
   }
 
   ///회원가입
@@ -304,6 +202,7 @@ class UserInfoPageController extends GetxController{
     }
   }
 
+  /// 변경시 [UserInfoModifyPageController]도 변경 필요
   void onBirthTextChange(String value){
     int newLength = value.length;
     if(newLength > birthTextLength){
