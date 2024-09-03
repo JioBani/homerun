@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/enum/Gender.dart';
@@ -20,11 +22,15 @@ class UserInfoPageController extends GetxController{
 
   final ImagePicker picker = ImagePicker();
   final double maxSizeMb = 3;
+  final TimeFormatter timeFormatter = TimeFormatter();
 
   final SelectBoxController<Gender> genderController = SelectBoxController<Gender>();
   final SelectBoxController<AgeRange> ageController = SelectBoxController<AgeRange>();
   final SelectBoxController<Region> regionController = SelectBoxController<Region>(isCanSelectMulti: true);
   final TextEditingController nickNameController = TextEditingController();
+  final TextEditingController birthController = TextEditingController();
+
+  int birthTextLength = 0;
 
   /// 프로필 이미지 추가
   Future<void> setProfileImage() async {
@@ -69,6 +75,22 @@ class UserInfoPageController extends GetxController{
         CustomDialog.defaultDialog(
             context:context,
             title: "성별을 입력해주세요.",
+            buttonText: "확인"
+        );
+      }
+      return false;
+    }
+    
+    //#. 생년월일 확인
+    try{
+      final result = timeFormatter.datStringToTime(birthController.text);
+      StaticLogger.logger.i(result);
+    }catch(e){
+      StaticLogger.logger.e(e);
+      if(context.mounted){
+        CustomDialog.defaultDialog(
+            context:context,
+            title: "생년월일이 유효하지 않습니다.",
             buttonText: "확인"
         );
       }
@@ -203,14 +225,14 @@ class UserInfoPageController extends GetxController{
     }
 
     //#. 회원가입
-    //TODO 실제 값으로 변경
     Result result = await CustomDialog.showLoadingDialog<SignUpResult>(
       context: context,
       future: Get.find<AuthService>().signUp(
         displayName: nickNameController.text,
         gender: genderController.value!,
         ageRages: ageController.value!.label,
-        regions: regionController.values.map((e) => e.label).toList()
+        birth: birthController.text,
+        regions: regionController.values.map((e) => e.label).toList(),
       )
     );
 
@@ -279,6 +301,28 @@ class UserInfoPageController extends GetxController{
     bool? pageResult = await Get.to(const SignUpSuccessPage());
     if(pageResult == true && context.mounted){
       Get.back(result: true);
+    }
+  }
+
+  void onBirthTextChange(String value){
+    int newLength = value.length;
+    if(newLength > birthTextLength){
+      if(newLength == 4){
+        birthController.text =  '${birthController.text}.';
+      }
+      else if(newLength == 7){
+        birthController.text =  '${birthController.text}.';
+      }
+      birthTextLength = birthController.text.length;
+    }
+    else{
+      if(newLength == 4){
+        birthController.text = birthController.text.substring(0, birthController.text.length - 1);
+      }
+      else if(newLength == 7){
+        birthController.text = birthController.text.substring(0, birthController.text.length - 1);
+      }
+      birthTextLength = birthController.text.length;
     }
   }
 }
