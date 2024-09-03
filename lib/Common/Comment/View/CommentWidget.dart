@@ -29,6 +29,7 @@ import 'CommentSnackBar.dart';
 import 'ReplyCommentListWidget.dart';
 
 //TODO 댓글 디자인 전체적으로 수정
+//TODO 댓글 신고기능 추가
 
 class CommentWidget extends StatefulWidget {
   const CommentWidget({
@@ -48,6 +49,8 @@ class CommentWidget extends StatefulWidget {
 
 class _CommentWidgetState extends State<CommentWidget> {
   static const cooldownDuration = Duration(seconds: 2);
+
+  final TimeFormatter timeFormatter = TimeFormatter();
 
   late int likeState;
   late int likes;
@@ -194,7 +197,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           )
                       ),
                       Text(
-                        TimeFormatter.formatTimeDifference(widget.comment.commentDto.date.toDate()),
+                        timeFormatter.formatTimeDifference(widget.comment.commentDto.date.toDate()),
                         style: TextStyle(
                           fontSize: 11.sp, fontWeight: FontWeight.normal, color: Palette.brightMode.mediumText,
                         ),
