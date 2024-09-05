@@ -17,6 +17,7 @@ import 'package:homerun/Service/Auth/SocialLoginService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/Auth/UserInfoService.dart';
+import 'package:homerun/Value/Region.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
@@ -177,7 +178,6 @@ class AuthService extends GetxService{
   Future<SignUpResult> signUp({
     required String displayName,
     required Gender gender,
-    required String ageRages,
     required List<String> regions,
     required String birth,
     XFile? profileImage,
@@ -206,7 +206,6 @@ class AuthService extends GetxService{
           UserFields.socialProvider : currentLoginProvider!.toEnumString(),
           UserFields.displayName : displayName,
           UserFields.gender : gender.toEnumString(),
-          UserFields.ageRange : ageRages,
           UserFields.interestedRegions : regions,
           UserFields.birth : birth
         })
@@ -257,6 +256,42 @@ class AuthService extends GetxService{
     return SignUpResult.success;
   }
 
+  Future<String?> updateUserInfo({
+    required String displayName,
+    required Gender gender,
+    required List<String> regions,
+    required String birth,
+  }) async {
+    String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+
+    if(idToken == null){
+      throw ApplicationUnauthorizedException();
+    }
+
+    final ApiResult<String> apiResult = await ApiResult.handleRequest<String>(
+        http.post(Uri.parse(FirebaseFunctionEndpoints.updateUserInfo),
+            headers: {
+              'Authorization': 'Bearer $idToken',
+              'Content-Type': 'application/json'
+            },
+            body: jsonEncode({
+              UserFields.displayName : displayName,
+              UserFields.birth : birth,
+              UserFields.gender : gender.toEnumString(),
+              UserFields.interestedRegions : regions,
+            })
+        ),
+        timeout: const Duration(minutes: 1)
+    );
+
+    if(apiResult.isSuccess){
+      StaticLogger.logger.i("변경 성공");
+    }
+    else{
+      StaticLogger.logger.e(apiResult.apiResponse!.error!.message);
+    }
+  }
+
   /// 유저 데이터 가져오기
   Future<bool> listenUserSnapshot() async{
     try{
@@ -298,7 +333,6 @@ class AuthService extends GetxService{
       return userDto.value!;
     }
   }
-
   UserDto? tryGetUser(){
     return userDto.value;
   }
