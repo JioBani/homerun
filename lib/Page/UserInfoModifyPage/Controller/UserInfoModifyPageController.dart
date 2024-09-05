@@ -29,6 +29,9 @@ class UserInfoModifyPageController extends GetxController{
   late final SelectBoxController<Gender> genderController;
   late final SelectBoxController<Region> regionController;
 
+  final FocusNode nickNameFocusNode = FocusNode();
+  final FocusNode birthFocusNode = FocusNode();
+
   XFile? modifiedProfileImage;
   final UserDto userDto;
   late final String initNickName;
@@ -167,6 +170,13 @@ class UserInfoModifyPageController extends GetxController{
 
   void updateUserInfo(BuildContext context){
 
+    if(nickNameFocusNode.hasFocus){
+      nickNameFocusNode.unfocus();
+    }
+    else if(birthFocusNode.hasFocus){
+      birthFocusNode.unfocus();
+    }
+
     if(!checkData(context)){
       return;
     }
@@ -187,6 +197,13 @@ class UserInfoModifyPageController extends GetxController{
   /// 닉네임 확인
   //TODO 닉네임을 변경하지 않았을 경우?
   Future<void> checkNickName(BuildContext context) async {
+    if(nickNameFocusNode.hasFocus){
+      nickNameFocusNode.unfocus();
+    }
+    else if(birthFocusNode.hasFocus){
+      birthFocusNode.unfocus();
+    }
+
     var(String? result, _) = await LoadingDialog.showLoadingDialogWithFuture<String?>(
       context,
       userInfoService.checkNickName(nickNameController.text)

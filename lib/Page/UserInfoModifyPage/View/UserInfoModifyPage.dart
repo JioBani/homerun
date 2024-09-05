@@ -139,6 +139,7 @@ class UserInfoModifyPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10.w,),
                 TextFormField(
+                  focusNode: controller.nickNameFocusNode,
                   controller: controller.nickNameController,
                   onChanged: controller.onNickNameEdit,
                   style: TextStyle(
@@ -191,6 +192,7 @@ class UserInfoModifyPage extends StatelessWidget {
                 TextFormField(
                   controller: controller.birthController,
                   keyboardType: TextInputType.datetime,
+                  focusNode: controller.birthFocusNode,
                   onChanged: controller.onBirthTextChange,
                   style: TextStyle(
                       fontSize: 16.sp,
