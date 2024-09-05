@@ -44,6 +44,19 @@ class SelectBoxWidgetState<T> extends State<SelectBoxWidget<T>> {
   @override
   void initState() {
     widget.controller.addWidget(this);
+    
+    //#. 초기값 적용
+    if(widget.controller.isCanSelectMulti){ //#. 다중선택 가능인 경우
+      if(widget.controller.values.contains(widget.value)){
+        changeSelect(true);
+      }
+    }
+    else{ //#. 단일 선택인 경우
+      if(widget.controller.value != null && widget.controller.value == widget.value){
+        changeSelect(true);
+      }
+    }
+
     super.initState();
   }
 
@@ -72,6 +85,7 @@ class SelectBoxWidgetState<T> extends State<SelectBoxWidget<T>> {
                 widget.controller.onTap(this, isSelected);
               }
               else{
+                //TODO 일반화 하기
                 CustomSnackbar.show("오류", "관심 지역은 최대 3개까지 선택 가능합니다.");
               }
             }
@@ -160,7 +174,12 @@ class SelectBoxController<T>{
   /// 복수 선택 가능한지
   final bool isCanSelectMulti;
 
-  SelectBoxController({this.isCanSelectMulti = false});
+  SelectBoxController({this.isCanSelectMulti = false , T? initValue , List<T>? initValues}){
+    value = initValue;
+    if(initValues != null){
+      values = initValues;
+    }
+  }
 
   /// 위젯 추가
   void addWidget(SelectBoxWidgetState<T> widget){
