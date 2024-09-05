@@ -2,6 +2,7 @@ import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Value/Region.dart';
 import 'package:korean_profanity_filter/korean_profanity_filter.dart';
 
+//TODO 닉네임 체크는 서버로 옮겨야 할듯
 class UserInfoValidator{
   final TimeFormatter timeFormatter = TimeFormatter();
 
@@ -19,10 +20,16 @@ class UserInfoValidator{
   /// 실패하면 오류 메세지를 반환합니다.
   String? checkNickName(String displayName){
 
+    //#. 닉네임 글자 체크
+    String? result = checkNickNameCharacters(displayName);
+    if(result != null){
+      return result;
+    }
+
     //#. 닉네임 길이 체크
-    String? text = checkNickNameLength(displayName);
-    if(text != null){
-      return text;
+    result = checkNickNameLength(displayName);
+    if(result != null){
+      return result;
     }
 
     //#. 닉네임 단어 체크
@@ -57,12 +64,7 @@ class UserInfoValidator{
 
 
     int length = nickname.length;
-
-    //#. 한글,영문,숫자만 포함
-    if(!(hasNumber || hasKorean || hasEnglish)){
-      return "닉네임에는 한글,영문,숫자만 포함될 수 있습니다.";
-    }
-
+    
     if(hasKorean){ //#. 한글 포함
       if(length < koreanNameMin){
         return "한글 닉네임은 $koreanNameMin글자 이상이어야 합니다.";
@@ -85,6 +87,20 @@ class UserInfoValidator{
         return null;
       }
     }
+  }
+
+  /// 닉네임 글자 유형 체크(한글, 영문, 숫자만 포함되도록)
+  String? checkNickNameCharacters(String nickname) {
+    // 한글, 영문, 숫자 이외의 문자를 찾기 위한 정규식 패턴
+    final validPattern = RegExp(r'^[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]+$');
+
+    // 정규식 패턴에 맞지 않는 경우 오류 메시지 반환
+    if (!validPattern.hasMatch(nickname)) {
+      return "닉네임에는 한글, 영문, 숫자만 포함될 수 있습니다.";
+    }
+
+    // 닉네임이 유효한 경우 null 반환
+    return null;
   }
 
 
