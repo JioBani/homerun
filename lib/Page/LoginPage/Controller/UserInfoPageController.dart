@@ -9,7 +9,6 @@ import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/LoginPage/View/SignUpSuccessPage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserInfoService.dart';
-import 'package:homerun/Value/AgeRange.dart';
 import 'package:homerun/Value/Region.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -22,7 +21,6 @@ class UserInfoPageController extends GetxController{
   final UserInfoValidator userInfoValidator = UserInfoValidator();
 
   final SelectBoxController<Gender> genderController = SelectBoxController<Gender>();
-  final SelectBoxController<AgeRange> ageController = SelectBoxController<AgeRange>();
   final SelectBoxController<Region> regionController = SelectBoxController<Region>(isCanSelectMulti: true);
   final TextEditingController nickNameController = TextEditingController();
   final TextEditingController birthController = TextEditingController();
@@ -61,7 +59,7 @@ class UserInfoPageController extends GetxController{
   /// 회원가입 데이터 유효성 확인
   bool checkData(BuildContext context){
 
-    //#. 닉네임 체크
+    //. 닉네임 체크
     String? nameCheck = userInfoValidator.checkNickName(nickNameController.text);
     if(nameCheck != null){
       if(context.mounted){
@@ -87,7 +85,7 @@ class UserInfoPageController extends GetxController{
     }
     
     //#. 생년월일 확인
-    if(userInfoValidator.checkBirthText(birthController.text)){
+    if(!userInfoValidator.checkBirthText(birthController.text)){
       if(context.mounted){
         CustomDialog.defaultDialog(
             context:context,
@@ -128,7 +126,6 @@ class UserInfoPageController extends GetxController{
       future: Get.find<AuthService>().signUp(
         displayName: nickNameController.text,
         gender: genderController.value!,
-        ageRages: ageController.value!.label,
         birth: birthController.text,
         regions: regionController.values.map((e) => e.label).toList(),
       )
