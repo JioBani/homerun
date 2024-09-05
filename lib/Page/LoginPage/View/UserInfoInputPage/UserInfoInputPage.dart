@@ -221,36 +221,6 @@ class UserInfoInputPage extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 20.w,),
-                
-                //#. 연령대
-                Text(
-                  "연령대를 알려주세요!",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15.sp,
-                      color: Palette.brightMode.mediumText
-                  ),
-                ),
-                SizedBox(height: 10.w,),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 70.w,
-                  child: Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    runSpacing: 9.w,
-                    children : [
-                     ...AgeRange.values.map((age) => SelectBoxWidget<AgeRange>(
-                        value: age,
-                        width: 84.w,
-                        text: age.label,
-                        onTap: (_){},
-                        letterSpacing: 3.w,
-                        controller: controller.ageController,
-                      )).toList(),
-                      SizedBox(width: 84.w,height: 40.w,)
-                    ]
-                  ),
-                ),
-                SizedBox(height: 20.w,),
 
                 //#. 관심 지역
                 Text(
