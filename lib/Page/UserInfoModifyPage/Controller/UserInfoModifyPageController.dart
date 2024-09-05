@@ -6,9 +6,9 @@ import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/LoginPage/View/UserInfoInputPage/SelectBoxWidget.dart';
+import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserInfoService.dart';
 import 'package:homerun/Value/Region.dart';
-import 'package:homerun/Value/UserInfoValues.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserInfoModifyPageController extends GetxController{
@@ -17,7 +17,7 @@ class UserInfoModifyPageController extends GetxController{
   final UserInfoValidator userInfoValidator = UserInfoValidator();
 
   late final TextEditingController nickNameController;
-  late final  TextEditingController birthController;
+  late final TextEditingController birthController;
 
   final SelectBoxController<Gender> genderController = SelectBoxController();
   final SelectBoxController<Region> regionController = SelectBoxController(isCanSelectMulti: true);
@@ -45,8 +45,8 @@ class UserInfoModifyPageController extends GetxController{
       }
 
       //#. 이미지 크기 제한 확인
-      if(await pickedFile.length() / (1024 * 1024) > UserInfoValues.maxProfileSizeMB){
-        CustomSnackbar.show('오류', '프로필 이미지의 크기는 ${UserInfoValues.maxProfileSizeMB}MB를 넘을 수 없습니다.');
+      if(await pickedFile.length() / (1024 * 1024) > userInfoValidator.maxProfileMbSize){
+        CustomSnackbar.show('오류', '프로필 이미지의 크기는 ${userInfoValidator.maxProfileMbSize}MB를 넘을 수 없습니다.');
         return;
       }
 
@@ -145,5 +145,19 @@ class UserInfoModifyPageController extends GetxController{
       }
       birthTextLength = birthController.text.length;
     }
+  }
+
+  void updateUserInfo(BuildContext context){
+
+    if(!checkData(context)){
+      return;
+    }
+
+    Get.find<AuthService>().updateUserInfo(
+      displayName: nickNameController.text,
+      gender: genderController.value!,
+      regions: regionController.values.map((e) => e.label).toList(),
+      birth: birthController.text
+    );
   }
 }
