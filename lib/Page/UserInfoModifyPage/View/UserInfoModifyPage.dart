@@ -8,6 +8,7 @@ import 'package:gradient_borders/input_borders/gradient_outline_input_border.dar
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
+import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/FirebaseReferences/UserInfoReferences.dart';
 import 'package:homerun/Page/LoginPage/View/UserInfoInputPage/SelectBoxWidget.dart';
@@ -25,10 +26,6 @@ class UserInfoModifyPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     UserDto? userDto = Get.find<AuthService>().userDto.value;
-    UserInfoModifyPageController controller = Get.put(UserInfoModifyPageController(
-      nickName: userDto?.displayName ?? '',
-      birth : userDto != null ? timeFormatter.dateToDatString(userDto!.birth.toDate()) : '',
-    ));
 
     //#. 유저 정보가 없는 경우
     if(userDto == null){
@@ -49,6 +46,9 @@ class UserInfoModifyPage extends StatelessWidget {
         ),
       );
     }
+
+    //#. 유저 정보가 있는 경우
+    UserInfoModifyPageController controller = Get.put(UserInfoModifyPageController(userDto: userDto));
 
     return Scaffold(
       body: SafeArea(
@@ -140,6 +140,7 @@ class UserInfoModifyPage extends StatelessWidget {
                 SizedBox(height: 10.w,),
                 TextFormField(
                   controller: controller.nickNameController,
+                  onChanged: controller.onNickNameEdit,
                   style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500
@@ -161,6 +162,18 @@ class UserInfoModifyPage extends StatelessWidget {
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w500
                     ),
+                    suffix: InkWell(
+                      onTap: (){
+                        controller.checkNickName(context);
+                      },
+                      child: Text(
+                        "확인",
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    )
                   ),
                 ),
                 SizedBox(height: 20.w,),
@@ -276,7 +289,7 @@ class UserInfoModifyPage extends StatelessWidget {
                 //#. 다음 버튼
                 InkWell(
                   onTap: () async {
-                    //controller.signUp(context);
+                    controller.updateUserInfo(context);
                   },
                   child: Container(
                     height: 45.w,
@@ -288,7 +301,7 @@ class UserInfoModifyPage extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        "다음으로",
+                        "저장하기",
                         style: TextStyle(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w600,
