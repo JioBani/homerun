@@ -1,36 +1,57 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/UserInfoValidator/UserInfoValidator.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
+import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/LoginPage/View/UserInfoInputPage/SelectBoxWidget.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
+import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/Auth/UserInfoService.dart';
 import 'package:homerun/Value/Region.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:collection/collection.dart';
 
 class UserInfoModifyPageController extends GetxController{
 
   final ImagePicker picker = ImagePicker();
   final UserInfoValidator userInfoValidator = UserInfoValidator();
+  final UserInfoService userInfoService = UserInfoService();
+  final TimeFormatter timeFormatter = TimeFormatter();
 
   late final TextEditingController nickNameController;
   late final TextEditingController birthController;
 
-  final SelectBoxController<Gender> genderController = SelectBoxController();
-  final SelectBoxController<Region> regionController = SelectBoxController(isCanSelectMulti: true);
+  late final SelectBoxController<Gender> genderController;
+  late final SelectBoxController<Region> regionController;
 
   XFile? modifiedProfileImage;
-
-  final UserInfoService userInfoService = UserInfoService();
+  final UserDto userDto;
+  late final String initNickName;
+  late final String initBirth;
+  late final Gender initGender;
+  late final List<Region> initRegions;
 
   int birthTextLength = 0;
+  bool isNameChecked = false;
 
-  UserInfoModifyPageController({required String nickName, required String birth}){
-    nickNameController = TextEditingController(text: nickName);
-    birthController = TextEditingController(text: birth);
+  UserInfoModifyPageController({required this.userDto}){
+    initNickName = userDto.displayName;
+    initBirth = timeFormatter.dateToDatString(userDto.birth.toDate());
+    initGender = userDto.gender;
+    initRegions = userDto.interestedRegions.where((region)=>region != null).cast<Region>().toList();
+
+    nickNameController = TextEditingController(text: initNickName);
+    birthController = TextEditingController(text: initBirth);
+    genderController = SelectBoxController(initValue: userDto.gender);
+    regionController = SelectBoxController(
+      isCanSelectMulti: true,
+      initValues: initRegions.map((region)=>region).toList() // initRegions를 깊은 복사(Region이 enum타입이므로 재귀 복사 필요 x)
+    );
   }
 
   /// 프로필 이미지 추가
@@ -71,16 +92,13 @@ class UserInfoModifyPageController extends GetxController{
   /// 회원가입 데이터 유효성 확인
   bool checkData(BuildContext context){
 
-    //#. 닉네임 체크
-    String? nameCheck = userInfoValidator.checkNickName(nickNameController.text);
-    if(nameCheck != null){
-      if(context.mounted){
-        CustomDialog.defaultDialog(
-            context:context,
-            title: nameCheck,
-            buttonText: "확인"
-        );
-      }
+    //#. 닉네임 확인이 되었는지
+    if(initNickName != nickNameController.text && !isNameChecked){
+      CustomDialog.defaultDialog(
+          context:context,
+          title: "닉네임을 먼저 확인해주세요.",
+          buttonText: "확인"
+      );
       return false;
     }
 
@@ -97,7 +115,7 @@ class UserInfoModifyPageController extends GetxController{
     }
 
     //#. 생년월일 확인
-    if(userInfoValidator.checkBirthText(birthController.text)){
+    if(!userInfoValidator.checkBirthText(birthController.text)){
       if(context.mounted){
         CustomDialog.defaultDialog(
             context:context,
@@ -153,11 +171,39 @@ class UserInfoModifyPageController extends GetxController{
       return;
     }
 
-    Get.find<AuthService>().updateUserInfo(
-      displayName: nickNameController.text,
-      gender: genderController.value!,
-      regions: regionController.values.map((e) => e.label).toList(),
-      birth: birthController.text
+    //#. 변경된 것이 없으면 매개변수에 null
+    LoadingDialog.showLoadingDialogWithFuture(
+        context,
+        Get.find<AuthService>().updateUserInfo(
+            displayName: initNickName == nickNameController.text ? null : nickNameController.text,
+            gender: initGender == genderController.value ? null : genderController.value,
+            regions: const DeepCollectionEquality().equals(initRegions, regionController.values) ?
+            null : regionController.values.map((e) => e.label).toList(),
+            birth: initBirth == birthController.text ? null : birthController.text
+        )
     );
+  }
+
+  /// 닉네임 확인
+  //TODO 닉네임을 변경하지 않았을 경우?
+  Future<void> checkNickName(BuildContext context) async {
+    var(String? result, _) = await LoadingDialog.showLoadingDialogWithFuture<String?>(
+      context,
+      userInfoService.checkNickName(nickNameController.text)
+    );
+
+    if(result != null && context.mounted){
+      CustomDialog.showConfirmationDialog(context: context, content: result);
+    }
+    else{
+      CustomDialog.showConfirmationDialog(context: context, content: "사용 할 수 있는 닉네임 입니다.");
+      isNameChecked = true;
+    }
+
+    return;
+  }
+
+  void onNickNameEdit(String name){
+    isNameChecked = false;
   }
 }
