@@ -465,7 +465,6 @@ class SiteReviewWritePageController extends GetxController{
     for (var entry in imageResult.entries) {
       if(entry.value.isSuccess){
         uploadedImages[entry.key] = entry.value.content!;
-        StaticLogger.logger.e("${entry.key} : ${entry.value.content!.name}");
       }
       else{
         uploadedImages[entry.key] = null;
