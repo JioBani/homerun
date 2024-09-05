@@ -257,10 +257,10 @@ class AuthService extends GetxService{
   }
 
   Future<String?> updateUserInfo({
-    required String displayName,
-    required Gender gender,
-    required List<String> regions,
-    required String birth,
+    required String? displayName,
+    required Gender? gender,
+    required List<String>? regions,
+    required String? birth,
   }) async {
     String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
@@ -277,7 +277,7 @@ class AuthService extends GetxService{
             body: jsonEncode({
               UserFields.displayName : displayName,
               UserFields.birth : birth,
-              UserFields.gender : gender.toEnumString(),
+              UserFields.gender : gender?.toEnumString(),
               UserFields.interestedRegions : regions,
             })
         ),
