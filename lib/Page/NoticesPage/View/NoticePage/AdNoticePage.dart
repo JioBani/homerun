@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
 import 'package:homerun/Common/LoadingState.dart';
@@ -28,7 +29,7 @@ import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-//TODO 바텀 메뉴바가 나타나지 않는 문제
+//TODO 바텀 메뉴바가 나타나지 않는 문제 -> 현재 위젯이 너무 짧아서
 //댓글창 위에 스크랩 및 공유 넣어야할듯
 //댓글 탭바 보이자 마자 사라지는건 너무 이른듯?
 //TODO 댓글창 클릭시 열리는 속도가 키보드 애니메이션보다 빨라서 애니메이션이 망가짐
@@ -106,13 +107,95 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
     return [
       SizedBox(height: 100.w,), //temp
       SizedBox(height: 6.w,),
-      //#. 광고 이미지
-      SizedBox(
-        width: double.infinity,
-        height: 174.w,
+      //#. 이미지
+      UnconstrainedBox(
         child: Image.asset(
           "assets/images/Test/ad.png",
           fit: BoxFit.fitHeight,
+          width: 310.w,
+          height: 210.w,
+        ),
+      ),
+      //#. 주택 이름 및 이미지
+      UnconstrainedBox(
+        child: Container(
+          height: 100.w,
+          width: 310.w,
+          color: const Color(0xffE7F2FF),
+          child: Container(
+            margin: EdgeInsets.fromLTRB(10.w, 0, 10.w, 10.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(20.r),
+                bottomLeft: Radius.circular(20.r)
+              ),
+            ),
+            child: Column(
+              children: [
+                Gap(8.w),
+                //#. 공고일자
+                SizedBox(
+                  width: 260.w,
+                  height: 20.w,
+                  child: Stack(
+                    children: [
+                      Image.asset(
+                        NoticePageImages.noticeDateTextDecoration,
+                      ),
+                      Row(
+                        children: [
+                          Gap(13.w),
+                          //#. 공고 일자 텍스트
+                          Text(
+                            "공고 일자",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white
+                            ),
+                          ),
+                          Gap(30.w),
+                          //#. 공고 일자
+                          Text(
+                            "2024.07.25",
+                            style: TextStyle(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Palette.defaultOrange
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                //#. 주택명
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "고양 장향",
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Gap(10.w),
+                      Text(
+                        "아 테 라",
+                        style: TextStyle(
+                          fontSize: 30.sp,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
       //TODO 개발중에 렉 줄이기 위해서 임시로 해제
@@ -152,6 +235,17 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
                 height: 150.w,
                 child: LocationMap(notice : widget.notice)
             ),
+          ],
+        ),
+      ),
+      //#. 공급 규모
+      InfoBox(
+        child: Column(
+          children: [
+            SubTitleWidget(
+              text: "공급 규모",
+              frontPadding: 12.w,
+            )
           ],
         ),
       ),
@@ -576,3 +670,65 @@ class ScrapIconButton extends StatelessWidget {
     );
   }
 }
+
+class InfoBox extends StatelessWidget {
+  const InfoBox({super.key, required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 310.w,
+      color: const Color(0xffE7F2FF),
+      child: Container(
+        margin: EdgeInsets.all(10.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(20.r),
+              bottomLeft: Radius.circular(20.r)
+          ),
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
+class SubTitleWidget extends StatelessWidget {
+  const SubTitleWidget({super.key, required this.text,required this.frontPadding,});
+  final double frontPadding;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 20.w,
+      width: 260.w,
+      child: Stack(
+        alignment: Alignment.centerLeft,
+        children: [
+          Image.asset(
+            NoticePageImages.subTitleTextDecoration,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Gap(frontPadding),
+              Text(
+                text,
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11.sp,
+                    color: Colors.white
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
