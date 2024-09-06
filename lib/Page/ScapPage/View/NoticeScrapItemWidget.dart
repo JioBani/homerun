@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/HouseDetailTypeBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
-import 'package:homerun/Page/NoticesPage/View/AdNoticePage.dart';
+import 'package:homerun/Page/NoticesPage/View/NoticePage/AdNoticePage.dart';
 import 'package:homerun/Page/ScapPage/Controller/ScrapPageController.dart';
 import 'package:homerun/Page/ScapPage/Model/NoticeScrap.dart';
 import 'package:homerun/Style/Palette.dart';
