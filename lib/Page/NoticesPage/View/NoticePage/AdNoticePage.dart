@@ -10,7 +10,6 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/Comment/View/CommentInputWidget.dart';
 import 'package:homerun/Common/LoadingState.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/LoadableIcon.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/model/Result.dart';
@@ -21,6 +20,7 @@ import 'package:homerun/Page/NoticesPage/View/Comment/CommentSortWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabBarWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabChildWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
+import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewWidget.dart';
 import 'package:homerun/Page/ScapPage/Service/ScrapService.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
@@ -28,6 +28,8 @@ import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
+import 'SubTitleWidget.dart';
 
 //TODO 바텀 메뉴바가 나타나지 않는 문제 -> 현재 위젯이 너무 짧아서
 //댓글창 위에 스크랩 및 공유 넣어야할듯
@@ -671,64 +673,6 @@ class ScrapIconButton extends StatelessWidget {
   }
 }
 
-class InfoBox extends StatelessWidget {
-  const InfoBox({super.key, required this.child});
-  final Widget child;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 310.w,
-      color: const Color(0xffE7F2FF),
-      child: Container(
-        margin: EdgeInsets.all(10.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(20.r),
-              bottomLeft: Radius.circular(20.r)
-          ),
-        ),
-        child: child,
-      ),
-    );
-  }
-}
-
-class SubTitleWidget extends StatelessWidget {
-  const SubTitleWidget({super.key, required this.text,required this.frontPadding,});
-  final double frontPadding;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 20.w,
-      width: 260.w,
-      child: Stack(
-        alignment: Alignment.centerLeft,
-        children: [
-          Image.asset(
-            NoticePageImages.subTitleTextDecoration,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Gap(frontPadding),
-              Text(
-                text,
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11.sp,
-                    color: Colors.white
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 
