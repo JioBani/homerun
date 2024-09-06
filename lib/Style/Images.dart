@@ -28,6 +28,8 @@ class NoticePageImages{
   static const String star = "assets/images/notice_page/star.png";
   static const String siteReview = "assets/images/notice_page/site_review.png";
   static NoticePageCommentImages comment = NoticePageCommentImages();
+  static const String noticeDateTextDecoration =  "assets/images/notice_page/notice_date_decoration.jpg";
+  static const String subTitleTextDecoration =  "assets/images/notice_page/notice_date_decoration.jpg";
 }
 
 class NoticePageCommentImages{
