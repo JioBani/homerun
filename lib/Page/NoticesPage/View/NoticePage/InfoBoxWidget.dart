@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class InfoBox extends StatelessWidget {
-  const InfoBox({super.key, required this.child});
+class InfoBoxWidget extends StatelessWidget {
+  const InfoBoxWidget({super.key, required this.child});
   final Widget child;
 
   @override

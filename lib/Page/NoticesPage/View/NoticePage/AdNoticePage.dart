@@ -241,7 +241,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         ),
       ),
       //#. 공급 규모
-      InfoBox(
+      InfoBoxWidget(
         child: Column(
           children: [
             SubTitleWidget(
