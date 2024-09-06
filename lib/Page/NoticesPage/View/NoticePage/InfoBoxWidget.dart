@@ -14,10 +14,7 @@ class InfoBoxWidget extends StatelessWidget {
         margin: EdgeInsets.all(10.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(20.r),
-              bottomLeft: Radius.circular(20.r)
-          ),
+          borderRadius: BorderRadius.circular(20.r),
         ),
         child: child,
       ),
