@@ -29,18 +29,13 @@ class SubTitleWidget extends StatelessWidget {
       child: Stack(
         alignment: Alignment.centerLeft,
         children: [
-          SubTitleDecoration(bottomWidth: textPainter.width + 25.w,),
+          SubTitleDecoration(bottomWidth: textPainter.width + frontPadding + 15.w,),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Gap(frontPadding),
-              Text(
-                text,
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11.sp,
-                    color: Colors.white
-                ),
+              RichText(
+                text: textSpan
               )
             ],
           ),
@@ -73,7 +68,7 @@ class SubTitleDecorationPainter extends CustomPainter {
   late final double topWidth;
 
   SubTitleDecorationPainter({required this.bottomWidth}){
-    topWidth = bottomWidth - 10.w;
+    topWidth = bottomWidth - 15;
   }
 
   @override
