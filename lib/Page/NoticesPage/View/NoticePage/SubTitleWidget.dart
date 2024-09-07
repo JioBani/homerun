@@ -4,10 +4,21 @@ import 'package:gap/gap.dart';
 import 'package:homerun/Style/Palette.dart';
 
 /// 소제목 위젯
+/// TODO 사이즈 결정의 기준을 top으로 할지 bottom으로 할지
 class SubTitleWidget extends StatelessWidget {
-  const SubTitleWidget({super.key, required this.text,required this.frontPadding,});
-  final double frontPadding;
+
+  SubTitleWidget({
+    super.key,
+    required this.text,
+    required this.leftPadding,
+    this.width,
+    double? rightPadding, /// 기본값은 15.w
+  }) : rightPadding = rightPadding ?? 15.w;
+
+  final double leftPadding;
+  final double rightPadding;
   final String text;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +36,18 @@ class SubTitleWidget extends StatelessWidget {
 
     return SizedBox(
       height: 20.w,
-      width: 260.w,
+      width: width ?? 260.w,
       child: Stack(
         alignment: Alignment.centerLeft,
         children: [
-          SubTitleDecoration(bottomWidth: textPainter.width + frontPadding + 15.w,),
+          SubTitleDecoration(
+            bottomWidth: textPainter.width + leftPadding + rightPadding,
+            width: width,
+          ),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Gap(frontPadding),
+              Gap(leftPadding),
               RichText(
                 text: textSpan
               )
@@ -46,13 +60,14 @@ class SubTitleWidget extends StatelessWidget {
 }
 
 class SubTitleDecoration extends StatelessWidget {
-  const SubTitleDecoration({super.key, required this.bottomWidth});
+  const SubTitleDecoration({super.key, required this.bottomWidth, this.width});
   final double bottomWidth;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 260.w,
+      width: width ?? 260.w,
       height: 20.w,
       child: CustomPaint(
         painter: SubTitleDecorationPainter(
@@ -66,8 +81,9 @@ class SubTitleDecoration extends StatelessWidget {
 class SubTitleDecorationPainter extends CustomPainter {
   final double bottomWidth;
   late final double topWidth;
+  final double? width;
 
-  SubTitleDecorationPainter({required this.bottomWidth}){
+  SubTitleDecorationPainter({required this.bottomWidth, this.width}){
     topWidth = bottomWidth - 15;
   }
 
@@ -93,7 +109,7 @@ class SubTitleDecorationPainter extends CustomPainter {
 
     final path2 = Path();
     path2.moveTo(0, 20.w);
-    path2.lineTo(260.w, 20.w);
+    path2.lineTo(width ?? 260.w, 20.w);
     canvas.drawPath(path2, paintLine);
   }
 
