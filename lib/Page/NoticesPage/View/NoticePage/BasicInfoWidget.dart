@@ -42,7 +42,7 @@ class BasicInfoWidget extends StatelessWidget {
           Gap(15.w),
           SubTitleWidget(
             text: "공급 규모",
-            frontPadding: 12.w
+            leftPadding: 12.w
           ),
           Gap(11.w),
           ContentBoxWidget(
