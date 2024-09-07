@@ -8,8 +8,8 @@ import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'ContentBoxWidget.dart';
 
 //TODO 데이터를 불러오지 못했거나, 없거나, 취합중일때 어떻게 표현할지
-class SupplyScaleInfoWidget extends StatelessWidget {
-  const SupplyScaleInfoWidget({super.key, required this.info});
+class BasicInfoWidget extends StatelessWidget {
+  const BasicInfoWidget({super.key, required this.info});
   final APTAnnouncement? info;
 
   @override

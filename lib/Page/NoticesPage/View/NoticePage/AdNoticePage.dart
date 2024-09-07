@@ -250,6 +250,10 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
             )
           ],
         ),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: BasicInfoWidget(info: widget.notice.noticeDto?.info,),
+      ),
       ),
       SizedBox(height: 24.w,),
       //#. 현장리뷰
