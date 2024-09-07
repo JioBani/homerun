@@ -61,3 +61,61 @@ class ContentBoxWidget extends StatelessWidget {
     );
   }
 }
+
+class ContentTitleBoxWidget extends StatelessWidget {
+  const ContentTitleBoxWidget({super.key, required this.title, required this.width, required this.height, this.margin});
+  final String title;
+  final double width;
+  final double height;
+  final EdgeInsets? margin;
+
+  @override
+  Widget build(BuildContext context) {
+    return  Container(
+      margin: margin,
+      width: width,
+      height: height,
+      color: const Color(0xff014FAB),
+      child: Center(
+        child: Text(
+          title,
+          style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.white
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ContentTextBoxWidget extends StatelessWidget {
+  const ContentTextBoxWidget({super.key, required this.text, required this.width, required this.height, this.margin});
+  final String text;
+  final double height;
+  final double width;
+  final EdgeInsets? margin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      width: width,
+      height: height,
+      color: const Color(0xffF7F7F7),
+      child: Center(
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w600,
+            color: Palette.brightMode.darkText
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
