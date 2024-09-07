@@ -3,14 +3,38 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/SubTitleWidget.dart';
+import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 
 import 'ContentBoxWidget.dart';
 
+//TODO 데이터를 불러오지 못했거나, 없거나, 취합중일때 어떻게 표현할지
 class SupplyScaleInfoWidget extends StatelessWidget {
-  const SupplyScaleInfoWidget({super.key});
+  const SupplyScaleInfoWidget({super.key, required this.info});
+  final APTAnnouncement? info;
 
   @override
   Widget build(BuildContext context) {
+    const dataErrorText = "데이터를 가져 올 수 없습니다.";
+    const dataIsBeingCollected = "데이터 취합중 입니다.";
+
+    String location = "";
+    String size = "";
+    String company = "";
+    String moveIn = "";
+
+    if(info == null){
+      location = dataErrorText;
+      size = dataErrorText;
+      company = dataErrorText;
+      moveIn = dataErrorText;
+    }
+    else{
+      location = info!.supplyLocationAddress ?? dataIsBeingCollected;
+      size =  info?.totalSupplyHouseholdCount == null ? dataIsBeingCollected : "${info?.totalSupplyHouseholdCount}세대";
+      company = info!.constructionEnterpriseName ?? dataIsBeingCollected;
+      moveIn = info!.moveInPrearrangeYearMonth ?? dataIsBeingCollected;
+    }
+
     return InfoBoxWidget(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,9 +54,7 @@ class SupplyScaleInfoWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    "경기도 고양시 일산동구 장항동 529-26번지 일원",
-                  ),
+                  Text(location),
                   Text(
                     "(고양 장항지구 B-3BL)",
                     style: TextStyle(
@@ -50,9 +72,7 @@ class SupplyScaleInfoWidget extends StatelessWidget {
             contentWidth: 188.w,
             content: Padding(
               padding: EdgeInsets.symmetric(vertical: 9.w),
-              child: Text(
-                "300세대",
-              ),
+              child: Text(size),
             ),
           ),
           Gap(2.w),
@@ -62,22 +82,17 @@ class SupplyScaleInfoWidget extends StatelessWidget {
             contentWidth: 188.w,
             content: Padding(
               padding: EdgeInsets.symmetric(vertical: 9.w),
-              child: Text(
-                "현대건설",
-              ),
+              child: Text(company),
             ),
           ),
           Gap(2.w),
           ContentBoxWidget(
-            title: "공급위치",
+            title: "입주시기",
             titleWidth: 70.w,
             contentWidth: 188.w,
             content: Padding(
               padding: EdgeInsets.symmetric(vertical: 9.w),
-              child:  Text(
-                "2027년 9월 예정",
-                textAlign: TextAlign.center,
-              ),
+              child:  Text(moveIn),
             ),
           ),
           Gap(15.w),
