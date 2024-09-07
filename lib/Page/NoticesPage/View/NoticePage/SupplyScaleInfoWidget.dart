@@ -19,7 +19,7 @@ class SupplyScaleInfoWidget extends StatelessWidget {
               Gap(17.w),
               SubTitleWidget(
                 text: "공급 세대수",
-                frontPadding: 10.w,
+                leftPadding: 10.w,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 6.w),
