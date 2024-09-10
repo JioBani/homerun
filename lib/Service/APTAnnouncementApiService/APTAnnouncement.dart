@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class APTAnnouncement {
   /// 주택 관리 번호
   final String? houseManageNumber;
@@ -11,8 +13,8 @@ class APTAnnouncement {
   /// 공급 지역명
   final String? subscriptionAreaName;
 
-  /// 모집 공고일
-  final String? recruitmentPublicAnnouncementDate;
+  /// 모집 공고일 (Firebase Timestamp)
+  final Timestamp? recruitmentPublicAnnouncementDate;
 
   /// 주택명
   final String? houseName;
@@ -44,50 +46,50 @@ class APTAnnouncement {
   /// 공급 규모 (가구 수)
   final int? totalSupplyHouseholdCount;
 
-  /// 청약 접수 시작일
-  final String? applicationReceptionStartDate;
+  /// 청약 접수 시작일 (Firebase Timestamp)
+  final Timestamp? applicationReceptionStartDate;
 
-  /// 청약 접수 종료일
-  final String? applicationReceptionEndDate;
+  /// 청약 접수 종료일 (Firebase Timestamp)
+  final Timestamp? applicationReceptionEndDate;
 
-  /// 특별 공급 접수 시작일
-  final String? specialSupplyReceptionStartDate;
+  /// 특별 공급 접수 시작일 (Firebase Timestamp)
+  final Timestamp? specialSupplyReceptionStartDate;
 
-  /// 특별 공급 접수 종료일
-  final String? specialSupplyReceptionEndDate;
+  /// 특별 공급 접수 종료일 (Firebase Timestamp)
+  final Timestamp? specialSupplyReceptionEndDate;
 
-  /// 1순위 해당지역 접수 시작일
-  final String? generalRank1CorrespondingAreaReceptionStartDate;
+  /// 1순위 해당지역 접수 시작일 (Firebase Timestamp)
+  final Timestamp? generalRank1CorrespondingAreaReceptionStartDate;
 
-  /// 1순위 해당지역 접수 종료일
-  final String? generalRank1CorrespondingAreaReceptionEndDate;
+  /// 1순위 해당지역 접수 종료일 (Firebase Timestamp)
+  final Timestamp? generalRank1CorrespondingAreaReceptionEndDate;
 
-  /// 1순위 기타지역 접수 시작일
-  final String? generalRank1OtherAreaReceptionStartDate;
+  /// 1순위 기타지역 접수 시작일 (Firebase Timestamp)
+  final Timestamp? generalRank1OtherAreaReceptionStartDate;
 
-  /// 1순위 기타지역 접수 종료일
-  final String? generalRank1OtherAreaReceptionEndDate;
+  /// 1순위 기타지역 접수 종료일 (Firebase Timestamp)
+  final Timestamp? generalRank1OtherAreaReceptionEndDate;
 
-  /// 2순위 해당지역 접수 시작일
-  final String? generalRank2CorrespondingAreaReceptionStartDate;
+  /// 2순위 해당지역 접수 시작일 (Firebase Timestamp)
+  final Timestamp? generalRank2CorrespondingAreaReceptionStartDate;
 
-  /// 2순위 해당지역 접수 종료일
-  final String? generalRank2CorrespondingAreaReceptionEndDate;
+  /// 2순위 해당지역 접수 종료일 (Firebase Timestamp)
+  final Timestamp? generalRank2CorrespondingAreaReceptionEndDate;
 
-  /// 2순위 기타지역 접수 시작일
-  final String? generalRank2OtherAreaReceptionStartDate;
+  /// 2순위 기타지역 접수 시작일 (Firebase Timestamp)
+  final Timestamp? generalRank2OtherAreaReceptionStartDate;
 
-  /// 2순위 기타지역 접수 종료일
-  final String? generalRank2OtherAreaReceptionEndDate;
+  /// 2순위 기타지역 접수 종료일 (Firebase Timestamp)
+  final Timestamp? generalRank2OtherAreaReceptionEndDate;
 
-  /// 당첨자 발표일
-  final String? prizeWinnerAnnouncementDate;
+  /// 당첨자 발표일 (Firebase Timestamp)
+  final Timestamp? prizeWinnerAnnouncementDate;
 
-  /// 계약 시작일
-  final String? contractConclusionStartDate;
+  /// 계약 시작일 (Firebase Timestamp)
+  final Timestamp? contractConclusionStartDate;
 
-  /// 계약 종료일
-  final String? contractConclusionEndDate;
+  /// 계약 종료일 (Firebase Timestamp)
+  final Timestamp? contractConclusionEndDate;
 
   /// 홈페이지 주소
   final String? homepageAddress;
@@ -184,7 +186,7 @@ class APTAnnouncement {
       publicAnnouncementNumber: map['PBLANC_NO'] as String?,
       houseSectionCode: map['HOUSE_SECD'] as String?,
       subscriptionAreaName: map['SUBSCRPT_AREA_CODE_NM'] as String?,
-      recruitmentPublicAnnouncementDate: map['RCRIT_PBLANC_DE'] as String?,
+      recruitmentPublicAnnouncementDate: map['RCRIT_PBLANC_DE'] as Timestamp?,
       houseName: map['HOUSE_NM'] as String?,
       houseSectionName: map['HOUSE_SECD_NM'] as String?,
       houseDetailSectionCode: map['HOUSE_DTL_SECD'] as String?,
@@ -195,21 +197,21 @@ class APTAnnouncement {
       supplyLocationZipCode: map['HSSPLY_ZIP'] as String?,
       supplyLocationAddress: map['HSSPLY_ADRES'] as String?,
       totalSupplyHouseholdCount: map['TOT_SUPLY_HSHLDCO'] as int?,
-      applicationReceptionStartDate: map['RCEPT_BGNDE'] as String?,
-      applicationReceptionEndDate: map['RCEPT_ENDDE'] as String?,
-      specialSupplyReceptionStartDate: map['SPSPLY_RCEPT_BGNDE'] as String?,
-      specialSupplyReceptionEndDate: map['SPSPLY_RCEPT_ENDDE'] as String?,
-      generalRank1CorrespondingAreaReceptionStartDate: map['GNRL_RNK1_CRSPAREA_RCPTDE'] as String?,
-      generalRank1CorrespondingAreaReceptionEndDate: map['GNRL_RNK1_CRSPAREA_ENDDE'] as String?,
-      generalRank1OtherAreaReceptionStartDate: map['GNRL_RNK1_ETC_AREA_RCPTDE'] as String?,
-      generalRank1OtherAreaReceptionEndDate: map['GNRL_RNK1_ETC_AREA_ENDDE'] as String?,
-      generalRank2CorrespondingAreaReceptionStartDate: map['GNRL_RNK2_CRSPAREA_RCPTDE'] as String?,
-      generalRank2CorrespondingAreaReceptionEndDate: map['GNRL_RNK2_CRSPAREA_ENDDE'] as String?,
-      generalRank2OtherAreaReceptionStartDate: map['GNRL_RNK2_ETC_AREA_RCPTDE'] as String?,
-      generalRank2OtherAreaReceptionEndDate: map['GNRL_RNK2_ETC_AREA_ENDDE'] as String?,
-      prizeWinnerAnnouncementDate: map['PRZWNER_PRESNATN_DE'] as String?,
-      contractConclusionStartDate: map['CNTRCT_CNCLS_BGNDE'] as String?,
-      contractConclusionEndDate: map['CNTRCT_CNCLS_ENDDE'] as String?,
+      applicationReceptionStartDate: map['RCEPT_BGNDE'] as Timestamp?,
+      applicationReceptionEndDate: map['RCEPT_ENDDE'] as Timestamp?,
+      specialSupplyReceptionStartDate: map['SPSPLY_RCEPT_BGNDE'] as Timestamp?,
+      specialSupplyReceptionEndDate: map['SPSPLY_RCEPT_ENDDE'] as Timestamp?,
+      generalRank1CorrespondingAreaReceptionStartDate: map['GNRL_RNK1_CRSPAREA_RCPTDE'] as Timestamp?,
+      generalRank1CorrespondingAreaReceptionEndDate: map['GNRL_RNK1_CRSPAREA_ENDDE'] as Timestamp?,
+      generalRank1OtherAreaReceptionStartDate: map['GNRL_RNK1_ETC_AREA_RCPTDE'] as Timestamp?,
+      generalRank1OtherAreaReceptionEndDate: map['GNRL_RNK1_ETC_AREA_ENDDE'] as Timestamp?,
+      generalRank2CorrespondingAreaReceptionStartDate: map['GNRL_RNK2_CRSPAREA_RCPTDE'] as Timestamp?,
+      generalRank2CorrespondingAreaReceptionEndDate: map['GNRL_RNK2_CRSPAREA_ENDDE'] as Timestamp?,
+      generalRank2OtherAreaReceptionStartDate: map['GNRL_RNK2_ETC_AREA_RCPTDE'] as Timestamp?,
+      generalRank2OtherAreaReceptionEndDate: map['GNRL_RNK2_ETC_AREA_ENDDE'] as Timestamp?,
+      prizeWinnerAnnouncementDate: map['PRZWNER_PRESNATN_DE'] as Timestamp?,
+      contractConclusionStartDate: map['CNTRCT_CNCLS_BGNDE'] as Timestamp?,
+      contractConclusionEndDate: map['CNTRCT_CNCLS_ENDDE'] as Timestamp?,
       homepageAddress: map['HMPG_ADRES'] as String?,
       constructionEnterpriseName: map['CNSTRCT_ENTRPS_NM'] as String?,
       inquiryTelephone: map['MDHS_TELNO'] as String?,
