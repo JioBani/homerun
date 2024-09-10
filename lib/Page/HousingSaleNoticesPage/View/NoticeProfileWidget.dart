@@ -2,24 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/HouseDetailTypeBoxWidget.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
-import 'package:homerun/Page/NoticesPage/ApplyhomeCodeConverter.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/Model/NoticeDto.dart';
-import 'package:homerun/Page/NoticesPage/View/AdNoticePage.dart';
+import 'package:homerun/Page/NoticesPage/View/NoticePage/AdNoticePage.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Style/TestImages.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 
+//TODO 특별공급 알림 박스 색 변경
 class NoticeProfileWidget extends StatelessWidget {
-  const NoticeProfileWidget({super.key, required this.notice});
+  NoticeProfileWidget({super.key, required this.notice});
+
   final Notice notice;
+
+  late final String announcementDateText;
+  late final String specialDateText;
+  late final String generalDateText;
+
+  late final DateTime? announcementDate = notice.noticeDto?.info?.recruitmentPublicAnnouncementDate?.toDate();
+  late final DateTime? specialDate = notice.noticeDto?.info?.specialSupplyReceptionStartDate?.toDate();
+  late final DateTime? generalDate = notice.noticeDto?.info?.generalRank1CorrespondingAreaReceptionStartDate?.toDate();
+
+  void initText(){
+    announcementDateText = formatDate(announcementDate);
+    specialDateText =  formatDate(specialDate);
+    generalDateText = formatDate(generalDate);
+  }
+
+  String formatDate(DateTime? date){
+    return TimeFormatter.tryDateToDatString(date) ?? "";
+  }
+
+  /// 왼쪽 상단 알림 박스 리스트 제작
+  List<Widget> generateAlertBox(){
+    List<Widget> result = [];
+
+    //#. 중복될 가능성이 있지만 ui overflow를 방지하기 위해서 하나만 활성화 되도록 함
+    if(announcementDate != null){
+      if(TimeFormatter.calculateDaysDifference(announcementDate!) == 0){
+        result.add(const AlertBoxWidget(text: "오늘공고",color: Palette.defaultRed,));
+      }
+    }
+    else if(specialDate != null){
+      if(TimeFormatter.calculateDaysDifference(specialDate!) == 0){
+        result.add(const AlertBoxWidget(text: "오늘 일반공급 1순위 접수",color: Palette.defaultOrange,));
+      }
+    }
+    else if(generalDate != null){
+      if(TimeFormatter.calculateDaysDifference(generalDate!) == 0){
+        result.add(const AlertBoxWidget(text: "오늘 특별공급 접수",color: Colors.deepPurple,));
+      }
+    }
+
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    initText();
 
     if(notice.noticeDto == null || notice.noticeDto!.info == null){
       return Container(
@@ -56,15 +101,32 @@ class NoticeProfileWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //#. 청약상세 구분 및 조회수
+              //#. 상단 정보
               Row(
                 children: [
                   //#. 청약상세 구분
                   HouseDetailTypeBoxWidget(text: aptInfo.houseDetailSectionName ?? '없음'),
+                  //#. 알림 박스 리스트
+                  ...generateAlertBox(),
                   const Spacer(),
+                  //#. 좋아요
+                  Icon(
+                    Icons.favorite,
+                    color: Palette.defaultRed,
+                    size: 10.sp,
+                  ), //TODO 이미지로 변경
+                  Gap(4.w),
+                  Text(
+                    "좋아요 ${noticeDto.likes}",
+                    style: TextStyle(
+                        fontSize: 10.sp, //TODO 디자인은 8인데 10으로 키움
+                        color: Palette.brightMode.darkText
+                    ),
+                  ),
+                  Gap(6.w),
+                  //#. 조회수
                   Image.asset(NoticePageImages.star),
                   Gap(4.w),
-                  //#. 조회수
                   Text(
                     "조회수 ${noticeDto.views}",
                     style: TextStyle(
@@ -74,7 +136,7 @@ class NoticeProfileWidget extends StatelessWidget {
                   )
                 ],
               ),
-              Gap(12.w),
+              Gap(8.w),
               //#. 주택 이름
               Row(
                 children: [
@@ -95,6 +157,7 @@ class NoticeProfileWidget extends StatelessWidget {
                 ],
               ),
               Gap(15.w),
+              //#. 사진 및 상세 정보
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -106,18 +169,19 @@ class NoticeProfileWidget extends StatelessWidget {
                     fit: BoxFit.fitHeight,
                   ),
                   Gap(10.w),
+                  //#. 상세 정보
                   Expanded(
                     child: SizedBox(
                       height: 125.w,
                       child: DefaultTextStyle(
                         style: TextStyle(
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black
                         ),
                         child: Column(
                           children: [
-                            //#. 오늘공고
+                            //#. 일정
                             Container(
                               padding : EdgeInsets.symmetric(horizontal: 4.w,vertical: 4.w),
                               decoration: BoxDecoration(
@@ -126,13 +190,14 @@ class NoticeProfileWidget extends StatelessWidget {
                               ),
                               child: Column(
                                 children: [
+                                  //#. 공오 일자
                                   Row(
                                     children: [
                                       const StarImage(color: Palette.primary,),
                                       Gap(4.w),
-                                      const Text("오늘공고"),
+                                      const Text("공고일자"),
                                       const Spacer(),
-                                      const Text("2024.06.30"),
+                                      Text(announcementDateText), //#. 공고 일자는 지나는 것이 의미가 없기 때문에
                                     ],
                                   ),
                                   //#. 특별공급 접수일
@@ -142,7 +207,7 @@ class NoticeProfileWidget extends StatelessWidget {
                                       Gap(4.w),
                                       const Text("특별공급 접수"),
                                       const Spacer(),
-                                      const Text("2024.06.30"),
+                                      DateText(dateTime : specialDate),
                                     ],
                                   ),
                                   //#. 일반공급 1순위 접수
@@ -152,29 +217,33 @@ class NoticeProfileWidget extends StatelessWidget {
                                       Gap(4.w),
                                       const Text("일반공급 1순위 접수"),
                                       const Spacer(),
-                                      const Text("2024.06.30"),
+                                      DateText(dateTime : generalDate),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
                             Gap(8.w),
+                            //#. 주소
                             Row(
                               children: [
                                 Gap(5.sp + 8.w),
-                                Text(
-                                  "APT/공급규모: 200세대\n"
-                                      "서울 서대문구 영천동 60-20 120필지\n"
-                                      "건설사: 현대엔지니어링",
-                                  style: TextStyle(
-                                      color: Palette.brightMode.darkText,
-                                      fontSize: 9.sp,
-                                      fontWeight: FontWeight.normal
+                                Expanded(
+                                  child: Text(
+                                    aptInfo.supplyLocationAddress ?? "",
+                                    maxLines: 3,
+                                    style: TextStyle(
+                                      overflow: TextOverflow.ellipsis,
+                                      color: Colors.black,
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.w500
+                                    ),
                                   ),
                                 )
                               ],
                             ),
                             const Spacer(),
+                            //#. 분양 가격
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -228,4 +297,61 @@ class StarImage extends StatelessWidget {
     );
   }
 }
+
+//TODO 블러 radius 회의
+class AlertBoxWidget extends StatelessWidget {
+  const AlertBoxWidget({super.key, required this.text, required this.color});
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(left: 6.w),
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(2.r),
+        boxShadow: [BoxShadow(offset: Offset(0, 4.w), blurRadius: 10.r , color: Colors.black.withOpacity(0.25))]
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 10.sp,
+          color: Colors.white
+        ),
+      ),
+    );
+  }
+}
+
+/// 청약 일정의 지남에 따라서 Text색을 변경하는 Text 위젯
+class DateText extends StatelessWidget {
+  const DateText({super.key, this.dateTime});
+  final DateTime? dateTime;
+
+  bool checkOver(){
+    if(dateTime != null && dateTime!.difference(DateTime.now()) > Duration.zero){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var text = dateTime == null ? "" : TimeFormatter.dateToDatString(dateTime!);
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 10.sp,
+        fontWeight: FontWeight.w600,
+        color: checkOver() ? Palette.brightMode.mediumText : Colors.black
+      ),
+    );
+  }
+}
+
+
 
