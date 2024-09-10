@@ -9,8 +9,13 @@ class NoticeDto {
   final int likes;
   final int scraps;
   final String houseName;
+  
+  /// 청약 접수 시작일
   final Timestamp applicationReceptionStartDate;
+  
+  /// 분양 공고일
   final Timestamp recruitmentPublicAnnouncementDate;
+
   final APTAnnouncement? info;
 
   NoticeDto({
