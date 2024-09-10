@@ -22,6 +22,7 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
   bool get wantKeepAlive => true;
 
   late final NaverMapController? naverMapController;
+  bool addressNotFound = false;
 
   Future<void> moveMapCameraToAddress(NaverMapController controller) async {
     try {
@@ -30,6 +31,7 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
       }
 
       final geocodeData = await NaverGeocodeService.instance.fetchGeocode(widget.notice.noticeDto?.info?.supplyLocationAddress ?? '');
+
       if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
         var position = NLatLng(
             double.parse(geocodeData.addresses![0].y ?? ''),
@@ -38,16 +40,18 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
         final cameraUpdate = NCameraUpdate.withParams(
           target: position,
         );
-
         await controller.updateCamera(cameraUpdate);
-
         final infoWindow = NInfoWindow.onMap(
             id: "position",
             position: position,
-            text: widget.notice.noticeDto?.houseName ?? ''
+            text: widget.notice.noticeDto?.houseName ?? '위치'
         );
-
         controller.addOverlay(infoWindow);
+      }
+      else{
+        addressNotFound = true;
+        setState(() {});
+        StaticLogger.logger.e("주소를 찾을 수 없습니다.");
       }
     } catch (e , s) {
       //TODO 사용자에게 알림 주기
@@ -116,6 +120,39 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
                 icon: const Icon(Icons.fullscreen_rounded)
             ),
           ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Builder(
+              builder: (_){
+                if(addressNotFound){
+                  return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.w),
+                    margin: EdgeInsets.only(bottom: 5.w),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(2.r),
+                      boxShadow: [BoxShadow(
+                        offset: Offset(0, 2.w),
+                        blurRadius: 4.r,
+                        color: Colors.black.withOpacity(0.25)
+                      )]
+                    ),
+                    child: Text(
+                      "위치를 찾을 수 없습니다.",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11.sp
+                      ),
+                    )
+                  );
+                }
+                else{
+                  return const SizedBox.shrink();
+                }
+              }
+            ),
+          )
         ],
       );
     }
