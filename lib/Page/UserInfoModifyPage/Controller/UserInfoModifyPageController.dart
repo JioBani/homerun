@@ -21,7 +21,6 @@ class UserInfoModifyPageController extends GetxController{
   final ImagePicker picker = ImagePicker();
   final UserInfoValidator userInfoValidator = UserInfoValidator();
   final UserInfoService userInfoService = UserInfoService();
-  final TimeFormatter timeFormatter = TimeFormatter();
 
   late final TextEditingController nickNameController;
   late final TextEditingController birthController;
@@ -44,7 +43,7 @@ class UserInfoModifyPageController extends GetxController{
 
   UserInfoModifyPageController({required this.userDto}){
     initNickName = userDto.displayName;
-    initBirth = timeFormatter.dateToDatString(userDto.birth.toDate());
+    initBirth = TimeFormatter.dateToDatString(userDto.birth.toDate());
     initGender = userDto.gender;
     initRegions = userDto.interestedRegions.where((region)=>region != null).cast<Region>().toList();
 

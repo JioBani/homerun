@@ -14,7 +14,6 @@ class ScheduleInfoWidget extends StatelessWidget {
   final APTAnnouncement? info;
   final String failText = "데이터를 가져 올 수 없습니다.";
   final String collectingText = "데이터 취합 중 입니다.";
-  final TimeFormatter timeFormatter = TimeFormatter();
 
 
   /// 남은 일에 따라 마감, 오늘접수, x일 남음 반환
@@ -36,7 +35,7 @@ class ScheduleInfoWidget extends StatelessWidget {
       return const SizedBox();
     }
 
-    int days = timeFormatter.calculateDaysDifference(dateTime);
+    int days = TimeFormatter.calculateDaysDifference(dateTime);
 
     if(0 <= days && days <= 3){ //#. 0 ~ 3일 남았을떄
       return Expanded(
@@ -102,12 +101,12 @@ class ScheduleInfoWidget extends StatelessWidget {
       signData = failText;
     }
     else{
-      announcementData = timeFormatter.tryDateToKoreanString(info!.recruitmentPublicAnnouncementDate?.toDate()) ?? collectingText;
-      specialData = timeFormatter.tryDateToKoreanString(info!.specialSupplyReceptionStartDate?.toDate()) ?? collectingText;
-      generalData1st = timeFormatter.tryDateToKoreanString(info!.generalRank1CorrespondingAreaReceptionEndDate?.toDate()) ?? collectingText;
-      generalData2nd = timeFormatter.tryDateToKoreanString(info!.generalRank2CorrespondingAreaReceptionStartDate?.toDate()) ?? collectingText;
-      winnerDate = timeFormatter.tryDateToKoreanString(info!.prizeWinnerAnnouncementDate?.toDate()) ?? collectingText;
-      signData = timeFormatter.tryDateToKoreanString(info!.contractConclusionStartDate?.toDate()) ?? collectingText;
+      announcementData = TimeFormatter.tryDateToKoreanString(info!.recruitmentPublicAnnouncementDate?.toDate()) ?? collectingText;
+      specialData = TimeFormatter.tryDateToKoreanString(info!.specialSupplyReceptionStartDate?.toDate()) ?? collectingText;
+      generalData1st = TimeFormatter.tryDateToKoreanString(info!.generalRank1CorrespondingAreaReceptionEndDate?.toDate()) ?? collectingText;
+      generalData2nd = TimeFormatter.tryDateToKoreanString(info!.generalRank2CorrespondingAreaReceptionStartDate?.toDate()) ?? collectingText;
+      winnerDate = TimeFormatter.tryDateToKoreanString(info!.prizeWinnerAnnouncementDate?.toDate()) ?? collectingText;
+      signData = TimeFormatter.tryDateToKoreanString(info!.contractConclusionStartDate?.toDate()) ?? collectingText;
     }
 
     return InfoBoxWidget(

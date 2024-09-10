@@ -4,7 +4,6 @@ import 'package:korean_profanity_filter/korean_profanity_filter.dart';
 
 //TODO 닉네임 체크는 서버로 옮겨야 할듯
 class UserInfoValidator{
-  final TimeFormatter timeFormatter = TimeFormatter();
 
   final double maxProfileMbSize = 3;
   final int koreanNameMin = 2;
@@ -107,7 +106,7 @@ class UserInfoValidator{
   /// 생년월일 체크
   bool checkBirthText(String dateString){
     try{
-      timeFormatter.datStringToTime(dateString);
+      TimeFormatter.datStringToTime(dateString);
       return true;
     }catch(e){
       return false;
