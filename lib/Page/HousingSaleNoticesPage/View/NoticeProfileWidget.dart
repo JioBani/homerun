@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -246,23 +247,26 @@ class NoticeProfileWidget extends StatelessWidget {
                             //#. 분양 가격
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Gap(5.sp + 8.w),
                                 Text(
-                                  "분양가격",
+                                  "분양가",
                                   style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w600,
                                       color: Palette.defaultRed
                                   ),
                                 ),
-                                const Spacer(),
-                                Text(
-                                  "1.9 ~ 2.5 억",
-                                  style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Palette.defaultRed
+                                Expanded(
+                                  child: AutoSizeText(
+                                    "10억 3,000 ~ 19억 5,000",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: Palette.defaultRed
+                                    ),
+                                    textAlign: TextAlign.right,
                                   ),
                                 ),
                               ],
