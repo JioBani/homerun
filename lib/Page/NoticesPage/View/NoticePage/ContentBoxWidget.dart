@@ -123,11 +123,12 @@ class ContentTitleBoxWidget extends StatelessWidget {
 }
 
 class ContentTextBoxWidget extends StatelessWidget {
-  const ContentTextBoxWidget({super.key, required this.text, required this.width, required this.height, this.margin});
+  const ContentTextBoxWidget({super.key, required this.text, required this.width, required this.height, this.margin, this.maxLines});
   final String text;
   final double height;
   final double width;
   final EdgeInsets? margin;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -137,13 +138,14 @@ class ContentTextBoxWidget extends StatelessWidget {
       height: height,
       color: const Color(0xffF7F7F7),
       child: Center(
-        child: Text(
+        child: AutoSizeText(
           text,
           style: TextStyle(
             fontSize: 11.sp,
             fontWeight: FontWeight.w600,
             color: Palette.brightMode.darkText
           ),
+          maxLines: maxLines,
         ),
       ),
     );
