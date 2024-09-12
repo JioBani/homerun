@@ -8,7 +8,6 @@ import 'package:gradient_borders/input_borders/gradient_outline_input_border.dar
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
-import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/FirebaseReferences/UserInfoReferences.dart';
 import 'package:homerun/Page/LoginPage/View/UserInfoInputPage/SelectBoxWidget.dart';
@@ -20,7 +19,6 @@ import 'package:homerun/Value/Region.dart';
 
 class UserInfoModifyPage extends StatelessWidget {
   UserInfoModifyPage({super.key});
-  final TimeFormatter timeFormatter = TimeFormatter();
 
   @override
   Widget build(BuildContext context) {
