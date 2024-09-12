@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/SubTitleWidget.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
+import 'package:homerun/String/APTAnnouncementStrings.dart';
 
 import 'ContentBoxWidget.dart';
 
@@ -14,25 +15,22 @@ class BasicInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const dataErrorText = "데이터를 가져 올 수 없습니다.";
-    const dataIsBeingCollected = "데이터 취합중 입니다.";
-
     String location = "";
     String size = "";
     String company = "";
     String moveIn = "";
 
     if(info == null){
-      location = dataErrorText;
-      size = dataErrorText;
-      company = dataErrorText;
-      moveIn = dataErrorText;
+      location = APTAnnouncementStrings.couldNotGetData;
+      size = APTAnnouncementStrings.couldNotGetData;
+      company = APTAnnouncementStrings.couldNotGetData;
+      moveIn = APTAnnouncementStrings.couldNotGetData;
     }
     else{
-      location = info!.supplyLocationAddress ?? dataIsBeingCollected;
-      size =  info?.totalSupplyHouseholdCount == null ? dataIsBeingCollected : "${info?.totalSupplyHouseholdCount}세대";
-      company = info!.constructionEnterpriseName ?? dataIsBeingCollected;
-      moveIn = info!.moveInPrearrangeYearMonth ?? dataIsBeingCollected;
+      location = info!.supplyLocationAddress ?? APTAnnouncementStrings.collectionData;
+      size =  info?.totalSupplyHouseholdCount == null ? APTAnnouncementStrings.collectionData : "${info?.totalSupplyHouseholdCount}세대";
+      company = info!.constructionEnterpriseName ?? APTAnnouncementStrings.collectionData;
+      moveIn = info!.moveInPrearrangeYearMonth ?? APTAnnouncementStrings.collectionData;
     }
 
     return InfoBoxWidget(
@@ -51,18 +49,7 @@ class BasicInfoWidget extends StatelessWidget {
             contentWidth: 188.w,
             content: Padding(
               padding: EdgeInsets.symmetric(vertical: 5.w , horizontal: 15.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(location),
-                  Text(
-                    "(고양 장항지구 B-3BL)",
-                    style: TextStyle(
-                      fontSize: 10.sp
-                    ),
-                  ),
-                ],
-              ),
+              child: Center(child: Text(location)),
             ),
           ),
           Gap(2.w),
