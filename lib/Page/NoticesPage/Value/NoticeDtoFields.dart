@@ -7,4 +7,6 @@ class NoticeDtoFields {
   static const String houseName = 'houseName';
   static const String applicationReceptionStartDate = 'applicationReceptionStartDate';
   static const String recruitmentPublicAnnouncementDate = 'recruitmentPublicAnnouncementDate';
+  static const String aptAnnouncementByTypeList = 'aptAnnouncementByTypeList';
+  static const String processedAPTAnnouncementByHouseType = 'processedAPTAnnouncementByHouseType';
 }
