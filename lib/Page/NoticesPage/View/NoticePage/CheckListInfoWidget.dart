@@ -3,13 +3,31 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/SubTitleWidget.dart';
+import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
+import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Palette.dart';
 
 class CheckListInfoWidget extends StatelessWidget {
-  const CheckListInfoWidget({super.key});
+  const CheckListInfoWidget({super.key, this.announcement});
+  final APTAnnouncement? announcement;
 
   @override
   Widget build(BuildContext context) {
+    final String selectionText;
+    bool hasSelectionData = true;
+
+    if(announcement == null){
+      selectionText = APTAnnouncementStrings.couldNotGetData;
+      hasSelectionData = false;
+    }
+    else if(announcement!.houseDetailSectionName == null){
+      selectionText = APTAnnouncementStrings.collectionData;
+      hasSelectionData = false;
+    }
+    else{
+      selectionText = announcement!.houseDetailSectionName!;
+    }
+
     return InfoBoxWidget(
         child: Center(
           child: SizedBox(
@@ -39,12 +57,12 @@ class CheckListInfoWidget extends StatelessWidget {
                             size: 16.sp,
                           ), //TODO 이미지 적용
                           Gap(6.w),
-                          Text("주택 유형 : "),
+                          const Text("주택 유형 : "),
                           Text(
-                            "국민",
+                            selectionText,
                             style: TextStyle(
-                              color: Palette.defaultRed,
-                              fontWeight: FontWeight.w600
+                              color: hasSelectionData ? Palette.defaultRed : Palette.brightMode.darkText,
+                              fontWeight: hasSelectionData ?  FontWeight.w600 : FontWeight.normal
                             ),
                           ),
                         ],
