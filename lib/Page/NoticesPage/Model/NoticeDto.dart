@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Page/NoticesPage/Value/NoticeDtoFields.dart';
+import 'package:homerun/Service/APTAnnouncementApiService/AptAnnouncementByHouseType.dart';
+import 'package:homerun/Service/APTAnnouncementApiService/ProcessedAPTAnnouncementByHouseType.dart';
 
 class NoticeDto {
   final String noticeId;
@@ -17,6 +19,8 @@ class NoticeDto {
   final Timestamp recruitmentPublicAnnouncementDate;
 
   final APTAnnouncement? info;
+  final List<AptAnnouncementByHouseType?>? aptAnnouncementByTypeList;
+  final ProcessedAPTAnnouncementByHouseType? processedAPTAnnouncementByHouseType;
 
   NoticeDto({
     required this.noticeId,
@@ -26,16 +30,20 @@ class NoticeDto {
     required this.houseName,
     required this.applicationReceptionStartDate,
     required this.recruitmentPublicAnnouncementDate,
+    required this.aptAnnouncementByTypeList,
+    required this.processedAPTAnnouncementByHouseType,
     required this.info,
   });
 
   factory NoticeDto.fromMap(Map<String, dynamic> map) {
     APTAnnouncement? announcement;
+
     try{
       announcement = APTAnnouncement.fromMap(map[NoticeDtoFields.info]);
     }catch(e , s){
       StaticLogger.logger.e("$e\n$s");
     }
+
     return NoticeDto(
       noticeId: map[NoticeDtoFields.noticeId] as String,
       views: map[NoticeDtoFields.views] as int,
@@ -44,6 +52,12 @@ class NoticeDto {
       houseName: map[NoticeDtoFields.houseName] as String,
       applicationReceptionStartDate: map[NoticeDtoFields.applicationReceptionStartDate] as Timestamp,
       recruitmentPublicAnnouncementDate: map[NoticeDtoFields.recruitmentPublicAnnouncementDate] as Timestamp,
+      aptAnnouncementByTypeList: AptAnnouncementByHouseType.tryMakeList(
+          map[NoticeDtoFields.aptAnnouncementByTypeList] as List<dynamic>?
+      ),
+      processedAPTAnnouncementByHouseType: ProcessedAPTAnnouncementByHouseType.tryFromMap(
+          map[NoticeDtoFields.processedAPTAnnouncementByHouseType]
+      ),
       info: announcement,
     );
   }
@@ -58,6 +72,8 @@ class NoticeDto {
       NoticeDtoFields.applicationReceptionStartDate: applicationReceptionStartDate,
       NoticeDtoFields.recruitmentPublicAnnouncementDate: recruitmentPublicAnnouncementDate,
       NoticeDtoFields.info: info?.toMap(),
+      NoticeDtoFields.aptAnnouncementByTypeList: aptAnnouncementByTypeList?.map((e)=>e?.toMap()),
+      NoticeDtoFields.processedAPTAnnouncementByHouseType: processedAPTAnnouncementByHouseType?.toMap(),
     };
   }
 }
