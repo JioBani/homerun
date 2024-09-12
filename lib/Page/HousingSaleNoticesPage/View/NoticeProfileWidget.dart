@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/PriceFormatter.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/HouseDetailTypeBoxWidget.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
@@ -10,6 +11,8 @@ import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/Model/NoticeDto.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/AdNoticePage.dart';
 import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
+import 'package:homerun/Service/APTAnnouncementApiService/ProcessedAPTAnnouncementByHouseType.dart';
+import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Style/TestImages.dart';
@@ -23,6 +26,7 @@ class NoticeProfileWidget extends StatelessWidget {
   late final String announcementDateText;
   late final String specialDateText;
   late final String generalDateText;
+  late final String priceText;
 
   late final DateTime? announcementDate = notice.noticeDto?.info?.recruitmentPublicAnnouncementDate?.toDate();
   late final DateTime? specialDate = notice.noticeDto?.info?.specialSupplyReceptionStartDate?.toDate();
@@ -32,6 +36,20 @@ class NoticeProfileWidget extends StatelessWidget {
     announcementDateText = formatDate(announcementDate);
     specialDateText =  formatDate(specialDate);
     generalDateText = formatDate(generalDate);
+
+    if(notice.noticeDto?.processedAPTAnnouncementByHouseType != null){
+      ProcessedAPTAnnouncementByHouseType processed = notice.noticeDto!.processedAPTAnnouncementByHouseType!;
+
+      if(processed.maxSupplyPrice == null || processed.maxSupplyPrice == null){
+        priceText = APTAnnouncementStrings.collectionData;
+      }
+      else{
+        priceText = "${PriceFormatter.formatToEokThousand(processed.minSupplyPrice!)} ~ ${PriceFormatter.formatToEokThousand(processed.maxSupplyPrice!)}";
+      }
+    }
+    else{
+      priceText = APTAnnouncementStrings.couldNotGetData;
+    }
   }
 
   String formatDate(DateTime? date){
@@ -259,7 +277,7 @@ class NoticeProfileWidget extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: AutoSizeText(
-                                    "10억 3,000 ~ 19억 5,000",
+                                    priceText,
                                     maxLines: 1,
                                     style: TextStyle(
                                         fontSize: 12.sp,
