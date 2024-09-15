@@ -8,11 +8,13 @@ import 'package:homerun/Page/LoginPage/View/AgreementPage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Style/Fonts.dart';
+import 'package:homerun/Style/Palette.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key, this.goHomeAfterLogin = false , this.hasNoBack = false});
   final bool goHomeAfterLogin;
   final bool hasNoBack;
+  final Color welcomeTextColor = const Color(0xff3F3D3D);
 
   Future<void> login(
       BuildContext context ,
@@ -85,10 +87,20 @@ class LoginPage extends StatelessWidget {
             SizedBox(height: 30.w,),
             //#. 안내 테스트
             Text(
-              "간편하게 로그인하고\n 다양한 서비스를 이용하세요",
+              "간편하게 로그인하고",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 22.sp,
+                color: welcomeTextColor
+              ),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              "다양한 서비스를 이용하세요",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 22.sp,
+                color: welcomeTextColor
               ),
               textAlign: TextAlign.center,
             ),
