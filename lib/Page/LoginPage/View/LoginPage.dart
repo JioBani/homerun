@@ -10,8 +10,9 @@ import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Style/Fonts.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key, this.goHomeAfterLogin = false});
+  const LoginPage({super.key, this.goHomeAfterLogin = false , this.hasNoBack = false});
   final bool goHomeAfterLogin;
+  final bool hasNoBack;
 
   Future<void> login(
       BuildContext context ,
@@ -61,7 +62,7 @@ class LoginPage extends StatelessWidget {
         child: Column(
           children: [
             //#. 뒤로가기 아이콘
-            Align(
+            hasNoBack ?  const SizedBox.shrink() : Align(
               alignment: Alignment.centerLeft,
               child: IconButton(
                 onPressed: (){
