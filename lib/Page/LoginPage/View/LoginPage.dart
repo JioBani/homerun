@@ -172,11 +172,36 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 13.w,),
+            InkWell(
+              onTap: () => Get.to(const HousingSaleNoticesPage()),
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 25.w),
+                height: 40.w,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(color: Palette.brightMode.lightText , width: 1.sp)
+                ),
+                child: Center(
+                  child: Text(
+                    "로그인 없이 계속하기",
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black
+                    ),
+                  ),
+                ),
+              ),
+            ),
             const Spacer(),
             SizedBox(height: 13.w,),
             //#. 로그인 없이 계속하기
             InkWell(
-              onTap: (){},
+              onTap: (){
+                Get.back();
+              },
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 40.w,
