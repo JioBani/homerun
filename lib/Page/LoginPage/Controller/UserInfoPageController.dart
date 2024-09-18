@@ -46,10 +46,6 @@ class UserInfoPageController extends GetxController{
 
       profileImage = pickedFile;
 
-      if(profileImage != null){
-        await UserInfoService().updateProfile(profileImage!);
-      }
-
       update();
     }catch(e,s){
       CustomSnackbar.show('오류', '이미지를 가져 올 수 없습니다.');
