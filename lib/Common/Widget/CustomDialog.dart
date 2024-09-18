@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:homerun/Common/model/Result.dart';
 
+//#. 확인 다이얼로그 제작하기
 class CustomDialog{
 
   /// 명세
@@ -208,7 +209,7 @@ class CustomDialog{
                   //#. 내용
                   Expanded(
                     child: Padding(
-                      padding: padding ?? EdgeInsets.symmetric(horizontal: 5.w,vertical: 5.w),
+                      padding: padding ?? EdgeInsets.symmetric(horizontal: 15.w,vertical: 5.w),
                       child: Center(
                         child: Text(
                           content,
