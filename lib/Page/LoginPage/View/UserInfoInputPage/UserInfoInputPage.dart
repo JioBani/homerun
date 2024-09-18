@@ -8,14 +8,15 @@ import 'package:gradient_borders/gradient_borders.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Page/LoginPage/Controller/UserInfoPageController.dart';
 import 'package:homerun/Style/Palette.dart';
-import 'package:homerun/Value/AgeRange.dart';
 import 'package:homerun/Value/Region.dart';
 import 'SelectBoxWidget.dart';
 
 //TODO 스크롤해야한다는 것을 어떻게 알릴 것인지
 
 class UserInfoInputPage extends StatelessWidget {
-  const UserInfoInputPage({super.key});
+  UserInfoInputPage({super.key});
+  final FocusNode birthFocusNode = FocusNode();
+  final FocusNode nickNameFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +121,7 @@ class UserInfoInputPage extends StatelessWidget {
                 SizedBox(height: 10.w,),
                 TextFormField(
                   controller: controller.nickNameController,
+                  focusNode: nickNameFocusNode,
                   style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500
@@ -159,6 +161,7 @@ class UserInfoInputPage extends StatelessWidget {
                   controller: controller.birthController,
                   keyboardType: TextInputType.datetime,
                   onChanged: controller.onBirthTextChange,
+                  focusNode: birthFocusNode,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w500
@@ -169,7 +172,7 @@ class UserInfoInputPage extends StatelessWidget {
                   ],
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 10.w, horizontal: 20.w),
-                    hintText: "영문·한글 최대 10자까지 가능해요.",
+                    hintText: "0000.00.00",
                     prefixIconConstraints: BoxConstraints(
                       minWidth: 25.sp,
                       minHeight: 25.sp,
@@ -256,6 +259,13 @@ class UserInfoInputPage extends StatelessWidget {
                 //#. 다음 버튼
                 InkWell(
                   onTap: () async {
+                    if(birthFocusNode.hasFocus){
+                      birthFocusNode.unfocus();
+                    }
+                    else if(nickNameFocusNode.hasFocus){
+                      nickNameFocusNode.unfocus();
+                    }
+
                     controller.signUp(context);
                   },
                   child: Container(
