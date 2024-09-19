@@ -37,3 +37,7 @@ class NoticePageCommentImages{
   final String bad = "assets/images/notice_page/comment/bad.png";
   final String reply = "assets/images/notice_page/comment/reply.png";
 }
+
+class SignUpSuccessPageImages{
+  static String success = "assets/images/sign_up_success_page/success.png";
+}
