@@ -113,6 +113,7 @@ flutter:
     - assets/images/housing_sale_notices_page/
     - assets/images/notice_page/
     - assets/images/notice_page/comment/
+    - assets/images/sign_up_success_page/
     - shorebird.yaml
     - assets/config/.env
   #   - images/a_dot_burr.jpeg
