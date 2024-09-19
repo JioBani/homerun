@@ -39,7 +39,7 @@ class LoginPage extends StatelessWidget {
     }
     else if(result == LoginResult.userDoNotExistFailure){
       CustomSnackbar.show("알림", "회원가입이 필요합니다.");
-      bool? result = await Get.to<bool>(const AgreementPage());
+      bool? result = await Get.to<bool>(AgreementPage());
       if(result == true){
         if(context.mounted){
           Navigator.pop(context);
@@ -53,7 +53,7 @@ class LoginPage extends StatelessWidget {
       }
     }
     else{
-      CustomSnackbar.show("오류", "로그인에 실패했습니다. $result");
+      CustomSnackbar.show("오류", "로그인에 실패했습니다.");
     }
   }
 
@@ -197,27 +197,6 @@ class LoginPage extends StatelessWidget {
             ),
             const Spacer(),
             SizedBox(height: 13.w,),
-            //#. 로그인 없이 계속하기
-            InkWell(
-              onTap: (){
-                Get.back();
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 40.w,
-                  vertical: 5.w
-                ),
-                child: Text(
-                  "로그인 없이 계속하기",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15.sp,
-                    color: const Color(0xfffA4A4A6)
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 15.w,),
           ],
         ),
       ),
