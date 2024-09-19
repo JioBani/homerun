@@ -189,7 +189,7 @@ class UserInfoPageController extends GetxController{
     }
 
     //#. 회원가입 완료 페이지로 넘기고 재귀적으로 페이지 pop
-    bool? pageResult = await Get.to(const SignUpSuccessPage());
+    bool? pageResult = await Get.to(SignUpSuccessPage(name: nickNameController.text,));
     if(pageResult == true && context.mounted){
       Get.back(result: true);
     }
