@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Style/Fonts.dart';
+import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
+import 'package:homerun/Style/ShadowPalette.dart';
 
 class SignUpSuccessPage extends StatelessWidget {
-  const SignUpSuccessPage({super.key});
+  const SignUpSuccessPage({super.key, required this.name});
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -14,24 +18,32 @@ class SignUpSuccessPage extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Gap(100.w),
+              Gap(72.w),
+              Image.asset(
+                SignUpSuccessPageImages.success,
+                width: 200.w,
+                height: 200.w,
+              ),
+              Gap(62.w),
               Text(
-                "임강현님 환영합니다.",
+                "회원가입 완료!",
                 style: TextStyle(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w700,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Palette.brightMode.mediumText
                 ),
               ),
-              Gap(10.w),
+              Gap(37.w),
               Text(
-                "청약홈런에 가입이 완료되었습니다. 이제 청약에 대한 모든 정보를 확인 할 수 있어요.",
+                "'${name}' 님,\n청약홈런에 오신것을\n환영합니다!",
                 style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Palette.brightMode.mediumText
+                  fontSize: 30.sp,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: Fonts.BCCard
                 ),
+                textAlign: TextAlign.center,
               ),
               const Spacer(),
               InkWell(
@@ -43,21 +55,22 @@ class SignUpSuccessPage extends StatelessWidget {
                   height: 50.w,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.r),
-                    color: Theme.of(context).primaryColor
+                    color: Theme.of(context).primaryColor,
+                    boxShadow: [ShadowPalette.defaultShadow]
                   ),
                   child: Center(
                     child: Text(
                       "시작하기",
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontSize: 16.sp,
+                        fontSize: 20.sp,
                         color: Colors.white
                       ),
                     ),
                   ),
                 ),
               ),
-              Gap(20.w),
+              Gap(36.w),
             ],
           ),
         )
