@@ -5,8 +5,9 @@ class NoticeDtoFields {
   static const String likes = 'likes';
   static const String scraps = 'scraps';
   static const String houseName = 'houseName';
-  static const String applicationReceptionStartDate = 'applicationReceptionStartDate';
+  static const String subscriptionReceptionStartDate = 'subscriptionReceptionStartDate';
   static const String recruitmentPublicAnnouncementDate = 'recruitmentPublicAnnouncementDate';
   static const String aptAnnouncementByTypeList = 'aptAnnouncementByTypeList';
   static const String processedAPTAnnouncementByHouseType = 'processedAPTAnnouncementByHouseType';
+  static const String supplyMethod = 'supplyMethod';
 }
