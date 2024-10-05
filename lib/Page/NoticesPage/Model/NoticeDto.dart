@@ -1,26 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:homerun/Common/ApplyHome/ApplyHomeDto.dart';
+import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Page/NoticesPage/Value/NoticeDtoFields.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/AptAnnouncementByHouseType.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/ProcessedAPTAnnouncementByHouseType.dart';
 
-class NoticeDto {
+class NoticeDto{
   final String noticeId;
   final int views;
   final int likes;
   final int scraps;
   final String houseName;
+  final SupplyMethod supplyMethod;
   
   /// 청약 접수 시작일
-  final Timestamp applicationReceptionStartDate;
+  final Timestamp subscriptionReceptionStartDate;
   
   /// 분양 공고일
   final Timestamp recruitmentPublicAnnouncementDate;
 
-  final APTAnnouncement? info;
-  final List<AptAnnouncementByHouseType?>? aptAnnouncementByTypeList;
-  final ProcessedAPTAnnouncementByHouseType? processedAPTAnnouncementByHouseType;
+  final ApplyHomeDto applyHomeDto;
 
   NoticeDto({
     required this.noticeId,
@@ -28,21 +26,14 @@ class NoticeDto {
     required this.likes,
     required this.scraps,
     required this.houseName,
-    required this.applicationReceptionStartDate,
+    required this.subscriptionReceptionStartDate,
     required this.recruitmentPublicAnnouncementDate,
-    required this.aptAnnouncementByTypeList,
-    required this.processedAPTAnnouncementByHouseType,
-    required this.info,
+    required this.supplyMethod,
+    required this.applyHomeDto
   });
 
   factory NoticeDto.fromMap(Map<String, dynamic> map) {
-    APTAnnouncement? announcement;
-
-    try{
-      announcement = APTAnnouncement.fromMap(map[NoticeDtoFields.info]);
-    }catch(e , s){
-      StaticLogger.logger.e("$e\n$s");
-    }
+    SupplyMethod supplyMethod = SupplyMethodExtension.fromString(map[NoticeDtoFields.supplyMethod] as String);
 
     return NoticeDto(
       noticeId: map[NoticeDtoFields.noticeId] as String,
@@ -50,16 +41,20 @@ class NoticeDto {
       likes: map[NoticeDtoFields.likes] as int,
       scraps: map[NoticeDtoFields.scraps] as int,
       houseName: map[NoticeDtoFields.houseName] as String,
-      applicationReceptionStartDate: map[NoticeDtoFields.applicationReceptionStartDate] as Timestamp,
+      subscriptionReceptionStartDate: map[NoticeDtoFields.subscriptionReceptionStartDate] as Timestamp,
       recruitmentPublicAnnouncementDate: map[NoticeDtoFields.recruitmentPublicAnnouncementDate] as Timestamp,
-      aptAnnouncementByTypeList: AptAnnouncementByHouseType.tryMakeList(
-          map[NoticeDtoFields.aptAnnouncementByTypeList] as List<dynamic>?
-      ),
-      processedAPTAnnouncementByHouseType: ProcessedAPTAnnouncementByHouseType.tryFromMap(
-          map[NoticeDtoFields.processedAPTAnnouncementByHouseType]
-      ),
-      info: announcement,
+      supplyMethod: supplyMethod,
+      applyHomeDto : ApplyHomeDto.fromMap(map[NoticeDtoFields.info] as Map<String, dynamic>, supplyMethod)
     );
+  }
+
+  static NoticeDto? tryFromMap(Map<String, dynamic> map){
+    try{
+      return NoticeDto.fromMap(map);
+    }catch(e,s){
+      StaticLogger.logger.e("[NoticeDto.tryFromMap()] $e\n$s");
+      return null;
+    }
   }
 
   Map<String, dynamic> toMap() {
@@ -69,11 +64,8 @@ class NoticeDto {
       NoticeDtoFields.likes: likes,
       NoticeDtoFields.scraps: scraps,
       NoticeDtoFields.houseName: houseName,
-      NoticeDtoFields.applicationReceptionStartDate: applicationReceptionStartDate,
+      NoticeDtoFields.subscriptionReceptionStartDate: subscriptionReceptionStartDate,
       NoticeDtoFields.recruitmentPublicAnnouncementDate: recruitmentPublicAnnouncementDate,
-      NoticeDtoFields.info: info?.toMap(),
-      NoticeDtoFields.aptAnnouncementByTypeList: aptAnnouncementByTypeList?.map((e)=>e?.toMap()),
-      NoticeDtoFields.processedAPTAnnouncementByHouseType: processedAPTAnnouncementByHouseType?.toMap(),
     };
   }
 }
