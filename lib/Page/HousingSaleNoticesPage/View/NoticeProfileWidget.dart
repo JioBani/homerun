@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/ApplyHome/AptBasicInfo.dart';
+import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
 import 'package:homerun/Common/PriceFormatter.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/HouseDetailTypeBoxWidget.dart';
@@ -10,8 +12,6 @@ import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/Model/NoticeDto.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/AdNoticePage.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/ProcessedAPTAnnouncementByHouseType.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
@@ -19,32 +19,44 @@ import 'package:homerun/Style/TestImages.dart';
 
 //TODO 특별공급 알림 박스 색 변경
 class NoticeProfileWidget extends StatelessWidget {
-  NoticeProfileWidget({super.key, required this.notice});
+  NoticeProfileWidget({super.key, required this.notice , required this.supplyMethod});
 
   final Notice notice;
+  final SupplyMethod supplyMethod;
 
   late final String announcementDateText;
   late final String specialDateText;
   late final String generalDateText;
   late final String priceText;
 
-  late final DateTime? announcementDate = notice.noticeDto?.info?.recruitmentPublicAnnouncementDate?.toDate();
-  late final DateTime? specialDate = notice.noticeDto?.info?.specialSupplyReceptionStartDate?.toDate();
-  late final DateTime? generalDate = notice.noticeDto?.info?.generalRank1CorrespondingAreaReceptionStartDate?.toDate();
+  late final DateTime? announcementDate;
+  late final DateTime? specialDate;
+  late final DateTime? generalDate;
 
-  void initText(){
+  void initData(){
+    //#. 데이터 초기화
+    var aptBasicInfo = notice.noticeDto?.applyHomeDto.aptBasicInfo;
+    announcementDate = aptBasicInfo?.recruitmentPublicAnnouncementDate?.toDate();
+    specialDate =  aptBasicInfo?.specialSupplyReceptionStartDate?.toDate();
+
+    if(supplyMethod == SupplyMethod.General){
+      generalDate = aptBasicInfo?.generalRank1CorrespondingAreaReceptionStartDate?.toDate();
+    }
+    else{
+      generalDate = aptBasicInfo?.generalSupplyReceptionStartDate?.toDate();
+    }
+
     announcementDateText = formatDate(announcementDate);
     specialDateText =  formatDate(specialDate);
     generalDateText = formatDate(generalDate);
 
-    if(notice.noticeDto?.processedAPTAnnouncementByHouseType != null){
-      ProcessedAPTAnnouncementByHouseType processed = notice.noticeDto!.processedAPTAnnouncementByHouseType!;
-
-      if(processed.maxSupplyPrice == null || processed.maxSupplyPrice == null){
+    if(notice.noticeDto?.applyHomeDto != null){
+      if(notice.noticeDto?.applyHomeDto.maxSupplyPrice == null || notice.noticeDto?.applyHomeDto.minSupplyPrice == null){
         priceText = APTAnnouncementStrings.collectionData;
       }
       else{
-        priceText = "${PriceFormatter.formatToEokThousand(processed.minSupplyPrice!)} ~ ${PriceFormatter.formatToEokThousand(processed.maxSupplyPrice!)}";
+        priceText = "${PriceFormatter.formatToEokThousand(notice.noticeDto!.applyHomeDto.minSupplyPrice!.toDouble())} ~ "
+            "${PriceFormatter.formatToEokThousand(notice.noticeDto!.applyHomeDto.maxSupplyPrice!.toDouble())}";
       }
     }
     else{
@@ -83,9 +95,9 @@ class NoticeProfileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    initText();
+    initData();
 
-    if(notice.noticeDto == null || notice.noticeDto!.info == null){
+    if(notice.noticeDto == null || notice.noticeDto!.applyHomeDto.aptBasicInfo == null){
       return Container(
         height: 200.w,
         decoration: BoxDecoration(
@@ -96,7 +108,7 @@ class NoticeProfileWidget extends StatelessWidget {
     }
 
     NoticeDto noticeDto = notice.noticeDto!;
-    APTAnnouncement aptInfo = notice.noticeDto!.info!;
+    AptBasicInfo aptInfo = notice.noticeDto!.applyHomeDto.aptBasicInfo!;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 13.sp),
