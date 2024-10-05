@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:homerun/Common/ApplyHome/AptBasicInfo.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/SubTitleWidget.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 
 import 'ContentBoxWidget.dart';
@@ -11,7 +11,7 @@ import 'ContentBoxWidget.dart';
 //TODO 데이터를 불러오지 못했거나, 없거나, 취합중일때 어떻게 표현할지
 class BasicInfoWidget extends StatelessWidget {
   const BasicInfoWidget({super.key, required this.info});
-  final APTAnnouncement? info;
+  final AptBasicInfo? info;
 
   @override
   Widget build(BuildContext context) {
