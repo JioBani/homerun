@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:homerun/Page/LoginPage/View/LoginPage.dart';
+import 'package:homerun/Page/UserInfoModifyPage/View/UserInfoModifyPage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Style/TestImages.dart';
@@ -93,6 +94,7 @@ class ProfileWidget extends StatelessWidget {
                 children: [
                   Gap(20.w),
                   //#. 프로필 이미지
+                  //TODO 프로필 이미지 연결하기
                   ClipRRect(
                     borderRadius: BorderRadius.circular(60.w),
                     child: Image.asset(
@@ -124,7 +126,9 @@ class ProfileWidget extends StatelessWidget {
                       Gap(5.w),
                       //#. 수정버튼
                       InkWell(
-                        onTap: (){},
+                        onTap: (){
+                          Get.to(UserInfoModifyPage());
+                        },
                         child: Container(
                           width: 16.w,
                           height: 16.w,
