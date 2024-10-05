@@ -30,7 +30,9 @@ class _LocationMapState extends State<LocationMap> with AutomaticKeepAliveClient
         return;
       }
 
-      final geocodeData = await NaverGeocodeService.instance.fetchGeocode(widget.notice.noticeDto?.info?.supplyLocationAddress ?? '');
+      final geocodeData = await NaverGeocodeService.instance.fetchGeocode(
+          widget.notice.noticeDto?.applyHomeDto.aptBasicInfo?.supplyLocationAddress ?? ''
+      );
 
       if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
         var position = NLatLng(
@@ -170,7 +172,9 @@ class FullLocationMap extends StatelessWidget {
         return;
       }
 
-      final geocodeData = await NaverGeocodeService.instance.fetchGeocode(notice.noticeDto?.info?.supplyLocationAddress  ?? '');
+      final geocodeData = await NaverGeocodeService.instance.fetchGeocode(
+          notice.noticeDto?.applyHomeDto.aptBasicInfo?.supplyLocationAddress  ?? ''
+      );
 
       if(geocodeData.addresses != null && geocodeData.addresses!.isNotEmpty){
         var position = NLatLng(
