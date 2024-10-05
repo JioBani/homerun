@@ -72,7 +72,7 @@ class _NoticeScrapItemWidgetState extends State<NoticeScrapItemWidget> {
                               ),
                               SizedBox(width:  2.w),
                               //#. 분양상세정보
-                              HouseDetailTypeBoxWidget(text: notice?.noticeDto?.info?.houseDetailSectionName ?? '',)
+                              HouseDetailTypeBoxWidget(text: notice?.noticeDto?.applyHomeDto.aptBasicInfo?.houseDetailSectionName ?? '',)
                             ],
                           ),
                         ),
