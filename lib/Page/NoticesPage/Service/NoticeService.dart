@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/instance_manager.dart';
+import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
 import 'package:homerun/Common/Firebase/FirebaseFunctionsRequest.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/NoticesPage/Value/NoticeDtoFields.dart';
 import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
@@ -30,7 +32,7 @@ class NoticeService{
 
   Future<Result<bool>> like(String noticeId, bool like){
     return FirebaseFunctionsService.call<bool>(
-      FirebaseFunctionEndpoints.likeNotice,
+      FirebaseFunctionEndpoints.likeNotice, //TODO 변경
       {
         'noticeId': noticeId,
         'like': like,
@@ -56,10 +58,13 @@ class NoticeService{
     required int count,
     required OrderType orderType,
     Notice? startAfter,
+    required SupplyMethod supplyMethod,
   }){
     return Result.handleFuture<List<Notice>>(
       action: () async {
         Query query = NoticeReferences.getNoticeCollection();
+
+        query = query.where(NoticeDtoFields.supplyMethod , isEqualTo: supplyMethod.toEnumString());
 
         if(orderType == OrderType.likes){
           query = query.orderBy(NoticeDtoFields.likes, descending: true);
@@ -71,7 +76,7 @@ class NoticeService{
           query = query.orderBy(NoticeDtoFields.recruitmentPublicAnnouncementDate, descending: true);
         }
         else if(orderType == OrderType.applicationDate){
-          query = query.orderBy(NoticeDtoFields.applicationReceptionStartDate, descending: true);
+          query = query.orderBy(NoticeDtoFields.subscriptionReceptionStartDate, descending: true);
         }
 
         if(startAfter != null){
@@ -81,7 +86,6 @@ class NoticeService{
         var querySnapshot = await query.limit(count).get();
 
         List<Notice> notices = querySnapshot.docs.map((doc) => Notice.fromDocumentSnapshot(doc)).toList();
-
         return notices;
       }
     );
