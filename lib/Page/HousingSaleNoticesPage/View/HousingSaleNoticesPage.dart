@@ -1,6 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Common/Widget/IconTextButton.dart';
 import 'package:homerun/Page/HousingSaleNoticesPage/View/NoticesTabPage.dart';
 import 'package:homerun/Page/MyPageDrawer/View/MyPageDrawer.dart';
 import 'package:homerun/Style/Fonts.dart';
@@ -40,6 +43,36 @@ class _HousingSaleNoticesPageState extends State<HousingSaleNoticesPage> with Ti
               fontFamily: Fonts.title
           ),
         ),
+        actions: [
+          IconTextButton(
+            icon: Icon(
+              Icons.campaign,
+              size: 16.sp,
+            ),
+            onTap: (){},
+            text: "제휴광고",
+            textStyle: TextStyle(
+              fontSize: 7.sp,
+              fontWeight: FontWeight.w600
+            ),
+            
+          ),
+          Gap(7.w),
+          IconTextButton(
+            icon: Icon(
+              Icons.call_outlined,
+              size: 16.sp,
+            ),
+            onTap: (){},
+            text: "제휴광고",
+            textStyle: TextStyle(
+                fontSize: 7.sp,
+                fontWeight: FontWeight.w600
+            ),
+
+          ),
+          Gap(25.w)
+        ],
       ),
       drawer: const MyPageDrawer(),
       body: SafeArea(
@@ -47,8 +80,8 @@ class _HousingSaleNoticesPageState extends State<HousingSaleNoticesPage> with Ti
           padding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 0),
           child: Column(
             children: [
-              SizedBox(height: 12.w,),
-              CustomSearchBar(),
+              SizedBox(height: 2.w,),
+              const CustomSearchBar(),
               SizedBox(height: 21.w,),
               SizedBox(
                 width: double.infinity,
@@ -131,9 +164,9 @@ class _HousingSaleNoticesPageState extends State<HousingSaleNoticesPage> with Ti
                       child: TabBarView(
                         controller: tabController,
                         children: [
-                          NoticesTabPage(),
-                          NoticesTabPage(),
-                          NoticesTabPage(),
+                          NoticesTabPage(supplyMethod: SupplyMethod.General,),
+                          NoticesTabPage(supplyMethod: SupplyMethod.UnrankedRemain,),
+                          NoticesTabPage(supplyMethod: SupplyMethod.OptionalSupply,),
                         ]
                       ),
                     ),
