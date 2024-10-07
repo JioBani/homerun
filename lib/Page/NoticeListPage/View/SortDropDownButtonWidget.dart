@@ -84,7 +84,7 @@ class _SortDropDownButtonWidgetState extends State<SortDropDownButtonWidget> {
         return SortType.values.map((e)=>buildMenuItem(
           value: e,
           name: e.toEnumString(),
-          icon: Icons.check_circle_outline,
+          icon: e == selectedValue ? Icons.check_circle_outline : Icons.circle_outlined,
           color: e == selectedValue ? Theme.of(context).primaryColor  :  Palette.brightMode.darkText
         )).toList();
       },
