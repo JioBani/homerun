@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:homerun/Common/ApplyHome/AptDetailsInfo.dart';
 import 'package:homerun/Common/PriceFormatter.dart';
 import 'package:homerun/Page/NoticesPage/Model/NoticeDto.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/ContentBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/AptAnnouncementByHouseType.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Palette.dart';
 
@@ -22,7 +22,7 @@ class PriceInfoWidget extends StatelessWidget {
         child: const Center(child: Text(APTAnnouncementStrings.couldNotGetData)),
       );
     }
-    else if(noticeDto?.aptAnnouncementByTypeList == null){
+    else if(noticeDto?.applyHomeDto.detailsList == null){
       return SizedBox(
         height: 80.w,
         child: const Center(child: Text(APTAnnouncementStrings.couldNotGetData)),
@@ -30,7 +30,7 @@ class PriceInfoWidget extends StatelessWidget {
     }
     else{
       return Column(
-        children: noticeDto!.aptAnnouncementByTypeList!.map((e)=>
+        children: noticeDto!.applyHomeDto.detailsList!.map((e)=>
           PriceItemWidget(aptAnnouncementByHouseType : e)
         ).toList(),
       );
@@ -111,7 +111,7 @@ class PriceInfoWidget extends StatelessWidget {
 /// 분양가 목록 아이템
 class PriceItemWidget extends StatelessWidget {
   const PriceItemWidget({super.key, this.aptAnnouncementByHouseType});
-  final AptAnnouncementByHouseType? aptAnnouncementByHouseType;
+  final AptDetailsInfo? aptAnnouncementByHouseType;
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +130,12 @@ class PriceItemWidget extends StatelessWidget {
       else{
         typeText = aptAnnouncementByHouseType!.houseType!;
 
-        if(aptAnnouncementByHouseType!.highestSupplyPrice == null){
+        if(aptAnnouncementByHouseType!.topAmount == null){
           priceText = "취합 중";
         }
         else{
           priceText = PriceFormatter.tryFormatToEokThousand(
-              double.tryParse(aptAnnouncementByHouseType!.highestSupplyPrice!)
+              aptAnnouncementByHouseType!.topAmount!.toDouble()
           ) ?? "알 수 없음";
         }
       }
