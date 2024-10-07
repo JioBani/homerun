@@ -103,7 +103,7 @@ class _SortDropDownButtonWidgetState extends State<SortDropDownButtonWidget> {
           Text(
             selectedValue?.toEnumString() ?? "알 수 없음",
             style: TextStyle(
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w500,
               fontSize: 13.sp,
             ),
             maxLines: 1,
