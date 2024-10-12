@@ -18,7 +18,7 @@ class LocalPrioritySupplyInfoWidget extends StatelessWidget {
           children: [
             Gap(15.w),
             SubTitleWidget(
-                text: "지역우선 공급비율",
+                text: "지역우선 공급 비율",
                 leftPadding: 12.w
             ),
             Gap(11.w),

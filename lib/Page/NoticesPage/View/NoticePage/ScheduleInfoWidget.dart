@@ -10,7 +10,7 @@ import 'package:homerun/Style/Palette.dart';
 
 //TODO 오늘접수 이미지 넣기 - 공간이 부족해서 디자인 보고 작업해야할듯
 class ScheduleInfoWidget extends StatelessWidget {
-  ScheduleInfoWidget({super.key, required this.info});
+  const ScheduleInfoWidget({super.key, required this.info});
   final AptBasicInfo? info;
   final String failText = "데이터를 가져 올 수 없습니다.";
   final String collectingText = "데이터 취합 중 입니다.";
@@ -120,7 +120,7 @@ class ScheduleInfoWidget extends StatelessWidget {
             children: [
               Gap(15.w),
               SubTitleWidget(
-                  text: "분양 일정",
+                  text: "청약 일정", //TODO 이야기하기
                   leftPadding: 12.w
               ),
               Gap(11.w),

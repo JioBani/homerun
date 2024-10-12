@@ -20,7 +20,7 @@ class PriceRateInfoWidget extends StatelessWidget {
               children: [
                 Gap(15.w),
                 SubTitleWidget(
-                  text: "분양대금 비율",
+                  text: "계약금 납부 비율",
                   leftPadding: 12.w,
                   width: 260.w,
                 ),

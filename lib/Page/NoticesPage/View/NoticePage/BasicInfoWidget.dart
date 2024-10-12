@@ -39,12 +39,12 @@ class BasicInfoWidget extends StatelessWidget {
         children: [
           Gap(15.w),
           SubTitleWidget(
-            text: "공급 규모",
+            text: "기본 정보",
             leftPadding: 12.w
           ),
           Gap(11.w),
           ContentBoxWidget(
-            title: "공급위치",
+            title: "공급 위치",
             titleWidth: 70.w,
             contentWidth: 188.w,
             content: Padding(
@@ -54,7 +54,7 @@ class BasicInfoWidget extends StatelessWidget {
           ),
           Gap(2.w),
           ContentBoxWidget(
-            title: "공급규모",
+            title: "공급 규모",
             titleWidth: 70.w,
             contentWidth: 188.w,
             content: Padding(
@@ -74,7 +74,7 @@ class BasicInfoWidget extends StatelessWidget {
           ),
           Gap(2.w),
           ContentBoxWidget(
-            title: "입주시기",
+            title: "입주 시기",
             titleWidth: 70.w,
             contentWidth: 188.w,
             content: Padding(

@@ -37,7 +37,7 @@ class CheckListInfoWidget extends StatelessWidget {
               children: [
                 Gap(15.w),
                 SubTitleWidget(
-                  text: "청약 체크리스트",
+                  text: "청약홈런 청약 가이드",
                   leftPadding: 12.w,
                   width: 260.w,
                 ),
