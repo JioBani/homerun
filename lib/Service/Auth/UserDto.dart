@@ -28,7 +28,7 @@ class UserDto {
       socialProvider: SocialProviderExtension.fromString(map[UserFields.socialProvider]),
       displayName: map[UserFields.displayName] as String,
       gender: GenderExtension.fromString(map[UserFields.gender] as String),
-      interestedRegions: List<String>.from(map[UserFields.interestedRegions] as List).map((region) => Region.fromString(region)).toList(),
+      interestedRegions: List<String>.from(map[UserFields.interestedRegions] as List).map((region) => Region.fromKoreanString(region)).toList(),
       birth: map[UserFields.birth] as Timestamp,
     );
   }
