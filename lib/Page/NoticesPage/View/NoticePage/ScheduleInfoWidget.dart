@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:homerun/Common/ApplyHome/AptBasicInfo.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/ContentBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/SubTitleWidget.dart';
-import 'package:homerun/Service/APTAnnouncementApiService/APTAnnouncement.dart';
 import 'package:homerun/Style/Palette.dart';
 
 //TODO 오늘접수 이미지 넣기 - 공간이 부족해서 디자인 보고 작업해야할듯
 class ScheduleInfoWidget extends StatelessWidget {
   ScheduleInfoWidget({super.key, required this.info});
-  final APTAnnouncement? info;
+  final AptBasicInfo? info;
   final String failText = "데이터를 가져 올 수 없습니다.";
   final String collectingText = "데이터 취합 중 입니다.";
 
