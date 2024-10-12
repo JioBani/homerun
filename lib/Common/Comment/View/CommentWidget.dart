@@ -50,8 +50,6 @@ class CommentWidget extends StatefulWidget {
 class _CommentWidgetState extends State<CommentWidget> {
   static const cooldownDuration = Duration(seconds: 2);
 
-  final TimeFormatter timeFormatter = TimeFormatter();
-
   late int likeState;
   late int likes;
   late int dislikes;
@@ -197,7 +195,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           )
                       ),
                       Text(
-                        timeFormatter.formatTimeDifference(widget.comment.commentDto.date.toDate()),
+                        TimeFormatter.formatTimeDifference(widget.comment.commentDto.date.toDate()),
                         style: TextStyle(
                           fontSize: 11.sp, fontWeight: FontWeight.normal, color: Palette.brightMode.mediumText,
                         ),
