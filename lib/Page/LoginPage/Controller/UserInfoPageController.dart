@@ -12,7 +12,7 @@ import 'package:homerun/Service/Auth/UserInfoService.dart';
 import 'package:homerun/Value/Region.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../View/UserInfoInputPage/SelectBoxWidget.dart';
+import '../../../Common/Widget/SelectBoxWidget.dart';
 
 class UserInfoPageController extends GetxController{
   XFile? profileImage;
@@ -21,7 +21,10 @@ class UserInfoPageController extends GetxController{
   final UserInfoValidator userInfoValidator = UserInfoValidator();
 
   final SelectBoxController<Gender> genderController = SelectBoxController<Gender>();
-  final SelectBoxController<Region> regionController = SelectBoxController<Region>(isCanSelectMulti: true);
+  final SelectBoxController<Region> regionController = SelectBoxController<Region>(
+    isCanSelectMulti: true,
+    maxSelectCount: 3
+  );
   final TextEditingController nickNameController = TextEditingController();
   final TextEditingController birthController = TextEditingController();
 
@@ -123,7 +126,7 @@ class UserInfoPageController extends GetxController{
         displayName: nickNameController.text,
         gender: genderController.value!,
         birth: birthController.text,
-        regions: regionController.values.map((e) => e.label).toList(),
+        regions: regionController.values.map((e) => e.koreanString).toList(),
       )
     );
 
