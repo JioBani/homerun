@@ -8,7 +8,7 @@ import 'package:homerun/Page/HousingSaleNoticesPage/View/NoticesTabPage.dart';
 import 'package:homerun/Page/MyPageDrawer/View/MyPageDrawer.dart';
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Palette.dart';
-import 'package:homerun/Widget/CustonSearchBar.dart';
+import 'package:homerun/Common/Widget/CustomSearchBar.dart';
 
 class HousingSaleNoticesPage extends StatefulWidget {
   const HousingSaleNoticesPage({super.key});
