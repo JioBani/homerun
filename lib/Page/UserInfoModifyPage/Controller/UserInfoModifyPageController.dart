@@ -8,7 +8,7 @@ import 'package:homerun/Common/Widget/LoadingDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/LoginPage/View/UserInfoInputPage/SelectBoxWidget.dart';
+import 'package:homerun/Common/Widget/SelectBoxWidget.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/Auth/UserInfoService.dart';
@@ -52,7 +52,8 @@ class UserInfoModifyPageController extends GetxController{
     genderController = SelectBoxController(initValue: userDto.gender);
     regionController = SelectBoxController(
       isCanSelectMulti: true,
-      initValues: initRegions.map((region)=>region).toList() // initRegions를 깊은 복사(Region이 enum타입이므로 재귀 복사 필요 x)
+      initValues: initRegions.map((region)=>region).toList(), // initRegions를 깊은 복사(Region이 enum타입이므로 재귀 복사 필요 x)
+      maxSelectCount: 3
     );
   }
 
@@ -187,7 +188,7 @@ class UserInfoModifyPageController extends GetxController{
             displayName: initNickName == nickNameController.text ? null : nickNameController.text,
             gender: initGender == genderController.value ? null : genderController.value,
             regions: const DeepCollectionEquality().equals(initRegions, regionController.values) ?
-            null : regionController.values.map((e) => e.label).toList(),
+            null : regionController.values.map((e) => e.koreanString).toList(),
             birth: initBirth == birthController.text ? null : birthController.text
         )
     );
