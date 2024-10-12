@@ -70,7 +70,7 @@ class NoticeService{
           query = query.orderBy(NoticeDtoFields.likes, descending: true);
         }
         else if(orderType == OrderType.views){
-          query = query.orderBy(NoticeDtoFields.likes, descending: true);
+          query = query.orderBy(NoticeDtoFields.views, descending: true);
         }
         else if(orderType == OrderType.announcementDate){
           query = query.orderBy(NoticeDtoFields.recruitmentPublicAnnouncementDate, descending: true);
