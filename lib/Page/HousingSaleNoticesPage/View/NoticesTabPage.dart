@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Page/HousingSaleNoticesPage/View/NoticeProfileWidget.dart';
+import 'package:homerun/Page/NoticeListPage/View/NoticeListPage.dart';
 
 import '../Controller/NoticesTabPageController.dart';
 
@@ -57,7 +58,9 @@ class _NoticesTabPageState extends State<NoticesTabPage> with AutomaticKeepAlive
                 if(index == controller.noticeList.length){
                   return Center(
                     child: TextButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          Get.to(NoticeListPage(supplyMethod: widget.supplyMethod,));
+                        },
                         child: Text(
                           "전체보기",
                           style: TextStyle(
