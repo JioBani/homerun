@@ -8,9 +8,9 @@ extension SortTypeExtension on SortType{
   String toEnumString() {
     switch (this) {
       case SortType.applicationDate:
-        return '입주자공고일';
+        return '공고일순';
       case SortType.announcementDate:
-        return '접수마감일순';
+        return '접수임박순';
       case SortType.popularity:
         return '인기순';
     }
