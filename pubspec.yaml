@@ -76,6 +76,10 @@ dependencies:
   korean_profanity_filter: ^1.0.0
   infinite_scroll_pagination: ^4.0.0
   flutter_dotenv: ^5.1.0
+  flutter_local_notifications :
+  firebase_messaging: 
+  googleapis_auth: ^1.6.0
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
