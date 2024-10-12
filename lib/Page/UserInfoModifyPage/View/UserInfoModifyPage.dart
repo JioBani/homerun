@@ -10,12 +10,14 @@ import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/FirebaseReferences/UserInfoReferences.dart';
-import 'package:homerun/Page/LoginPage/View/UserInfoInputPage/SelectBoxWidget.dart';
+import 'package:homerun/Common/Widget/SelectBoxWidget.dart';
 import 'package:homerun/Page/UserInfoModifyPage/Controller/UserInfoModifyPageController.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Value/Region.dart';
+
+import '../../LoginPage/View/UserInfoInputPage/UserInfoSelectBoxWidget.dart';
 
 class UserInfoModifyPage extends StatelessWidget {
   UserInfoModifyPage({super.key});
@@ -233,7 +235,7 @@ class UserInfoModifyPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    SelectBoxWidget<Gender>(
+                    UserInfoSelectBoxWidget<Gender>(
                       value: Gender.male,
                       width: 130.w,
                       text: "남자",
@@ -242,7 +244,7 @@ class UserInfoModifyPage extends StatelessWidget {
                       controller: controller.genderController,
                       textPadding: EdgeInsets.only(left: 22.w),
                     ),
-                    SelectBoxWidget<Gender>(
+                    UserInfoSelectBoxWidget<Gender>(
                       value: Gender.female,
                       width: 130.w,
                       text: "여자",
@@ -271,10 +273,10 @@ class UserInfoModifyPage extends StatelessWidget {
                       alignment: WrapAlignment.spaceBetween,
                       runSpacing: 9.w,
                       children : [
-                        ...Region.values.map((region) => SelectBoxWidget<Region>(
+                        ...Region.values.map((region) => UserInfoSelectBoxWidget<Region>(
                           value: region,
                           width: 86.w,
-                          text: region.label,
+                          text: region.koreanString,
                           onTap: (_){},
                           controller: controller.regionController,
                           hasIcon: false,
