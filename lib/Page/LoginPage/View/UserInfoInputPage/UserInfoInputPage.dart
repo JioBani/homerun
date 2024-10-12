@@ -7,9 +7,10 @@ import 'package:get/get.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Page/LoginPage/Controller/UserInfoPageController.dart';
+import 'package:homerun/Page/LoginPage/View/UserInfoInputPage/UserInfoSelectBoxWidget.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Value/Region.dart';
-import 'SelectBoxWidget.dart';
+import '../../../../Common/Widget/SelectBoxWidget.dart';
 
 //TODO 스크롤해야한다는 것을 어떻게 알릴 것인지
 
@@ -203,7 +204,7 @@ class UserInfoInputPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    SelectBoxWidget<Gender>(
+                    UserInfoSelectBoxWidget<Gender>(
                       value: Gender.male,
                       width: 130.w,
                       text: "남자",
@@ -212,7 +213,7 @@ class UserInfoInputPage extends StatelessWidget {
                       controller: controller.genderController,
                       textPadding: EdgeInsets.only(left: 22.w),
                     ),
-                    SelectBoxWidget<Gender>(
+                    UserInfoSelectBoxWidget<Gender>(
                       value: Gender.female,
                       width: 130.w,
                       text: "여자",
@@ -241,10 +242,10 @@ class UserInfoInputPage extends StatelessWidget {
                       alignment: WrapAlignment.spaceBetween,
                       runSpacing: 9.w,
                       children : [
-                        ...Region.values.map((region) => SelectBoxWidget<Region>(
+                        ...Region.values.map((region) => UserInfoSelectBoxWidget<Region>(
                           value: region,
                           width: 86.w,
-                          text: region.label,
+                          text: region.koreanString,
                           onTap: (_){},
                           controller: controller.regionController,
                           hasIcon: false,
