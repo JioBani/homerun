@@ -20,7 +20,12 @@ import 'package:homerun/Page/NoticesPage/View/Comment/CommentSortWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabBarWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabChildWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
+import 'package:homerun/Page/NoticesPage/View/NoticePage/CheckListInfoWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
+import 'package:homerun/Page/NoticesPage/View/NoticePage/PriceInfoWidget.dart';
+import 'package:homerun/Page/NoticesPage/View/NoticePage/PriceRateInfoWIdget.dart';
+import 'package:homerun/Page/NoticesPage/View/NoticePage/ScheduleInfoWidget.dart';
+import 'package:homerun/Page/NoticesPage/View/NoticePage/SupplyScaleInfoWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/SiteReview/SiteReviewWidget.dart';
 import 'package:homerun/Page/ScapPage/Service/ScrapService.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
@@ -29,6 +34,9 @@ import 'package:homerun/Style/Images.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import 'BasicInfoWidget.dart';
+import 'HouseProfileWidget.dart';
+import 'LocalPrioritySupplyInfoWidget.dart';
 import 'SubTitleWidget.dart';
 
 //TODO 바텀 메뉴바가 나타나지 않는 문제 -> 현재 위젯이 너무 짧아서
@@ -119,87 +127,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
         ),
       ),
       //#. 주택 이름 및 이미지
-      UnconstrainedBox(
-        child: Container(
-          height: 100.w,
-          width: 310.w,
-          color: const Color(0xffE7F2FF),
-          child: Container(
-            margin: EdgeInsets.fromLTRB(10.w, 0, 10.w, 10.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(20.r),
-                bottomLeft: Radius.circular(20.r)
-              ),
-            ),
-            child: Column(
-              children: [
-                Gap(8.w),
-                //#. 공고일자
-                SizedBox(
-                  width: 260.w,
-                  height: 20.w,
-                  child: Stack(
-                    children: [
-                      Image.asset(
-                        NoticePageImages.noticeDateTextDecoration,
-                      ),
-                      Row(
-                        children: [
-                          Gap(13.w),
-                          //#. 공고 일자 텍스트
-                          Text(
-                            "공고 일자",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white
-                            ),
-                          ),
-                          Gap(30.w),
-                          //#. 공고 일자
-                          Text(
-                            "2024.07.25",
-                            style: TextStyle(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Palette.defaultOrange
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                //#. 주택명
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "고양 장향",
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Gap(10.w),
-                      Text(
-                        "아 테 라",
-                        style: TextStyle(
-                          fontSize: 30.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
+      HouseProfileWidget(noticeDto: widget.notice.noticeDto,),
       //TODO 개발중에 렉 줄이기 위해서 임시로 해제
       //#. 분양 공고
       // Padding(
@@ -240,20 +168,41 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
           ],
         ),
       ),
-      //#. 공급 규모
-      InfoBoxWidget(
-        child: Column(
-          children: [
-            SubTitleWidget(
-              text: "공급 규모",
-              frontPadding: 12.w,
-            )
-          ],
-        ),
+      //#. 기본 정보
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 25.w),
-        child: BasicInfoWidget(info: widget.notice.noticeDto?.info,),
+        child: BasicInfoWidget(info: widget.notice.noticeDto?.applyHomeDto.aptBasicInfo,),
       ),
+      //#. 공급 세대수
+      Gap(17.w),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: const SupplyScaleInfoWidget(),
+      ),
+      Gap(17.w),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: PriceInfoWidget(noticeDto: widget.notice.noticeDto,),
+      ),
+      Gap(17.w),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: const PriceRateInfoWidget(),
+      ),
+      Gap(17.w),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: const LocalPrioritySupplyInfoWidget(),
+      ),
+      Gap(17.w),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: CheckListInfoWidget(announcement: widget.notice.noticeDto?.applyHomeDto.aptBasicInfo,),
+      ),
+      Gap(17.w),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: ScheduleInfoWidget(info : widget.notice.noticeDto?.applyHomeDto.aptBasicInfo),
       ),
       SizedBox(height: 24.w,),
       //#. 현장리뷰
@@ -322,7 +271,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
                   Row(
                     children: [
                       Text(
-                        widget.notice.noticeDto?.info?.subscriptionAreaName ?? "알수없음",
+                        widget.notice.noticeDto?.applyHomeDto.aptBasicInfo?.subscriptionAreaName ?? "알수없음",
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w700
@@ -336,7 +285,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
                           borderRadius: BorderRadius.circular(3.r), // radius가 약하게 보여서 2인데 3으로 변경
                         ),
                         child: Text(
-                          widget.notice.noticeDto?.info?.houseDetailSectionName ?? "알수없음",
+                          widget.notice.noticeDto?.applyHomeDto.aptBasicInfo?.houseDetailSectionName ?? "알수없음",
                           style: TextStyle(
                             color: typeColor,
                             fontWeight: FontWeight.w700, //폰트 굵기가 미디움인데 작게 보여서 bold로 변경,
