@@ -188,111 +188,114 @@ class CustomDialog{
     const Color borderColor = Color(0xffA4A4A6);
 
     final route = DialogRoute<bool>(
-        context: context,
-        barrierDismissible: true,
-        builder: (dialogContext) =>  Container(
-          height: 114.w,
-          width: double.infinity,
-          margin: EdgeInsets.symmetric(horizontal: 35.w),
-          child: Dialog(
-            insetPadding: EdgeInsets.zero,
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.r),
-            ),
-            child: SizedBox(
-              height: 114.w,
-              width: double.infinity,
-              child: Column(
-                children: [
-                  //#. 내용
-                  Expanded(
-                    child: Padding(
-                      padding: padding ?? EdgeInsets.symmetric(horizontal: 15.w,vertical: 5.w),
-                      child: Center(
-                        child: Text(
-                          content,
-                          textAlign : contentAlignment,
-                          style: contentTextStyle ?? TextStyle(
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) => Container(
+        constraints: BoxConstraints(
+          minHeight: 114.w, // 다이얼로그의 최소 높이 설정
+        ),
+        width: double.infinity,
+        margin: EdgeInsets.symmetric(horizontal: 35.w),
+        child: Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.r),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Column의 크기를 최소화
+            children: [
+              // 내용 부분
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: 114.w - 33.w - 10.w, // 전체 최소 높이에서 버튼 높이와 간격을 제외
+                ),
+                child: Padding(
+                  padding: padding ?? EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.w),
+                  child: Center(
+                    child: Text(
+                      content,
+                      textAlign: contentAlignment,
+                      style: contentTextStyle ?? TextStyle(
+                        fontSize: 17.sp,
+                        fontWeight: FontWeight.w600,
                       ),
-                    )
+                    ),
                   ),
-                  //#. 버튼
-                  Row(
-                    children: [
-                      //#. 취소
-                      Expanded(
-                        child: InkWell(
-                          onTap: (){
-                            if(dialogContext.mounted && Navigator.canPop(dialogContext)){
-                              Navigator.pop(dialogContext , false);
-                            }
-                          },
-                          child: Container(
-                            height: 33.w,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(width: 0.7.w,color: borderColor),
-                                right: BorderSide(width: 0.35.w , color: borderColor),
-                              )
+                ),
+              ),
+              SizedBox(height: 10.w), // 내용과 버튼 사이의 간격
+              // 버튼 부분
+              Row(
+                children: [
+                  // 취소 버튼
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        if (dialogContext.mounted && Navigator.canPop(dialogContext)) {
+                          Navigator.pop(dialogContext, false);
+                        }
+                      },
+                      child: Container(
+                        height: 33.w,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(width: 0.7.w, color: borderColor),
+                            right: BorderSide(width: 0.35.w, color: borderColor),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            cancelText,
+                            style: TextStyle(
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w600,
                             ),
-                            child: Center(
-                              child: Text(
-                                cancelText,
-                                style: TextStyle(
-                                  fontSize: 17.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            )
                           ),
                         ),
                       ),
-                      //#. 확인
-                      Expanded(
-                        child: InkWell(
-                          onTap: (){
-                            if(dialogContext.mounted && Navigator.canPop(dialogContext)){
-                              Navigator.pop(dialogContext , true);
-                            }
+                    ),
+                  ),
+                  // 확인 버튼
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        if (dialogContext.mounted && Navigator.canPop(dialogContext)) {
+                          Navigator.pop(dialogContext, true);
+                        }
 
-                            if(onConfirm != null){
-                              onConfirm();
-                            }
-                          },
-                          child: Container(
-                            height: 33.w,
-                            decoration: BoxDecoration(
-                                border: Border(
-                                  top: BorderSide(width: 0.7.w , color: borderColor),
-                                  left: BorderSide(width: 0.35.w , color: borderColor),
-                                )
+                        if (onConfirm != null) {
+                          onConfirm();
+                        }
+                      },
+                      child: Container(
+                        height: 33.w,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(width: 0.7.w, color: borderColor),
+                            left: BorderSide(width: 0.35.w, color: borderColor),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            confirmText,
+                            style: TextStyle(
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w600,
+                              color: confirmTextColor ?? Theme.of(context).primaryColor,
                             ),
-                            child: Center(
-                              child: Text(
-                                confirmText,
-                                style: TextStyle(
-                                  fontSize: 17.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: confirmTextColor ?? Theme.of(context).primaryColor
-                                ),
-                              ),
-                            )
                           ),
                         ),
                       ),
-                    ],
-                  )
+                    ),
+                  ),
                 ],
               ),
-            ),
+            ],
           ),
-        )
+        ),
+      ),
     );
     return Navigator.of(context).push<bool>(route);
   }
