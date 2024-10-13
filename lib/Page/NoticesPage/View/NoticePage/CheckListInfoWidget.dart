@@ -7,9 +7,19 @@ import 'package:homerun/Page/NoticesPage/View/NoticePage/SubTitleWidget.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Palette.dart';
 
+//TODO overflow
 class CheckListInfoWidget extends StatelessWidget {
-  const CheckListInfoWidget({super.key, this.announcement});
+  CheckListInfoWidget({super.key, this.announcement});
+
   final AptBasicInfo? announcement;
+
+  late final String largeScale;
+  late final String redevelopment;
+  late final String privatePublicHousing ;
+  late final String specialLaw;
+  String? overheat;
+  String? adjustTarget;
+  String? priceCanApp;
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +30,64 @@ class CheckListInfoWidget extends StatelessWidget {
       selectionText = APTAnnouncementStrings.couldNotGetData;
       hasSelectionData = false;
     }
-    else if(announcement!.houseDetailSectionName == null){
-      selectionText = APTAnnouncementStrings.collectionData;
-      hasSelectionData = false;
-    }
     else{
-      selectionText = announcement!.houseDetailSectionName!;
+      if(announcement!.houseDetailSectionName == null){
+        selectionText = APTAnnouncementStrings.collectionData;
+        hasSelectionData = false;
+      }
+      else{
+        selectionText = announcement!.houseDetailSectionName!;
+      }
+
+      //#. 대규모 택지지구
+      if(announcement!.largeScaleDevelopmentDistrict != null){
+        largeScale = announcement!.largeScaleDevelopmentDistrict == "Y" ? "대규모 택지 지구" : "대규모 택지 지구 아님";
+      }
+      else{
+        largeScale = "대규모 택지 여부 취합중";
+      }
+      
+      //#. 정비사업
+      if(announcement!.redevelopmentBusiness != null){
+        redevelopment = announcement!.redevelopmentBusiness == "Y" ? ", 정비사업" : "";
+      }
+      else{
+        redevelopment = "정비사업 여부 취합중";
+      }
+
+      //#. 수도권내 민영 공공주택지구
+      if(announcement!.capitalRegionPrivatePublicHousingDistrict != null){
+        privatePublicHousing = announcement!.capitalRegionPrivatePublicHousingDistrict != "Y" ? "수도권내 민영공공주택지구" : "";
+      }
+      else{
+        privatePublicHousing = "수도권내 면경 공공주택지구 여부 취합중";
+      }
+
+      //#. 공공주택 특별법
+      if(announcement!.publicHousingSpecialLawApplication != null){
+        specialLaw = announcement!.publicHousingSpecialLawApplication == "Y" ?
+        (privatePublicHousing == "" ? "공공주택 특별법 적용" : ", 공공주택 특별법 적용") :
+        "";
+      }
+      else{
+        specialLaw = "공공주택 특별법 적용 여부 취합중";
+      }
+
+      //#. 투기과열지구
+      if(announcement!.speculationOverheatedDistrict == "Y"){
+        overheat = "투기과열지구";
+      }
+
+      //#. 조정대상지역
+      if(announcement!.marketAdjustmentTargetAreaSection == "Y"){
+        adjustTarget = overheat == null ? "조정대상지역" : " ,조정대상지역";
+      }
+
+      //#. 분양가 상한제
+      if(announcement!.priceCapApplication == "Y"){
+        priceCanApp = (overheat == null && adjustTarget == null)  ? "조정대상지역" : " ,조정대상지역";
+      }
+
     }
 
     return InfoBoxWidget(
@@ -70,32 +132,98 @@ class CheckListInfoWidget extends StatelessWidget {
                       Gap(17.w),
 
                       //#. 택지 유형
+                      //TODO 너무 길어서 짤림
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(
                             Icons.check_circle , color: Colors.amberAccent,
                             size: 16.sp,
                           ), //TODO 이미지 적용
                           Gap(6.w),
-                          Text("주택 유형 : "),
-                          Text(
-                            "대규모 택지 지구",
-                            style: TextStyle(
-                                color: Palette.defaultRed,
-                                fontWeight: FontWeight.w600
-                            ),
+                          const Text("주택 유형 : "),
+                          Builder(
+                              builder: (context) {
+                                if(privatePublicHousing == "" && specialLaw == ""){
+                                  return Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            largeScale,
+                                            style: const TextStyle(
+                                                color: Palette.defaultRed,
+                                                fontWeight: FontWeight.w600
+                                            ),
+                                          ),
+                                          Text(
+                                            redevelopment,
+                                            style: const TextStyle(
+                                                color: Palette.defaultRed,
+                                                fontWeight: FontWeight.w600
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Gap(17.w),
+                                    ],
+                                  );
+                                }
+                                else{
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            largeScale,
+                                            style: const TextStyle(
+                                                color: Palette.defaultRed,
+                                                fontWeight: FontWeight.w600
+                                            ),
+                                          ),
+                                          Text(
+                                            redevelopment,
+                                            style: const TextStyle(
+                                                color: Palette.defaultRed,
+                                                fontWeight: FontWeight.w600
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 3.w, bottom: 10.w),
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                             Text(
+                                              "* ",
+                                              style: TextStyle(
+                                                fontSize: 9.sp
+                                              ),
+                                            ),
+                                            Text(
+                                              privatePublicHousing,
+                                              style: TextStyle(
+                                                  fontSize: 9.sp
+                                              ),
+                                            ),
+                                            // Text(
+                                            //   specialLaw,
+                                            //   style: TextStyle(
+                                            //       fontSize: 9.sp
+                                            //   ),
+                                            // ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                              }
                           ),
                         ],
                       ),
-                      Gap(3.w),
-                      Text(
-                        "*수도권내 민영공공주택지구, 공공주택 특별법 적용",
-                        style: TextStyle(
-                          fontSize: 9.sp
-                        ),
-                      ),
-                      Gap(17.w),
-
                       //#. 규제 지역 여부
                       Row(
                         children: [
@@ -104,12 +232,27 @@ class CheckListInfoWidget extends StatelessWidget {
                             size: 16.sp,
                           ), //TODO 이미지 적용
                           Gap(6.w),
-                          Text("규제 지역 여부: "),
-                          Text(
-                            "비규제 지역",
-                            style: TextStyle(
+                          const Text("규제 지역 여부: "),
+                          DefaultTextStyle(
+                            style: const TextStyle(
                                 color: Palette.defaultRed,
                                 fontWeight: FontWeight.w600
+                            ),
+                            child: Builder(
+                              builder: (context) {
+                                if(overheat == null && adjustTarget == null && priceCanApp == null){
+                                  return const Text("비규제 지역");
+                                }
+                                else{
+                                  return Row(
+                                    children: [
+                                      Text(overheat ?? ""),
+                                      Text(adjustTarget ?? ""),
+                                      Text(priceCanApp ?? ""),
+                                    ]
+                                  );
+                                }
+                              }
                             ),
                           ),
                         ],
