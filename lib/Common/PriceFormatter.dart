@@ -32,6 +32,6 @@ class PriceFormatter {
   }
   
   static String? tryFormatToEokThousand(double? amount){
-    return amount == null ? null : formatToEokThousand(amount);
+    return (amount == null || amount.isNaN) ? null : formatToEokThousand(amount);
   }
 }
