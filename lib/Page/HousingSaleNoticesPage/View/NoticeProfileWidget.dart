@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/ApplyHome/AptBasicInfo.dart';
 import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
 import 'package:homerun/Common/PriceFormatter.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/HouseDetailTypeBoxWidget.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
@@ -20,7 +19,9 @@ import 'package:homerun/Style/TestImages.dart';
 
 //TODO 특별공급 알림 박스 색 변경
 class NoticeProfileWidget extends StatelessWidget {
-  NoticeProfileWidget({super.key, required this.notice , required this.supplyMethod});
+  NoticeProfileWidget({super.key, required this.notice , required this.supplyMethod}){
+    initData();
+  }
 
   final Notice notice;
   final SupplyMethod supplyMethod;
@@ -29,8 +30,10 @@ class NoticeProfileWidget extends StatelessWidget {
   late final String specialDateText;
   late final String generalDateText;
   late final String priceText;
+  late final String subscriptionText;
 
   late final DateTime? announcementDate;
+  late final DateTime? subscriptionStartDate;
   late final DateTime? subscriptionEndDate;
   late final DateTime? specialDate;
   late final DateTime? general1Data;
@@ -41,6 +44,7 @@ class NoticeProfileWidget extends StatelessWidget {
     //#. 데이터 초기화
     var aptBasicInfo = notice.noticeDto?.applyHomeDto.aptBasicInfo;
     announcementDate = aptBasicInfo?.recruitmentPublicAnnouncementDate?.toDate();
+    subscriptionStartDate = aptBasicInfo?.subscriptionReceptionStartDate?.toDate();
     subscriptionEndDate = aptBasicInfo?.subscriptionReceptionEndDate?.toDate();
     specialDate =  aptBasicInfo?.specialSupplyReceptionStartDate?.toDate();
     generalDate = aptBasicInfo?.generalSupplyReceptionStartDate?.toDate();
@@ -50,6 +54,19 @@ class NoticeProfileWidget extends StatelessWidget {
     announcementDateText = formatDate(announcementDate);
     specialDateText =  formatDate(specialDate);
     generalDateText = formatDate(generalDate);
+
+    if(subscriptionStartDate == null || subscriptionEndDate == null){
+      subscriptionText = "";
+    }
+    else if(formatDate(subscriptionStartDate) == formatDate(subscriptionEndDate)){
+      subscriptionText = formatDate(subscriptionStartDate);
+    }
+    else if(subscriptionStartDate!.month == subscriptionEndDate!.month){
+      subscriptionText = "${formatDate(subscriptionStartDate)} ~ ${TimeFormatter.dateToDatDayString(subscriptionEndDate!)}";
+    }
+    else{
+      subscriptionText = "${formatDate(subscriptionStartDate)} ~ ${TimeFormatter.dateToDatMonthString(subscriptionEndDate!)}";
+    }
 
     if(notice.noticeDto?.applyHomeDto != null){
       if(notice.noticeDto?.applyHomeDto.maxSupplyPrice == null || notice.noticeDto?.applyHomeDto.minSupplyPrice == null){
@@ -104,7 +121,6 @@ class NoticeProfileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    initData();
 
     if(notice.noticeDto == null || notice.noticeDto!.applyHomeDto.aptBasicInfo == null){
       return Container(
@@ -135,7 +151,6 @@ class NoticeProfileWidget extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(3.r),
             color: const Color(0xffF9F9F9),
-            //color : Color.fromRGBO(249, 249, 249, 1),
             boxShadow: [BoxShadow(offset: Offset(0, 2.w) , blurRadius: 2.r,color: Colors.black.withOpacity(0.25))]
           ),
           child: Column(
@@ -176,7 +191,7 @@ class NoticeProfileWidget extends StatelessWidget {
                   )
                 ],
               ),
-              Gap(8.w),
+              Gap(5.w),
               //#. 주택 이름
               Row(
                 children: [
@@ -196,7 +211,7 @@ class NoticeProfileWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              Gap(15.w),
+              Gap(6.w),
               //#. 사진 및 상세 정보
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,14 +220,14 @@ class NoticeProfileWidget extends StatelessWidget {
                   Image.asset(
                     TestImages.apt,
                     width: 110.w,
-                    height: 125.w,
+                    height: 135.w,
                     fit: BoxFit.fitHeight,
                   ),
                   Gap(10.w),
                   //#. 상세 정보
                   Expanded(
                     child: SizedBox(
-                      height: 125.w,
+                      height: 135.w,
                       child: DefaultTextStyle(
                         style: TextStyle(
                           fontSize: 10.sp,
@@ -230,7 +245,17 @@ class NoticeProfileWidget extends StatelessWidget {
                               ),
                               child: Column(
                                 children: [
-                                  //#. 공오 일자
+                                  Row(
+                                    children: [
+                                      const StarImage(color: Palette.primary,),
+                                      Gap(4.w),
+                                      const Text("접수기간"),
+                                      const Spacer(),
+                                      Text(subscriptionText), //#. 공고 일자는 지나는 것이 의미가 없기 때문에
+                                    ],
+                                  ),
+                                  Gap(1.w),
+                                  //#. 공고 일자
                                   Row(
                                     children: [
                                       const StarImage(color: Palette.primary,),
@@ -240,6 +265,7 @@ class NoticeProfileWidget extends StatelessWidget {
                                       Text(announcementDateText), //#. 공고 일자는 지나는 것이 의미가 없기 때문에
                                     ],
                                   ),
+                                  Gap(1.w),
                                   //#. 특별공급 접수일
                                   Row(
                                     children: [
@@ -250,6 +276,7 @@ class NoticeProfileWidget extends StatelessWidget {
                                       DateText(dateTime : specialDate),
                                     ],
                                   ),
+                                  Gap(1.w),
                                   //#. 일반공급 1순위 접수
                                   Row(
                                     children: [
@@ -263,19 +290,19 @@ class NoticeProfileWidget extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            Gap(8.w),
+                            Gap(6.w),
                             //#. 주소
                             Row(
                               children: [
-                                Gap(5.sp + 8.w),
+                                Gap(3.w),
                                 Expanded(
-                                  child: Text(
+                                  child: AutoSizeText(
                                     aptInfo.supplyLocationAddress ?? "",
-                                    maxLines: 3,
+                                    maxLines: 2,
                                     style: TextStyle(
                                       overflow: TextOverflow.ellipsis,
                                       color: Colors.black,
-                                      fontSize: 10.sp,
+                                      fontSize: 11.sp,
                                       fontWeight: FontWeight.w500
                                     ),
                                   ),
@@ -284,6 +311,7 @@ class NoticeProfileWidget extends StatelessWidget {
                             ),
                             const Spacer(),
                             //#. 분양 가격
+                            Gap(8.w),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -291,9 +319,9 @@ class NoticeProfileWidget extends StatelessWidget {
                                 Text(
                                   "분양가",
                                   style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Palette.defaultRed
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[700]
                                   ),
                                 ),
                                 Expanded(
@@ -301,9 +329,9 @@ class NoticeProfileWidget extends StatelessWidget {
                                     priceText,
                                     maxLines: 1,
                                     style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: Palette.defaultRed
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: Theme.of(context).primaryColor
                                     ),
                                     textAlign: TextAlign.right,
                                   ),
