@@ -31,6 +31,7 @@ class NoticeProfileWidget extends StatelessWidget {
   late final String priceText;
 
   late final DateTime? announcementDate;
+  late final DateTime? subscriptionEndDate;
   late final DateTime? specialDate;
   late final DateTime? general1Data;
   late final DateTime? general2Data;
@@ -40,6 +41,7 @@ class NoticeProfileWidget extends StatelessWidget {
     //#. 데이터 초기화
     var aptBasicInfo = notice.noticeDto?.applyHomeDto.aptBasicInfo;
     announcementDate = aptBasicInfo?.recruitmentPublicAnnouncementDate?.toDate();
+    subscriptionEndDate = aptBasicInfo?.subscriptionReceptionEndDate?.toDate();
     specialDate =  aptBasicInfo?.specialSupplyReceptionStartDate?.toDate();
     generalDate = aptBasicInfo?.generalSupplyReceptionStartDate?.toDate();
     general1Data = aptBasicInfo?.generalRank1CorrespondingAreaReceptionStartDate?.toDate();
@@ -90,6 +92,10 @@ class NoticeProfileWidget extends StatelessWidget {
     }
     else if(general2Data != null && TimeFormatter.calculateDaysDifference(general2Data!) == 0){
       result.add(const AlertBoxWidget(text: "오늘 일반공급 2순위 접수",color: Colors.deepPurple,));
+    }
+
+    if(subscriptionEndDate != null && TimeFormatter.calculateDaysDifference(subscriptionEndDate!) < 0){
+      result.add(const AlertBoxWidget(text: "접수 마감",color: Colors.grey,));
     }
 
     return result;
@@ -349,12 +355,13 @@ class AlertBoxWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(2.r),
-        boxShadow: [BoxShadow(offset: Offset(0, 4.w), blurRadius: 10.r , color: Colors.black.withOpacity(0.25))]
+        boxShadow: [BoxShadow(offset: Offset(0, 2.w), blurRadius: 2.r , color: Colors.black.withOpacity(0.25))]
       ),
       child: Text(
         text,
         style: TextStyle(
           fontSize: 10.sp,
+          fontWeight: FontWeight.w600,
           color: Colors.white
         ),
       ),
