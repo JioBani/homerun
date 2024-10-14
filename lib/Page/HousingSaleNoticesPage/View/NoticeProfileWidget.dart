@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:homerun/Common/ApplyHome/AptBasicInfo.dart';
 import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
 import 'package:homerun/Common/PriceFormatter.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/HouseDetailTypeBoxWidget.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
@@ -31,6 +32,8 @@ class NoticeProfileWidget extends StatelessWidget {
 
   late final DateTime? announcementDate;
   late final DateTime? specialDate;
+  late final DateTime? general1Data;
+  late final DateTime? general2Data;
   late final DateTime? generalDate;
 
   void initData(){
@@ -38,13 +41,9 @@ class NoticeProfileWidget extends StatelessWidget {
     var aptBasicInfo = notice.noticeDto?.applyHomeDto.aptBasicInfo;
     announcementDate = aptBasicInfo?.recruitmentPublicAnnouncementDate?.toDate();
     specialDate =  aptBasicInfo?.specialSupplyReceptionStartDate?.toDate();
-
-    if(supplyMethod == SupplyMethod.General){
-      generalDate = aptBasicInfo?.generalRank1CorrespondingAreaReceptionStartDate?.toDate();
-    }
-    else{
-      generalDate = aptBasicInfo?.generalSupplyReceptionStartDate?.toDate();
-    }
+    generalDate = aptBasicInfo?.generalSupplyReceptionStartDate?.toDate();
+    general1Data = aptBasicInfo?.generalRank1CorrespondingAreaReceptionStartDate?.toDate();
+    general2Data = aptBasicInfo?.generalRank2CorrespondingAreaReceptionStartDate?.toDate();
 
     announcementDateText = formatDate(announcementDate);
     specialDateText =  formatDate(specialDate);
@@ -73,20 +72,24 @@ class NoticeProfileWidget extends StatelessWidget {
     List<Widget> result = [];
 
     //#. 중복될 가능성이 있지만 ui overflow를 방지하기 위해서 하나만 활성화 되도록 함
-    if(announcementDate != null){
-      if(TimeFormatter.calculateDaysDifference(announcementDate!) == 0){
-        result.add(const AlertBoxWidget(text: "오늘공고",color: Palette.defaultRed,));
-      }
+    if(announcementDate != null && TimeFormatter.calculateDaysDifference(announcementDate!) == 0){
+      result.add(const AlertBoxWidget(text: "오늘공고",color: Palette.defaultRed,));
     }
-    else if(specialDate != null){
+    else if(specialDate != null && TimeFormatter.calculateDaysDifference(specialDate!) == 0){
       if(TimeFormatter.calculateDaysDifference(specialDate!) == 0){
-        result.add(const AlertBoxWidget(text: "오늘 일반공급 1순위 접수",color: Palette.defaultOrange,));
+        result.add(const AlertBoxWidget(text: "오늘 특별공급 접수",color: Palette.defaultOrange,));
       }
     }
-    else if(generalDate != null){
-      if(TimeFormatter.calculateDaysDifference(generalDate!) == 0){
-        result.add(const AlertBoxWidget(text: "오늘 특별공급 접수",color: Colors.deepPurple,));
-      }
+    else if(generalDate != null && TimeFormatter.calculateDaysDifference(generalDate!) == 0){
+      result.add(const AlertBoxWidget(text: "오늘 일반공급 접수",color: Colors.deepPurple,));
+
+    }
+    else if(general1Data != null && TimeFormatter.calculateDaysDifference(general1Data!) == 0){
+      result.add(const AlertBoxWidget(text: "오늘 일반공급 1순위 접수",color: Colors.deepPurple,));
+
+    }
+    else if(general2Data != null && TimeFormatter.calculateDaysDifference(general2Data!) == 0){
+      result.add(const AlertBoxWidget(text: "오늘 일반공급 2순위 접수",color: Colors.deepPurple,));
     }
 
     return result;
