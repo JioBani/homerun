@@ -249,9 +249,9 @@ class NoticeProfileWidget extends StatelessWidget {
                                     children: [
                                       const StarImage(color: Palette.defaultRed,),
                                       Gap(4.w),
-                                      const Text("일반공급 1순위 접수"),
+                                      Text(noticeDto.supplyMethod == SupplyMethod.General ? "일반공급 1순위 접수" : "일반공급 접수"),
                                       const Spacer(),
-                                      DateText(dateTime : generalDate),
+                                      DateText(dateTime : noticeDto.supplyMethod == SupplyMethod.General ? general1Data : generalDate),
                                     ],
                                   ),
                                 ],
