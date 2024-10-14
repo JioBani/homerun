@@ -202,7 +202,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       Gap(17.w),
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 25.w),
-        child: ScheduleInfoWidget(info : widget.notice.noticeDto?.applyHomeDto.aptBasicInfo),
+        child: ScheduleInfoWidget(noticeDto: widget.notice.noticeDto,),
       ),
       SizedBox(height: 24.w,),
       //#. 현장리뷰
