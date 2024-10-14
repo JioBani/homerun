@@ -77,7 +77,7 @@ class _HousingSaleNoticesPageState extends State<HousingSaleNoticesPage> with Ti
       drawer: const MyPageDrawer(),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 0),
+          padding: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
           child: Column(
             children: [
               SizedBox(height: 2.w,),
