@@ -34,15 +34,17 @@ class NoticePagedListViewController{
     OrderType orderType;
     switch(sortType){
       case SortType.announcementDate : orderType = OrderType.announcementDate;
-      case SortType.applicationDate : orderType = OrderType.applicationDate;
+      case SortType.applicationDateUpcoming : orderType = OrderType.applicationDate;
       case SortType.popularity : orderType = OrderType.views;
     }
 
     Result<List<Notice>> result = await NoticeService.instance.getNotices(
-        count: pageSize,
-        orderType: orderType,
-        startAfter: noticeList.isNotEmpty ? noticeList.last : null,
-        supplyMethod : supplyMethod
+      count: pageSize,
+      orderType: orderType,
+      startAfter: noticeList.isNotEmpty ? noticeList.last : null,
+      supplyMethod : supplyMethod,
+      descending: sortType != SortType.applicationDateUpcoming,
+      applicationDateUpcoming: sortType == SortType.applicationDateUpcoming ?  DateTime.now() : null
     );
 
     if(result.isSuccess){
