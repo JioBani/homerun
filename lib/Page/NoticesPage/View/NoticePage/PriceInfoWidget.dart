@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:homerun/Common/ApplyHome/AptDetailsInfo.dart';
 import 'package:homerun/Common/PriceFormatter.dart';
+import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Page/NoticesPage/Model/NoticeDto.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/ContentBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
@@ -49,36 +50,6 @@ class PriceInfoWidget extends StatelessWidget {
               text: "분양가",
               leftPadding: 17.w,
               rightPadding: 20.w,
-            ),
-            Gap(13.w),
-            //#. 분양가 상한제 안내 및 공급금액
-            Row(
-              children: [
-                Gap(25.w),
-                Text(
-                  "분양가 상한제 : ",
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    color: Palette.brightMode.darkText
-                  ),
-                ),
-                Text(
-                  "적용 비적용",
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    color: Colors.redAccent,
-                    fontWeight: FontWeight.w600
-                  ),
-                ),
-                Gap(37.w),
-                Text(
-                  "공급금액 (단위: 만원)",
-                  style: TextStyle(
-                    fontSize: 9.sp,
-                    color: Palette.brightMode.darkText
-                  ),
-                )
-              ],
             ),
             Gap(12.w),
             //#. 항목
