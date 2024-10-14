@@ -59,6 +59,8 @@ class NoticeService{
     required OrderType orderType,
     Notice? startAfter,
     required SupplyMethod supplyMethod,
+    bool descending = true,
+    DateTime? applicationDateUpcoming,
   }){
     return Result.handleFuture<List<Notice>>(
       action: () async {
@@ -67,16 +69,22 @@ class NoticeService{
         query = query.where(NoticeDtoFields.supplyMethod , isEqualTo: supplyMethod.toEnumString());
 
         if(orderType == OrderType.likes){
-          query = query.orderBy(NoticeDtoFields.likes, descending: true);
+          query = query.orderBy(NoticeDtoFields.likes, descending: descending);
         }
         else if(orderType == OrderType.views){
-          query = query.orderBy(NoticeDtoFields.views, descending: true);
+          query = query.orderBy(NoticeDtoFields.views, descending: descending);
         }
         else if(orderType == OrderType.announcementDate){
-          query = query.orderBy(NoticeDtoFields.recruitmentPublicAnnouncementDate, descending: true);
+          query = query.orderBy(NoticeDtoFields.recruitmentPublicAnnouncementDate, descending: descending);
         }
         else if(orderType == OrderType.applicationDate){
-          query = query.orderBy(NoticeDtoFields.subscriptionReceptionStartDate, descending: true);
+          query = query.orderBy(NoticeDtoFields.subscriptionReceptionStartDate, descending: descending);
+          if(applicationDateUpcoming != null){
+            query = query.where(
+              NoticeDtoFields.subscriptionReceptionStartDate,
+              isGreaterThanOrEqualTo : Timestamp.fromDate(applicationDateUpcoming)
+            );
+          }
         }
 
         if(startAfter != null){
