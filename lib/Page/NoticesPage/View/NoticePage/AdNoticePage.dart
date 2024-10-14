@@ -177,7 +177,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       Gap(17.w),
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 25.w),
-        child: const SupplyScaleInfoWidget(),
+        child: SupplyScaleInfoWidget(applyHomeDto:  widget.notice.noticeDto?.applyHomeDto,),
       ),
       Gap(17.w),
       Padding(
