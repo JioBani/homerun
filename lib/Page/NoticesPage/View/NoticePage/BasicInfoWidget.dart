@@ -53,7 +53,7 @@ class BasicInfoWidget extends StatelessWidget {
     else{
       location = info!.supplyLocationAddress ?? APTAnnouncementStrings.collectionData;
       size =  info?.totalSupplyHouseholdCount == null ? APTAnnouncementStrings.collectionData : "${info?.totalSupplyHouseholdCount}세대";
-      company = info!.constructionEnterpriseName ?? APTAnnouncementStrings.collectionData;
+      company = info!.businessEntityName ?? APTAnnouncementStrings.collectionData;
       moveIn = info!.moveInPrearrangeYearMonth ?? APTAnnouncementStrings.collectionData;
     }
 
@@ -88,7 +88,7 @@ class BasicInfoWidget extends StatelessWidget {
           ),
           Gap(2.w),
           ContentBoxWidget(
-            title: "건설사",
+            title: "시행사",
             titleWidth: 70.w,
             contentWidth: 188.w,
             content: Padding(
