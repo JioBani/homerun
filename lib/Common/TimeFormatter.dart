@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 //TODO 변환 불가능할때 trycatch
 class TimeFormatter {
   static final DateFormat _datFormat = DateFormat('yyyy.MM.dd');
+  static final DateFormat _datMonthFormat = DateFormat('MM.dd');
+  static final DateFormat _datDayFormat = DateFormat('dd');
   static final DateFormat _koreanFormat = DateFormat('yyyy년 MM월 dd일');
 
   TimeFormatter._();
@@ -44,6 +46,22 @@ class TimeFormatter {
 
   static String? tryDateToDatString(DateTime? dateTime){
     return dateTime == null ? null  : _datFormat.format(dateTime);
+  }
+
+  static dateToDatMonthString(DateTime dateTime){
+    return _datMonthFormat.format(dateTime);
+  }
+
+  static String? tryDateToDatMonthString(DateTime? dateTime){
+    return dateTime == null ? null  : _datMonthFormat.format(dateTime);
+  }
+
+  static dateToDatDayString(DateTime dateTime){
+    return _datDayFormat.format(dateTime);
+  }
+
+  static String? tryDateToDatDayString(DateTime? dateTime){
+    return dateTime == null ? null  : _datDayFormat.format(dateTime);
   }
 
   ///00년 00월 00일
