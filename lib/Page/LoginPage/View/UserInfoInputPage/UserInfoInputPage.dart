@@ -9,7 +9,7 @@ import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Page/LoginPage/Controller/UserInfoPageController.dart';
 import 'package:homerun/Page/LoginPage/View/UserInfoInputPage/UserInfoSelectBoxWidget.dart';
 import 'package:homerun/Style/Palette.dart';
-import 'package:homerun/Value/Region.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
 import '../../../../Common/Widget/SelectBoxWidget.dart';
 
 //TODO 스크롤해야한다는 것을 어떻게 알릴 것인지
