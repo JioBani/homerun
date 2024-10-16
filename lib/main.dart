@@ -9,14 +9,16 @@ import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Service/NaverGeocodeService/ServiceKey.dart';
+import 'package:homerun/Service/PushNotificationService.dart';
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/MaterialTheme.dart';
 import 'package:homerun/View/HomePage/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:homerun/View/OnboardingPage/OnboardingPage.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'firebase_options.dart';
 
-
+//TODO 전체적으로 색이 어두워진거 같음
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -58,15 +60,18 @@ class MyApp extends StatelessWidget {
     Size screenSize;
 
     screenSize =  const Size(360, 800);
+    PushNotificationService.init(context);
 
     return ScreenUtilInit(
       designSize: screenSize,
        builder: (BuildContext context,child) => GetMaterialApp(
+         debugShowCheckedModeBanner: false,
          theme: ThemeData(
            fontFamily: Fonts.content,
            colorScheme: MaterialTheme.lightScheme().toColorScheme()
          ),
-         home: HomePage(),
+         //home: HomePage(),
+         home: OnBoardingPage(),
        )
     );
   }
