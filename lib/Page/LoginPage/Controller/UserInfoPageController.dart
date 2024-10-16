@@ -9,7 +9,7 @@ import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/LoginPage/View/SignUpSuccessPage.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserInfoService.dart';
-import 'package:homerun/Value/Region.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../Common/Widget/SelectBoxWidget.dart';

@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
-import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
-import 'package:homerun/Page/NoticesPage/Service/NoticeService.dart';
+import 'package:homerun/Feature/Notice/Model/Notice.dart';
+import 'package:homerun/Feature/Notice/NoticeService.dart';
 
 class NoticesTabPageController extends GetxController{
 
@@ -26,7 +26,7 @@ class NoticesTabPageController extends GetxController{
       count: 5,
       orderType: OrderType.announcementDate,
       startAfter: noticeList.isNotEmpty ? noticeList.last : null,
-      supplyMethod : supplyMethod
+      supplyMethod : supplyMethod,
     );
 
     if(result.isSuccess){

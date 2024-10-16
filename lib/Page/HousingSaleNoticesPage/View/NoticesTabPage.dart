@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Page/HousingSaleNoticesPage/View/NoticeProfileWidget.dart';
 import 'package:homerun/Page/NoticeListPage/View/NoticeListPage.dart';

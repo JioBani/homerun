@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/Widget/IconTextButton.dart';
 import 'package:homerun/Page/HousingSaleNoticesPage/View/NoticesTabPage.dart';
 import 'package:homerun/Page/MyPageDrawer/View/MyPageDrawer.dart';
