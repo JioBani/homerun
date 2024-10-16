@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Feature/Notice/Model/NoticeDto.dart';
-import 'package:homerun/Page/NoticePage/View/SubTitleWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/SubTitleWidget.dart';
 import 'package:homerun/Style/Palette.dart';
 
 /// 공고 페이지에 가장 처음에 나오는 이미지 및 공고 일자, 아파트 명을 표시하는 프로필 위젯

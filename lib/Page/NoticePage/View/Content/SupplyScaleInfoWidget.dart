@@ -4,8 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:homerun/Feature/Notice/Model/ApplyHomeDto.dart';
 import 'package:homerun/Feature/Notice/Model/AptDetailsInfo.dart';
 import 'package:homerun/Page/AnnouncementPage/Model/AnnouncementDto.dart';
-import 'package:homerun/Page/NoticePage/View/InfoBoxWidget.dart';
-import 'package:homerun/Page/NoticePage/View/SubTitleWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/InfoBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/SubTitleWidget.dart';
 import 'package:homerun/Style/Palette.dart';
 
 import 'ContentBoxWidget.dart';

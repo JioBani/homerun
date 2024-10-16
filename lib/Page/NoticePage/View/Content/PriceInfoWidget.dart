@@ -5,8 +5,8 @@ import 'package:homerun/Feature/Notice/Model/AptDetailsInfo.dart';
 import 'package:homerun/Common/PriceFormatter.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Feature/Notice/Model/NoticeDto.dart';
-import 'package:homerun/Page/NoticePage/View/ContentBoxWidget.dart';
-import 'package:homerun/Page/NoticePage/View/InfoBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/ContentBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/InfoBoxWidget.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Palette.dart';
 

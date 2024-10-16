@@ -5,8 +5,8 @@ import 'package:homerun/Feature/Notice/Model/AptBasicInfo.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/Snackbar.dart';
-import 'package:homerun/Page/NoticePage/View/InfoBoxWidget.dart';
-import 'package:homerun/Page/NoticePage/View/SubTitleWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/InfoBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/SubTitleWidget.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:url_launcher/url_launcher.dart';
 

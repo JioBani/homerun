@@ -5,9 +5,9 @@ import 'package:homerun/Feature/Notice/Model/AptBasicInfo.dart';
 import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Feature/Notice/Model/NoticeDto.dart';
-import 'package:homerun/Page/NoticePage/View/ContentBoxWidget.dart';
-import 'package:homerun/Page/NoticePage/View/InfoBoxWidget.dart';
-import 'package:homerun/Page/NoticePage/View/SubTitleWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/ContentBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/InfoBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/SubTitleWidget.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Palette.dart';
 

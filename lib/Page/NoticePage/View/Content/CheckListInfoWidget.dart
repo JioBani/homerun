@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:homerun/Feature/Notice/Model/AptBasicInfo.dart';
-import 'package:homerun/Page/NoticePage/View/InfoBoxWidget.dart';
-import 'package:homerun/Page/NoticePage/View/SubTitleWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/InfoBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/Content/SubTitleWidget.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Palette.dart';
 
