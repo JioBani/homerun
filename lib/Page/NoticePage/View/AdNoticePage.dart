@@ -21,7 +21,6 @@ import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabBarWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/Comment/CommentTabChildWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/LocationMap.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/CheckListInfoWidget.dart';
-import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/PriceInfoWidget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/PriceRateInfoWIdget.dart';
 import 'package:homerun/Page/NoticesPage/View/NoticePage/ScheduleInfoWidget.dart';
@@ -37,7 +36,6 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'BasicInfoWidget.dart';
 import 'HouseProfileWidget.dart';
 import 'LocalPrioritySupplyInfoWidget.dart';
-import 'SubTitleWidget.dart';
 
 //TODO 바텀 메뉴바가 나타나지 않는 문제 -> 현재 위젯이 너무 짧아서
 //댓글창 위에 스크랩 및 공유 넣어야할듯

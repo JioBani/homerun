@@ -9,6 +9,7 @@ import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/NoticeReferences.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
+import 'package:homerun/Value/Region.dart';
 
 class NoticeService{
 
@@ -54,6 +55,8 @@ class NoticeService{
     });
   }
 
+  ///검색할 인덱스
+  /// 지역, 주택 종류, 공급 유형
   Future<Result<List<Notice>>> getNotices({
     required int count,
     required OrderType orderType,
@@ -61,6 +64,7 @@ class NoticeService{
     required SupplyMethod supplyMethod,
     bool descending = true,
     DateTime? applicationDateUpcoming,
+    Region? region,
   }){
     return Result.handleFuture<List<Notice>>(
       action: () async {
