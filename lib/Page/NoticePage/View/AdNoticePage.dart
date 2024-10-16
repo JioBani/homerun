@@ -106,7 +106,6 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
 
   List<Widget> getListViewChildren(){
     return [
-      SizedBox(height: 100.w,), //temp
       SizedBox(height: 6.w,),
       //#. 이미지
       UnconstrainedBox(
@@ -119,12 +118,7 @@ class _AdNoticePageState extends State<AdNoticePage> with TickerProviderStateMix
       ),
       //#. 주택 이름 및 이미지
       HouseProfileWidget(noticeDto: widget.notice.noticeDto,),
-      //TODO 개발중에 렉 줄이기 위해서 임시로 해제
-      //#. 분양 공고
-      // Padding(
-      //   padding: EdgeInsets.fromLTRB(25.w, 30.w, 25.w, 0),
-      //   child: const FireStorageImageColum(path: "housing_notices/2024000001",),
-      // ),
+      Gap(10.w,),
       //#. 지도
       Padding(
         padding: EdgeInsets.fromLTRB(25.w, 10.w, 25.w, 10.w),

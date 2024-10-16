@@ -10,9 +10,11 @@ import 'package:homerun/Feature/Notice/NoticeService.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 
 class LikeIconButton extends StatelessWidget {
-  const LikeIconButton({super.key, required this.noticeId});
-
+  const LikeIconButton({super.key, required this.noticeId, required this.width, required this.height, required this.iconSize});
+  final double width;
+  final double height;
   final String noticeId;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +22,8 @@ class LikeIconButton extends StatelessWidget {
       iconBuilder: (value , loadingState){
         if(loadingState == LoadingState.loading || loadingState == LoadingState.before){
           return SizedBox(
-              width: 22.sp,
-              height: 22.sp,
+              width: width,
+              height: height,
               child: const CupertinoActivityIndicator()
           );
         }
@@ -30,13 +32,13 @@ class LikeIconButton extends StatelessWidget {
             return Icon(
               Icons.favorite ,
               color: Colors.redAccent,
-              size: 22.w,
+              size: iconSize,
             );
           }
           else{
             return Icon(
               Icons.favorite_border ,
-              size: 22.w,
+              size: iconSize,
             );
           }
         }
@@ -79,3 +81,4 @@ class LikeIconButton extends StatelessWidget {
     );
   }
 }
+

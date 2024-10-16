@@ -1,7 +1,6 @@
 //#. 스크랩 버튼
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/Widget/LoadableIcon.dart';
@@ -11,8 +10,10 @@ import 'package:homerun/Page/ScapPage/Service/ScrapService.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 
 class ScrapIconButton extends StatelessWidget {
-  const ScrapIconButton({super.key, required this.noticeId});
-
+  const ScrapIconButton({super.key, required this.noticeId, required this.width, required this.height, required this.iconSize});
+  final double width;
+  final double height;
+  final double iconSize;
   final String noticeId;
 
   @override
@@ -21,22 +22,22 @@ class ScrapIconButton extends StatelessWidget {
       iconBuilder: (value , loadingState){
         if(loadingState == LoadingState.loading || loadingState == LoadingState.loading){
           return SizedBox(
-              width: 22.sp,
-              height: 22.sp,
+              width: width,
+              height: height,
               child: const CupertinoActivityIndicator()
           );
         }
         else if(value == null || !value){
           return Icon(
             Icons.bookmark_border_outlined,
-            size: 22.sp,
+            size: iconSize,
           );
         }
         else{
           return Icon(
             Icons.bookmark ,
             color: Theme.of(context).primaryColor,
-            size: 22.sp,
+            size: iconSize,
           );
         }
       },

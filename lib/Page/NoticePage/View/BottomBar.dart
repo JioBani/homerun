@@ -47,7 +47,7 @@ class _BottomBarState extends State<BottomBar> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 //#. 스크랩
-                ScrapIconButton(noticeId: widget.noticeId,),
+                ScrapIconButton(noticeId: widget.noticeId,width: 22.w,height: 22.w,iconSize: 22.w,),
                 //#. 공유
                 Icon(Icons.share ,size: 22.sp,),
 
