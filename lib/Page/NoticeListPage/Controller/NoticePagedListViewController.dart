@@ -1,9 +1,9 @@
-import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
-import 'package:homerun/Page/NoticesPage/Service/NoticeService.dart';
+import 'package:homerun/Feature/Notice/Model/Notice.dart';
+import 'package:homerun/Feature/Notice/NoticeService.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../Value/SortType.dart';
