@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
+import 'package:homerun/Feature/Notice/Model/Notice.dart';
 import 'package:homerun/Page/ScapPage/Model/NoticeScrapDto.dart';
 
 class NoticeScrap{

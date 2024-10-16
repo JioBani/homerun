@@ -17,7 +17,7 @@ import 'package:homerun/Service/Auth/SocialLoginService.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/Auth/UserInfoService.dart';
-import 'package:homerun/Value/Region.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 

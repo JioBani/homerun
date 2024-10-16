@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/Widget/CustomSearchBar.dart';
 import 'package:homerun/Page/NoticeListPage/Value/SortType.dart';
 import 'package:homerun/Style/Fonts.dart';
@@ -20,7 +20,7 @@ class NoticeListPage extends StatefulWidget {
 
 class _NoticeListPageState extends State<NoticeListPage> {
   late final Map<SortType, NoticePagedListView> noticePagedListViewMap = {
-    SortType.applicationDate : NoticePagedListView(supplyMethod: widget.supplyMethod, sortType: SortType.applicationDate),
+    SortType.applicationDateUpcoming : NoticePagedListView(supplyMethod: widget.supplyMethod, sortType: SortType.applicationDateUpcoming),
     SortType.announcementDate : NoticePagedListView(supplyMethod: widget.supplyMethod, sortType: SortType.announcementDate),
     SortType.popularity : NoticePagedListView(supplyMethod: widget.supplyMethod, sortType: SortType.popularity),
   };

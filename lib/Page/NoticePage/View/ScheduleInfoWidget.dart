@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:homerun/Common/ApplyHome/AptBasicInfo.dart';
-import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Feature/Notice/Model/AptBasicInfo.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
-import 'package:homerun/Page/NoticesPage/Model/NoticeDto.dart';
-import 'package:homerun/Page/NoticesPage/View/NoticePage/ContentBoxWidget.dart';
-import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
-import 'package:homerun/Page/NoticesPage/View/NoticePage/SubTitleWidget.dart';
+import 'package:homerun/Feature/Notice/Model/NoticeDto.dart';
+import 'package:homerun/Page/NoticePage/View/ContentBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/InfoBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/SubTitleWidget.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Palette.dart';
 

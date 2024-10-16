@@ -6,7 +6,7 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Service/NaverGeocodeService/NaverGeocodeService.dart';
 import 'package:homerun/Style/Palette.dart';
 
-import '../Model/Notice.dart';
+import '../../../Feature/Notice/Model/Notice.dart';
 
 class LocationMap extends StatefulWidget {
   const LocationMap({super.key, required this.notice});

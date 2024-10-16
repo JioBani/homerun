@@ -12,7 +12,7 @@ import 'package:homerun/Common/Widget/SelectBoxWidget.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/Auth/UserInfoService.dart';
-import 'package:homerun/Value/Region.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:collection/collection.dart';
 

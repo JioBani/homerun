@@ -14,7 +14,7 @@ import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Style/Images.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../Model/Notice.dart';
+import '../../../../Feature/Notice/Model/Notice.dart';
 
 //TODO boxfit 수정
 class SiteReviewWidget extends StatefulWidget {

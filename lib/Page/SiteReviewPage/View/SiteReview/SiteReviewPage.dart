@@ -15,6 +15,7 @@ import 'package:homerun/Style/TestImages.dart';
 
 import 'AppbarPopupMenu.dart';
 
+//TODO 이미지 클릭시 이미지 확대해서 보는 창이 있으면 좋을듯
 class SiteReviewPage extends StatefulWidget {
   const SiteReviewPage({super.key, required this.siteReview, required this.userDto});
   final SiteReview siteReview;

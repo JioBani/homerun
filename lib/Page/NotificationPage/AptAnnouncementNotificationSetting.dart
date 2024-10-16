@@ -1,8 +1,8 @@
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Value/HouseType.dart';
-import 'package:homerun/Value/Region.dart';
-import 'package:homerun/Value/RegionGyeonggi.dart';
-import 'package:homerun/Value/RegionSeoul.dart';
+import 'package:homerun/Feature/Notice/Value/HouseType.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
+import 'package:homerun/Feature/Notice/Value/RegionGyeonggi.dart';
+import 'package:homerun/Feature/Notice/Value/RegionSeoul.dart';
 
 import 'AptAnnouncementNotificationSettingFields.dart';
 

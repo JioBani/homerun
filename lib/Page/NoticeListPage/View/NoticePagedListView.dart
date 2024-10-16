@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Page/NoticeListPage/Controller/NoticePagedListViewController.dart';
-import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
+import 'package:homerun/Feature/Notice/Model/Notice.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../HousingSaleNoticesPage/View/NoticeProfileWidget.dart';

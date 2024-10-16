@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/Service/Auth/SocialProvider.dart';
-import 'package:homerun/Value/Region.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
 
 import 'UserFields.dart';
 

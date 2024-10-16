@@ -15,7 +15,7 @@ import 'package:homerun/Page/UserInfoModifyPage/Controller/UserInfoModifyPageCon
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Style/Palette.dart';
-import 'package:homerun/Value/Region.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
 
 import '../../LoginPage/View/UserInfoInputPage/UserInfoSelectBoxWidget.dart';
 

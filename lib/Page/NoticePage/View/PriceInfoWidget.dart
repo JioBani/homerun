@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:homerun/Common/ApplyHome/AptDetailsInfo.dart';
+import 'package:homerun/Feature/Notice/Model/AptDetailsInfo.dart';
 import 'package:homerun/Common/PriceFormatter.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Page/NoticesPage/Model/NoticeDto.dart';
-import 'package:homerun/Page/NoticesPage/View/NoticePage/ContentBoxWidget.dart';
-import 'package:homerun/Page/NoticesPage/View/NoticePage/InfoBoxWidget.dart';
+import 'package:homerun/Feature/Notice/Model/NoticeDto.dart';
+import 'package:homerun/Page/NoticePage/View/ContentBoxWidget.dart';
+import 'package:homerun/Page/NoticePage/View/InfoBoxWidget.dart';
 import 'package:homerun/String/APTAnnouncementStrings.dart';
 import 'package:homerun/Style/Palette.dart';
 

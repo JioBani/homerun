@@ -241,7 +241,6 @@ class ErrorImageItem extends StatelessWidget {
   }
 }
 
-//TODO 이미지가 겹치는 경우
 class ImageUploadWidget extends StatelessWidget {
   const ImageUploadWidget({super.key, required this.controller});
   final SiteReviewWritePageController controller;
