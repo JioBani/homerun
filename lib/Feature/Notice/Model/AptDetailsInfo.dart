@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'AptDetailsInfoFields.dart';
+import '../Value/AptDetailsInfoFields.dart';
 
 class AptDetailsInfo {
   /// 주택관리번호

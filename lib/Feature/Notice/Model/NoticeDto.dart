@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:homerun/Common/ApplyHome/ApplyHomeDto.dart';
-import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Feature/Notice/Model/ApplyHomeDto.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/StaticLogger.dart';
-import 'package:homerun/Page/NoticesPage/Value/NoticeDtoFields.dart';
+import 'package:homerun/Feature/Notice/Value/NoticeDtoFields.dart';
 
 class NoticeDto{
   final String noticeId;

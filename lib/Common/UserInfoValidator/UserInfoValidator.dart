@@ -1,5 +1,5 @@
 import 'package:homerun/Common/TimeFormatter.dart';
-import 'package:homerun/Value/Region.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
 import 'package:korean_profanity_filter/korean_profanity_filter.dart';
 
 //TODO 닉네임 체크는 서버로 옮겨야 할듯

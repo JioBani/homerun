@@ -1,7 +1,7 @@
-import 'ApplyHomeDtoFields.dart';
+import '../Value/ApplyHomeDtoFields.dart';
 import 'AptBasicInfo.dart';
 import 'AptDetailsInfo.dart';
-import 'SupplyMethod.dart';
+import '../Value/SupplyMethod.dart';
 
 /// ApplyHomeDto 클래스는 청약 정보와 그에 따른 세부 정보를 포함합니다.
 class ApplyHomeDto{

@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/instance_manager.dart';
-import 'package:homerun/Common/ApplyHome/SupplyMethod.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/Firebase/FirebaseFunctionsRequest.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
-import 'package:homerun/Page/NoticesPage/Value/NoticeDtoFields.dart';
-import 'package:homerun/Page/NoticesPage/Model/Notice.dart';
+import 'package:homerun/Feature/Notice/Value/NoticeDtoFields.dart';
+import 'package:homerun/Feature/Notice/Model/Notice.dart';
 import 'package:homerun/Page/NoticesPage/NoticeReferences.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
-import 'package:homerun/Value/Region.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
 
 class NoticeService{
 
