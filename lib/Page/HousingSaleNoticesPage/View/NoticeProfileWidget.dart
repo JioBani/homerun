@@ -201,12 +201,15 @@ class NoticeProfileWidget extends StatelessWidget {
                     height: 12.sp,
                   ),
                   Gap(5.w),
-                  Text(
-                    noticeDto.houseName,
-                    style: TextStyle(
-                      color: const Color(0xff3F3D3D),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13.sp
+                  Expanded(
+                    child: AutoSizeText(
+                      noticeDto.houseName,
+                      style: TextStyle(
+                        color: const Color(0xff3F3D3D),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13.sp
+                      ),
+                      maxLines: 2,
                     ),
                   ),
                 ],
