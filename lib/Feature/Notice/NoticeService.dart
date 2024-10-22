@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/instance_manager.dart';
+import 'package:homerun/Feature/Notice/Value/HouseType.dart';
 import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/Firebase/FirebaseFunctionsRequest.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Feature/Notice/Value/NoticeDtoFields.dart';
 import 'package:homerun/Feature/Notice/Model/Notice.dart';
+import 'package:homerun/Page/NoticeSearchPage/View/SearchSettingPage.dart';
 import 'package:homerun/Page/NoticesPage/NoticeReferences.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
@@ -64,7 +66,7 @@ class NoticeService{
     required SupplyMethod supplyMethod,
     bool descending = true,
     DateTime? applicationDateUpcoming,
-    Region? region,
+    List<Region>? regions,
   }){
     return Result.handleFuture<List<Notice>>(
       action: () async {
@@ -89,6 +91,14 @@ class NoticeService{
               isGreaterThanOrEqualTo : Timestamp.fromDate(applicationDateUpcoming)
             );
           }
+        }
+        
+        //최대 10개까지만 가능하므로
+        if(regions != null){
+          query = query.where(
+            "region",
+            whereIn: (regions.length > 10 ? regions.sublist(0,9) : regions).map((e)=>e.koreanString).toList()
+          );
         }
 
         if(startAfter != null){
