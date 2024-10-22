@@ -1,3 +1,5 @@
+import 'package:homerun/Feature/Notice/Value/HouseType.dart';
+import 'package:homerun/Feature/Notice/Value/Region.dart';
 import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
@@ -10,11 +12,16 @@ import '../Value/SortType.dart';
 
 class NoticePagedListViewController{
   final SupplyMethod supplyMethod;
-  final List<Notice> noticeList = [];
-  LoadingState loadingState = LoadingState.before;
   final SortType sortType;
   final int pageSize = 5;
   final Duration delay = const Duration(seconds: 1);
+
+  LoadingState loadingState = LoadingState.before;
+
+  bool isSearch = false;
+  List<Region>? regions;
+  List<HouseType>? houseType;
+
 
   PagingController<int,Notice> pagingController = PagingController(
     firstPageKey: 0,
@@ -22,10 +29,12 @@ class NoticePagedListViewController{
   );
 
   NoticePagedListViewController({required this.supplyMethod , required this.sortType}){
-    pagingController.addPageRequestListener((pageKey) => loadNotice(pageKey , 2));
+    pagingController.addPageRequestListener(loadNoticeAction);
   }
 
-  Future<void> loadNotice(int pageKey, int count) async {
+  void loadNoticeAction(pageKey) => loadNotice(pageKey);
+
+  Future<void> loadNotice(int pageKey) async {
     loadingState = LoadingState.loading;
 
     //#. 딜레이
@@ -41,15 +50,17 @@ class NoticePagedListViewController{
     Result<List<Notice>> result = await NoticeService.instance.getNotices(
       count: pageSize,
       orderType: orderType,
-      startAfter: noticeList.isNotEmpty ? noticeList.last : null,
+      startAfter: pagingController.itemList?.isNotEmpty == true ? pagingController.itemList!.last : null,
       supplyMethod : supplyMethod,
       descending: sortType != SortType.applicationDateUpcoming,
-      applicationDateUpcoming: sortType == SortType.applicationDateUpcoming ?  DateTime.now() : null
+      applicationDateUpcoming: sortType == SortType.applicationDateUpcoming ?  DateTime.now() : null,
+      regions: regions,
+      //houseType
     );
 
     if(result.isSuccess){
       //#. 덜가져온 경우 noMoreData
-      if(result.content!.length < count){
+      if(result.content!.length < pageSize){
         pagingController.appendLastPage(result.content!);
 
         loadingState = LoadingState.noMoreData;
@@ -59,9 +70,6 @@ class NoticePagedListViewController{
 
         loadingState = LoadingState.success;
       }
-
-
-      noticeList.addAll(result.content!);
     }
     else{
       StaticLogger.logger.e(result.exception);
@@ -69,5 +77,14 @@ class NoticePagedListViewController{
       loadingState = LoadingState.fail;
       //update();
     }
+  }
+
+  void setSearch(List<Region>? regions, List<HouseType>? houseType){
+    isSearch = !(regions == null && houseType == null);
+
+    this.regions = regions;
+    this.houseType = houseType;
+
+    pagingController.refresh();
   }
 }

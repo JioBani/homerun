@@ -3,13 +3,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Page/NoticeListPage/Controller/NoticePagedListViewController.dart';
 import 'package:homerun/Feature/Notice/Model/Notice.dart';
+import 'package:homerun/Page/NoticeSearchPage/Controller/TagSearchBarController.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../HousingSaleNoticesPage/View/NoticeProfileWidget.dart';
 import '../Value/SortType.dart';
 
 class NoticePagedListView extends StatelessWidget {
-  NoticePagedListView({super.key , required this.supplyMethod, required this.sortType}){
+  NoticePagedListView({
+    super.key ,
+    required this.supplyMethod,
+    required this.sortType,
+  }){
     controller = NoticePagedListViewController(
         supplyMethod : supplyMethod,
         sortType: sortType
@@ -30,6 +35,19 @@ class NoticePagedListView extends StatelessWidget {
               notice: item,
               supplyMethod: supplyMethod,
             ),
+        noItemsFoundIndicatorBuilder: (_) => Center(
+          child: Padding(
+            padding: EdgeInsets.only(top:10.w , bottom: 20.w),
+            child: Text(
+              "조건에 맞는 공고가 없습니다.",
+              style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).primaryColor
+              ),
+            ),
+          )
+        ),
         noMoreItemsIndicatorBuilder : (_) => Center(
             child: Padding(
               padding: EdgeInsets.only(top:10.w , bottom: 20.w),

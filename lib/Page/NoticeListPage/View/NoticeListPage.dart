@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Feature/Notice/Value/HouseType.dart';
 import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/Widget/CustomSearchBar.dart';
 import 'package:homerun/Page/NoticeListPage/Value/SortType.dart';
+import 'package:homerun/Page/NoticeSearchPage/Controller/TagSearchBarController.dart';
+import 'package:homerun/Page/NoticeSearchPage/View/SearchSettingPage.dart';
 import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Palette.dart';
 
+import '../../../Feature/Notice/Value/Region.dart';
+import '../../NoticeSearchPage/View/TagSearchBar.dart';
 import 'NoticePagedListView.dart';
 import 'SortDropDownButtonWidget.dart';
 
@@ -20,13 +28,23 @@ class NoticeListPage extends StatefulWidget {
 
 class _NoticeListPageState extends State<NoticeListPage> {
   late final Map<SortType, NoticePagedListView> noticePagedListViewMap = {
-    SortType.applicationDateUpcoming : NoticePagedListView(supplyMethod: widget.supplyMethod, sortType: SortType.applicationDateUpcoming),
-    SortType.announcementDate : NoticePagedListView(supplyMethod: widget.supplyMethod, sortType: SortType.announcementDate),
-    SortType.popularity : NoticePagedListView(supplyMethod: widget.supplyMethod, sortType: SortType.popularity),
+    SortType.applicationDateUpcoming : NoticePagedListView(
+        supplyMethod: widget.supplyMethod,
+        sortType: SortType.applicationDateUpcoming
+    ),
+    SortType.announcementDate : NoticePagedListView(
+        supplyMethod: widget.supplyMethod,
+        sortType: SortType.announcementDate
+    ),
+    SortType.popularity : NoticePagedListView(
+        supplyMethod: widget.supplyMethod,
+        sortType: SortType.popularity)
+    ,
   };
 
   SortType sortType = SortType.announcementDate;
   late final PageController _pageController;
+  final TagSearchBarController tagSearchBarController = TagSearchBarController();
 
   @override
   void initState() {
@@ -81,7 +99,30 @@ class _NoticeListPageState extends State<NoticeListPage> {
         child: Column(
           children: [
             Gap(8.w),
-            const CustomSearchBar(),
+            InkWell(
+              onTap: ()async{
+                Map<String,dynamic>? result = await Get.to(SearchSettingPage(tagSearchBarController: tagSearchBarController,));
+
+                if(result != null){
+                  StaticLogger.logger.i("gd");
+                  setState(() {
+
+                  });
+                  noticePagedListViewMap.values.map((view)=>{
+                    view.controller.setSearch(result['regions'] as List<Region>?, result['houseTypes'] as List<HouseType>)
+                  }).toList();
+                }
+              },
+              child: TagSearchBarPreview(
+                controller: tagSearchBarController,
+                onReset: (){
+                  noticePagedListViewMap.values.map((view)=>{
+                    view.controller.setSearch(null,null)
+                  }).toList();
+                  tagSearchBarController.reset();
+                },
+              )
+            ),
             Gap(2.w),
             Expanded(
               child: PageView(
