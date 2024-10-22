@@ -9,7 +9,7 @@ enum HouseType {
   NewlywedsHopeTown('신혼희망타운', 'NewlywedsHopeTown'),
 
   /// 분양전환가능임대주택
-  ConvertibleLeaseHousing('분양전환가능임대주택', 'ConvertibleLeaseHousing');
+  ConvertibleLeaseHousing('분양전환임대주택', 'ConvertibleLeaseHousing');
 
   // 한글 및 영어 문자열 값
   final String koreanName;
