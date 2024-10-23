@@ -9,7 +9,10 @@ import 'package:homerun/Style/Palette.dart';
 
 //TODO overflow
 class CheckListInfoWidget extends StatelessWidget {
-  CheckListInfoWidget({super.key, this.announcement});
+
+  CheckListInfoWidget({super.key, this.announcement}){
+    initData();
+  }
 
   final AptBasicInfo? announcement;
 
@@ -21,11 +24,10 @@ class CheckListInfoWidget extends StatelessWidget {
   String? adjustTarget;
   String? priceCanApp;
 
-  @override
-  Widget build(BuildContext context) {
-    final String selectionText;
-    bool hasSelectionData = true;
+  late final String selectionText;
+  bool hasSelectionData = true;
 
+  void initData(){
     if(announcement == null){
       selectionText = APTAnnouncementStrings.couldNotGetData;
       hasSelectionData = false;
@@ -46,7 +48,7 @@ class CheckListInfoWidget extends StatelessWidget {
       else{
         largeScale = "대규모 택지 여부 취합중";
       }
-      
+
       //#. 정비사업
       if(announcement!.redevelopmentBusiness != null){
         redevelopment = announcement!.redevelopmentBusiness == "Y" ? ", 정비사업" : "";
@@ -89,7 +91,10 @@ class CheckListInfoWidget extends StatelessWidget {
       }
 
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return InfoBoxWidget(
         child: Center(
           child: SizedBox(
