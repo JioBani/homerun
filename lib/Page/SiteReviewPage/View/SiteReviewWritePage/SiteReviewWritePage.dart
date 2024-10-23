@@ -12,6 +12,7 @@ import 'package:homerun/Style/Palette.dart';
 // - 업로드시 다이얼로그가 진행 될 때 마다 키보드가 올라왔따 내려갔다 함
 // - s22에서 작성할때의 글씨가 전반적으로 작음
 // - 등록 버튼등의 크기를 수정해야할거 같음
+//#. 앱 크기가 커지면 pagedListview로 변경
 class SiteReviewWritePage extends StatefulWidget {
   const SiteReviewWritePage({
     super.key,
@@ -163,24 +164,26 @@ class _SiteReviewWritePageState extends State<SiteReviewWritePage> {
                   SizedBox(height: 14.w,),
                   InkWell(
                     onTap: () {
+                      titleFocusNode.unfocus();
+                      contentFocusNode.unfocus();
                       CustomDialog.show(
                           builder: (dialogContext){
                             if(widget.isUpdateMode) {
                               return ConfirmDialog(
-                                  onConfirm: (){
-                                    controller.updateReview(titleController.text, contentController.text , context);
-                                  },
-                                  title: "수정하시겠습니까?",
-                                  dialogContext: dialogContext
+                                onConfirm: (){
+                                  controller.updateReview(titleController.text, contentController.text , context);
+                                },
+                                title: "수정하시겠습니까?",
+                                dialogContext: dialogContext
                               );
                             }
                             else{
                               return ConfirmDialog(
-                                  onConfirm: (){
-                                    controller.upload(titleController.text, contentController.text , context);
-                                  },
-                                  title: "등록하시겠습니까?",
-                                  dialogContext: dialogContext
+                                onConfirm: (){
+                                  controller.upload(titleController.text, contentController.text , context);
+                                },
+                                title: "등록하시겠습니까?",
+                                dialogContext: dialogContext
                               );
                             }
                           },

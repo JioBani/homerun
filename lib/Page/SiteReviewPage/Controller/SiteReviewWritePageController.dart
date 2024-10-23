@@ -242,14 +242,6 @@ class SiteReviewWritePageController extends GetxController{
       return;
     }
 
-    //#. 포커스 없애기
-    if(titleFocusNode.hasFocus){
-      titleFocusNode.unfocus();
-    }
-    else if(contentFocusNode.hasFocus){
-      contentFocusNode.unfocus();
-    }
-
     UpdateResultInfo result = await _handleUpdateProgress(
         title: title,
         content: content,
