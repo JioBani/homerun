@@ -10,4 +10,6 @@ class NoticeDtoFields {
   static const String aptAnnouncementByTypeList = 'aptAnnouncementByTypeList';
   static const String processedAPTAnnouncementByHouseType = 'processedAPTAnnouncementByHouseType';
   static const String supplyMethod = 'supplyMethod';
+  static const String region = 'region';
+  static const String detailRegion = 'detailRegion';
 }

@@ -4,6 +4,8 @@ import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Feature/Notice/Value/NoticeDtoFields.dart';
 
+import '../Value/Region.dart';
+
 class NoticeDto{
   final String noticeId;
   final int views;
@@ -11,6 +13,8 @@ class NoticeDto{
   final int scraps;
   final String houseName;
   final SupplyMethod supplyMethod;
+  final Region? region;
+  final String? detailRegion;
   
   /// 청약 접수 시작일
   final Timestamp subscriptionReceptionStartDate;
@@ -29,7 +33,9 @@ class NoticeDto{
     required this.subscriptionReceptionStartDate,
     required this.recruitmentPublicAnnouncementDate,
     required this.supplyMethod,
-    required this.applyHomeDto
+    required this.applyHomeDto,
+    this.region,
+    this.detailRegion,
   });
 
   factory NoticeDto.fromMap(Map<String, dynamic> map) {
@@ -44,7 +50,9 @@ class NoticeDto{
       subscriptionReceptionStartDate: map[NoticeDtoFields.subscriptionReceptionStartDate] as Timestamp,
       recruitmentPublicAnnouncementDate: map[NoticeDtoFields.recruitmentPublicAnnouncementDate] as Timestamp,
       supplyMethod: supplyMethod,
-      applyHomeDto : ApplyHomeDto.fromMap(map[NoticeDtoFields.info] as Map<String, dynamic>, supplyMethod)
+      applyHomeDto : ApplyHomeDto.fromMap(map[NoticeDtoFields.info] as Map<String, dynamic>, supplyMethod),
+      region : Region.fromKoreanString(map[NoticeDtoFields.region]),
+      detailRegion : map[NoticeDtoFields.detailRegion],
     );
   }
 
