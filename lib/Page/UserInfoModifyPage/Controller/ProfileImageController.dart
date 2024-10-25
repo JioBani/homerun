@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/Loader.dart';
 import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/UserInfoValidator/UserInfoValidator.dart';
@@ -107,28 +108,6 @@ class ProfileImageController extends GetxController{
   void resetModify(){
     modifiedProfileImage.value = null;
     update();
-  }
-
-}
-
-class Loader<T>{
-  T? value;
-  LoadingState loadingState = LoadingState.before;
-
-  final Function(LoadingState state, T? value) onStateChanged;
-
-  final Future<T?> Function(Loader<T> loader) onLoad;
-
-  Loader({required this.onLoad, required this.onStateChanged});
-
-  void setState(LoadingState newState){
-    loadingState = newState;
-    onStateChanged(newState , value);
-    //refresh
-  }
-
-  Future<void> load() async {
-    value = await onLoad(this);
   }
 
 }
