@@ -256,40 +256,42 @@ class AuthService extends GetxService{
     return SignUpResult.success;
   }
 
-  Future<String?> updateUserInfo({
+  Future<Result> updateUserInfo({
     required String? displayName,
     required Gender? gender,
     required List<String>? regions,
     required String? birth,
   }) async {
-    String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+    return Result.handleFuture(action: ()async{
+      String? idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
-    if(idToken == null){
-      throw ApplicationUnauthorizedException();
-    }
+      if(idToken == null){
+        throw ApplicationUnauthorizedException();
+      }
 
-    final ApiResult<String> apiResult = await ApiResult.handleRequest<String>(
+      final ApiResult<String> apiResult = await ApiResult.handleRequest<String>(
         http.post(Uri.parse(FirebaseFunctionEndpoints.updateUserInfo),
-            headers: {
-              'Authorization': 'Bearer $idToken',
-              'Content-Type': 'application/json'
-            },
-            body: jsonEncode({
-              UserFields.displayName : displayName,
-              UserFields.birth : birth,
-              UserFields.gender : gender?.toEnumString(),
-              UserFields.interestedRegions : regions,
-            })
+          headers: {
+            'Authorization': 'Bearer $idToken',
+            'Content-Type': 'application/json'
+          },
+          body: jsonEncode({
+            UserFields.displayName : displayName,
+            UserFields.birth : birth,
+            UserFields.gender : gender?.toEnumString(),
+            UserFields.interestedRegions : regions,
+          })
         ),
         timeout: const Duration(minutes: 1)
-    );
+      );
 
-    if(apiResult.isSuccess){
-      StaticLogger.logger.i("변경 성공");
-    }
-    else{
-      StaticLogger.logger.e(apiResult.apiResponse!.error!.message);
-    }
+      if(apiResult.isSuccess){
+        StaticLogger.logger.i("변경 성공");
+      }
+      else{
+        StaticLogger.logger.e(apiResult.apiResponse!.error!.message);
+      }
+    });
   }
 
   /// 유저 데이터 가져오기
