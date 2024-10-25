@@ -59,15 +59,16 @@ class FileDataService{
     }
   }
 
-  static Future<(String? content , Object? , StackTrace?)> readAsString(String path) async{
+  static Future<(String? content , Object? , StackTrace?)> readAsString(String path, {bool logging = false}) async{
     try{
       final file = await _getFile(path);
       final contents = await file.readAsString();
       //_logger.i("[DataStoreService.readAsString()] 읽기 완료");
       return (contents , null , null);
     }catch(e , s){
-      _logger.e("[DataStoreService.readAsString()] $e");
-      _logger.e("[DataStoreService.readAsString()] $s");
+      if(logging){
+        _logger.e("[DataStoreService.readAsString()] $e\n$s");
+      }
       return (null ,e , s);
     }
   }
