@@ -15,9 +15,10 @@ class HouseDetailTypeBoxWidget extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: const TextStyle(
-            color: Color(0xffFF4545),
-            fontWeight: FontWeight.w600 //폰트 굵기가 미디움인데 작게 보여서 bold로 변경
+        style: TextStyle(
+          color: const Color(0xffFF4545),
+          fontWeight: FontWeight.w600, //폰트 굵기가 미디움인데 작게 보여서 bold로 변경
+          fontSize: 9.sp
         ),
       ),
     );
