@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get_common/get_reset.dart';
 import 'package:homerun/Common/StaticLogger.dart';
 import 'FileDataService.dart';
 import 'package:http/http.dart' as http;
@@ -56,7 +57,7 @@ class FirebaseStorageCacheService{
     String cachePath = "firebase_storage/$path";
 
     if (_assetCache.containsKey(cachePath)) {
-      //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 메모리 캐시로부터 불러오기");
+      StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] $path is in memory cache");
       return _assetCache[cachePath];
     }
 
@@ -69,11 +70,9 @@ class FirebaseStorageCacheService{
 
       //#.3 캐쉬 확인
       CacheState cacheState = await _checkCache(cachePath , metadata.updated!);
-      //CacheState cacheState = await checkCache(path , metadata.updated! , Duration(seconds: 10));
 
       //#.4-1 캐쉬가 최신이면
       if(cacheState == CacheState.recent){
-        //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 존재 : $cachePath");
         final file = await _readLocalCache(cachePath);
         if(file == null) {
           return null;
@@ -86,12 +85,10 @@ class FirebaseStorageCacheService{
 
       //#.4-2 캐쉬가 없거나 오래되었으면
       else if(cacheState == CacheState.old || cacheState == CacheState.error){
-        //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 없음 또는 오래됨 : $cachePath");
 
         final fileData = await _downloadAsset(spaceRef);
 
         if(fileData == null){
-          //StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] storage 파일에 접근 할 수 없음 없음 : $cachePath");
           return null;
         }
 
@@ -121,12 +118,10 @@ class FirebaseStorageCacheService{
         }
         bool success = await _saveCache(cachePath , fileData);
 
-        if(success){
-          //StaticLogger.logger.i("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 성공 : $cachePath");
-        }
-        else{
+        if(!success){
           StaticLogger.logger.e("[FirebaseStorageCacheService.getAsset()] 캐쉬 저장 실패 : $cachePath");
         }
+
         _addAssetMemoryCache(cachePath , fileData);
 
         return fileData;
@@ -143,6 +138,7 @@ class FirebaseStorageCacheService{
   }
 
   static Future<ImageProvider?> getImage(String path, {bool onlySaveMemory = false}) async {
+    StaticLogger.logger.i("[FirebaseStorageCacheService.getImage()] $path");
     Uint8List? memoryData = await getAsset(path , onlySaveMemory: onlySaveMemory);
     if(memoryData != null){
       return Image.memory(memoryData).image;
@@ -150,8 +146,7 @@ class FirebaseStorageCacheService{
     else{
       return null;
     }
-  }
-
+  } 
 
   //#. 로컬 캐쉬 이미지 가져오기
   static Future<File?> _readLocalCache(String path)async{
@@ -199,7 +194,12 @@ class FirebaseStorageCacheService{
 
     final (content , metaSaveE , metaSaveS)  = await FileDataService.readAsString("$cachePath.dat");
     if(metaSaveE != null){
-      StaticLogger.logger.e("[FirebaseStorageCacheService._checkAssetCache()] $metaSaveE\n$metaSaveS");
+      if(metaSaveE is PathNotFoundException){
+        StaticLogger.logger.i("[FirebaseStorageCacheService._checkAssetCache()] $path is not in local cache");
+      }
+      else{
+        StaticLogger.logger.e("[FirebaseStorageCacheService._checkAssetCache()] $metaSaveE\n$metaSaveS");
+      }
       return CacheState.error;
     }
     else{
@@ -231,13 +231,10 @@ class FirebaseStorageCacheService{
       while (_currentAssetCacheSize > _maxAssetCacheSize) {
         final String oldestKey = _assetCache.keys.first;
         final Uint8List? oldestImage = _assetCache.remove(oldestKey);
+        StaticLogger.logger.i("[FirebaseStorageCacheService._addAssetMemoryCache()] remove $oldestKey, now $_currentAssetCacheSize/$_maxAssetCacheSize");
         _currentAssetCacheSize -= oldestImage?.lengthInBytes ?? 0;
       }
     }
-  }
-
-  static void _removeCache(String path){
-    //TODO
   }
 
   static void _removeAllCache(){
