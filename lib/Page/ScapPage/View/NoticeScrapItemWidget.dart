@@ -1,10 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/HouseDetailTypeBoxWidget.dart';
 import 'package:homerun/Feature/Notice/Model/Notice.dart';
+import 'package:homerun/Feature/Notice/Value/SupplyMethod.dart';
 import 'package:homerun/Page/NoticePage/View/AdNoticePage.dart';
 import 'package:homerun/Page/ScapPage/Controller/ScrapPageController.dart';
 import 'package:homerun/Page/ScapPage/Model/NoticeScrap.dart';
@@ -24,6 +27,11 @@ class _NoticeScrapItemWidgetState extends State<NoticeScrapItemWidget> {
   Widget build(BuildContext context) {
     Notice? notice = widget.noticeScrap.notice;
     var controller = Get.find<ScrapPageController>();
+
+    final String dayAndSupplyMethodText =
+        "${TimeFormatter.dateToKoreanString(widget.noticeScrap.noticeScrapDto.date.toDate())} "
+        "| "
+        "${widget.noticeScrap.notice?.noticeDto?.supplyMethod.koreanName ?? "알 수 없음"}";
 
     return Padding(
       padding: EdgeInsets.only(bottom: 25.w),
@@ -63,16 +71,18 @@ class _NoticeScrapItemWidgetState extends State<NoticeScrapItemWidget> {
                           alignment: Alignment.topLeft,
                           child: Row(
                             children: [
+                              //#. 분양상세정보
+                              HouseDetailTypeBoxWidget(text: notice?.noticeDto?.applyHomeDto.aptBasicInfo?.houseDetailSectionName ?? '없음',),
+                              Gap(4.w),
                               //#. 지역
                               Text( //TODO 텍스트가 너무 작은듯?
-                                "서울",
+                                notice?.noticeDto?.region?.koreanString ?? "알 수 없음",
                                 style: TextStyle(
                                   fontSize: 10.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Palette.brightMode.darkText
                                 ),
                               ),
-                              SizedBox(width:  2.w),
-                              //#. 분양상세정보
-                              HouseDetailTypeBoxWidget(text: notice?.noticeDto?.applyHomeDto.aptBasicInfo?.houseDetailSectionName ?? '',)
                             ],
                           ),
                         ),
@@ -93,7 +103,7 @@ class _NoticeScrapItemWidgetState extends State<NoticeScrapItemWidget> {
                         ),
                         //#. 스크랩 날짜 및 청약 상태
                         Text( //TODO 텍스트가 너무 작은듯?
-                          "2024년 5월 01일 | 무순위 줍줍",
+                          dayAndSupplyMethodText,
                           style: TextStyle(
                             fontSize: 10.sp,
                             color: Palette.brightMode.mediumText
