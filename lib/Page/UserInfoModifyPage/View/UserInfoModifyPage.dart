@@ -1,23 +1,28 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gradient_borders/input_borders/gradient_outline_input_border.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
+import 'package:homerun/Common/LoadingState.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/enum/Gender.dart';
 import 'package:homerun/FirebaseReferences/UserInfoReferences.dart';
 import 'package:homerun/Common/Widget/SelectBoxWidget.dart';
+import 'package:homerun/Page/UserInfoModifyPage/Controller/ProfileImageController.dart';
 import 'package:homerun/Page/UserInfoModifyPage/Controller/UserInfoModifyPageController.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
+import 'package:homerun/Style/Fonts.dart';
 import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Feature/Notice/Value/Region.dart';
 
 import '../../LoginPage/View/UserInfoInputPage/UserInfoSelectBoxWidget.dart';
+import 'ProfileImageWidget.dart';
 
 class UserInfoModifyPage extends StatelessWidget {
   UserInfoModifyPage({super.key});
@@ -51,6 +56,21 @@ class UserInfoModifyPage extends StatelessWidget {
     UserInfoModifyPageController controller = Get.put(UserInfoModifyPageController(userDto: userDto));
 
     return Scaffold(
+      appBar:AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        surfaceTintColor : Colors.white,
+        title: Text(
+          "회원정보 수정",
+          style: TextStyle(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+              color: Palette.defaultSkyBlue,
+              fontFamily: Fonts.title
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 35.w),
@@ -58,76 +78,9 @@ class UserInfoModifyPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 53.w,),
-                //#. 정보 입력해주세요.
-                Text(
-                  "프로필 수정",
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 15.w,),
-
-                //#. 프로필 설정
-                Center(
-                  child: SizedBox(
-                    width: 100.w,
-                    height: 100.w,
-                    child: Stack(
-                      children: [
-                        //#. 프로필 이미지
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(100.w),
-                          child: GetBuilder<UserInfoModifyPageController>(
-                            builder: (controller) {
-                              if(controller.modifiedProfileImage == null){
-                                return FireStorageImage(
-                                  path: UserInfoReferences.getUserProfileImagePath(userDto.uid ?? ''),
-                                  width: 100.w,
-                                  height: 100.w,
-                                  fit: BoxFit.cover,
-                                );
-                              }
-                              else{
-                                return Image.file(
-                                  File(controller.modifiedProfileImage!.path),
-                                  width: 100.w,
-                                  height: 100.w,
-                                  fit: BoxFit.cover,
-                                );
-                              }
-                            }
-                          )
-                        ),
-                        //#. 프로필 설정 버튼
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: InkWell(
-                            onTap: (){
-                              //controller.setProfileImage();
-                            },
-                            child: Container(
-                              width: 25.w,
-                              height: 25.w,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white , width: 1.w),
-                                  borderRadius: BorderRadius.circular(25.w),
-                                  color: Colors.black
-                              ),
-                              child: const Icon(
-                                Icons.settings,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                SizedBox(height: 30.w,),
+                Center(child: ProfileImageWidget(userDto: userDto,)),
                 SizedBox(height: 25.w,),
-
                 //#. 닉네임
                 Text(
                   "닉네임",
@@ -322,3 +275,4 @@ class UserInfoModifyPage extends StatelessWidget {
     );
   }
 }
+
