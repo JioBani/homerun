@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/UserInfoValidator/UserInfoValidator.dart';
 import 'package:homerun/Common/Widget/CustomDialog.dart';
 import 'package:homerun/Common/Widget/LoadingDialog.dart';
-import 'package:homerun/Common/Widget/Snackbar.dart';
 import 'package:homerun/Common/enum/Gender.dart';
-import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Common/Widget/SelectBoxWidget.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
@@ -31,12 +28,12 @@ class UserInfoModifyPageController extends GetxController{
   final FocusNode nickNameFocusNode = FocusNode();
   final FocusNode birthFocusNode = FocusNode();
 
-  XFile? modifiedProfileImage;
   final UserDto userDto;
   late final String initNickName;
   late final String initBirth;
   late final Gender initGender;
   late final List<Region> initRegions;
+
 
   int birthTextLength = 0;
   bool isNameChecked = false;
@@ -55,41 +52,6 @@ class UserInfoModifyPageController extends GetxController{
       initValues: initRegions.map((region)=>region).toList(), // initRegions를 깊은 복사(Region이 enum타입이므로 재귀 복사 필요 x)
       maxSelectCount: 3
     );
-  }
-
-  /// 프로필 이미지 추가
-  Future<void> setProfileImage() async {
-    try{
-      final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-      //#. 이미지 가져왔는지 확인
-      if(pickedFile == null){
-        CustomSnackbar.show('오류', '이미지를 가져 올 수 없습니다.');
-        return;
-      }
-
-      //#. 이미지 크기 제한 확인
-      if(await pickedFile.length() / (1024 * 1024) > userInfoValidator.maxProfileMbSize){
-        CustomSnackbar.show('오류', '프로필 이미지의 크기는 ${userInfoValidator.maxProfileMbSize}MB를 넘을 수 없습니다.');
-        return;
-      }
-
-      modifiedProfileImage = pickedFile;
-
-      if(modifiedProfileImage != null){
-        Result result = await userInfoService.updateProfile(modifiedProfileImage!);
-        if(!result.isSuccess){
-          CustomSnackbar.show('오류', '프로필 업로드에 실패했습니다.');
-        }
-        else{
-          CustomSnackbar.show('알림', '프로필 변경에 성공했습니다.');
-        }
-      }
-
-      update();
-    }catch(e,s){
-      CustomSnackbar.show('오류', '이미지를 가져 올 수 없습니다.');
-    }
   }
 
   /// 회원가입 데이터 유효성 확인
@@ -168,7 +130,7 @@ class UserInfoModifyPageController extends GetxController{
     }
   }
 
-  void updateUserInfo(BuildContext context){
+  Future<void> updateUserInfo(BuildContext context) async {
 
     if(nickNameFocusNode.hasFocus){
       nickNameFocusNode.unfocus();
@@ -181,8 +143,7 @@ class UserInfoModifyPageController extends GetxController{
       return;
     }
 
-    //#. 변경된 것이 없으면 매개변수에 null
-    LoadingDialog.showLoadingDialogWithFuture(
+    var (result , _) = await LoadingDialog.showLoadingDialogWithFuture(
         context,
         Get.find<AuthService>().updateUserInfo(
             displayName: initNickName == nickNameController.text ? null : nickNameController.text,
@@ -192,6 +153,14 @@ class UserInfoModifyPageController extends GetxController{
             birth: initBirth == birthController.text ? null : birthController.text
         )
     );
+
+    if(context.mounted){
+      CustomDialog.defaultDialog(
+          context: context,
+          title: result.isSuccess ? "변경사항을 저장했습니다." : "오류가 발생하였습니다.",
+          buttonText: "확인"
+      );
+    }
   }
 
   /// 닉네임 확인
@@ -202,6 +171,27 @@ class UserInfoModifyPageController extends GetxController{
     }
     else if(birthFocusNode.hasFocus){
       birthFocusNode.unfocus();
+    }
+
+    if(nickNameController.text == userDto.displayName){
+      CustomDialog.defaultDialog(
+        context: context,
+        title: "현재 닉네임입니다.",
+        buttonText: "확인"
+      );
+      return;
+    }
+
+    String? nameCheck = userInfoValidator.checkNickName(nickNameController.text);
+    if(nameCheck != null){
+      if(context.mounted){
+        CustomDialog.defaultDialog(
+            context:context,
+            title: nameCheck,
+            buttonText: "확인"
+        );
+      }
+      return;
     }
 
     var(String? result, _) = await LoadingDialog.showLoadingDialogWithFuture<String?>(
