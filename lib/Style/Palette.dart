@@ -35,6 +35,11 @@ abstract class ColorMode{
   Color get mediumText;
   set mediumText(Color value);
 
+
+  Color get semiMediumText;
+  set semiMediumText(Color value);
+
+
   Color get lightText;
   set lightText(Color value);
 }
@@ -45,6 +50,9 @@ class BrightMode implements ColorMode{
 
   @override
   Color mediumText = const Color(0xff767676);
+
+  @override
+  Color semiMediumText = const Color(0xffA4A4A4);
 
   @override
   Color lightText = const Color(0xffD9D9D9);
