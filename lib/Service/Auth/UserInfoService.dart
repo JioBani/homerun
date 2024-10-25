@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,6 +10,7 @@ import 'package:homerun/Common/StaticLogger.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Security/FirebaseFunctionEndpoints.dart';
 import 'package:homerun/Service/Auth/AuthService.dart';
+import 'package:homerun/Service/Auth/HttpError.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -38,7 +40,28 @@ class UserInfoService{
         StaticLogger.logger.i("실패 ${uploadResult.exception}\n${uploadResult.stackTrace}");
       }
     });
+  }
 
+  Future<Result> updateProfileWithBytes(Uint8List bytes){
+    return Result.handleFuture(action: ()async{
+
+      //#1. 로그인 확인
+      UserDto userDto = Get.find<AuthService>().getUser();
+
+      //#1. 이미지 타입 검사
+
+      //#2. 이미지 확장자 변경 -> 일단 보류
+
+      //#3. 이미지 업로드
+      Result uploadResult = await _uploadImageWithBytes(
+          image: bytes,
+          userId: FirebaseAuth.instance.currentUser!.uid
+      );
+
+      if(!uploadResult.isSuccess){
+        StaticLogger.logger.i("실패 ${uploadResult.exception}\n${uploadResult.stackTrace}");
+      }
+    });
   }
 
   Future<Result<void>> _uploadImage({
@@ -56,31 +79,52 @@ class UserInfoService{
     });
   }
 
+  Future<Result<void>> _uploadImageWithBytes({
+    required Uint8List image,
+    required String userId,
+    void Function(TaskSnapshot)? snapshotEventAction
+  }) async {
+    return Result.handleFuture(action: () async {
+      Reference storageRef = FirebaseStorage.instance.ref().child('user/profile/$userId/profile.jpg');
+      UploadTask uploadTask = storageRef.putData(image);
+
+      uploadTask.snapshotEvents.listen(snapshotEventAction);
+
+      await uploadTask.whenComplete(() {});
+    });
+  }
+
   /// 닉네임 확인
   /// 
   /// [returns] 사용 할 수 있는 닉네임이면 [null], 사용 할 수 없는 닉네임이면 [String] 메세지를 반환
   Future<String?> checkNickName(String nickName) async {
     final ApiResult<String> apiResult = await ApiResult.handleRequest<String>(
-        http.post(Uri.parse(FirebaseFunctionEndpoints.checkDisplayName),
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: jsonEncode({
-              "displayName" : nickName
-            })
-        ),
-        timeout: const Duration(minutes: 1)
+      http.post(Uri.parse(FirebaseFunctionEndpoints.checkDisplayName),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode({
+          "displayName" : nickName
+        })
+      ),
+      timeout: const Duration(minutes: 1)
     );
 
     if(apiResult.parsingFailed){
-      return "서버에 연결 할 수 없습니다.";
+      return "오류가 발생하였습니다.";
     }
     else{
-      if(apiResult.isSuccess){
+      if(apiResult.apiResponse?.status == 409){
+        return "이미 사용중인 닉네임 입니다.";
+      }
+      else if(apiResult.apiResponse?.status == 400){
+        return apiResult.apiResponse!.error!.message;
+      }
+      else if(apiResult.apiResponse?.status == 200){
         return null;
       }
       else{
-        return apiResult.apiResponse!.error!.message;
+        return "오류가 발생하였습니다.";
       }
     }
   }
