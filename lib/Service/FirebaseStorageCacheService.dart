@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get_common/get_reset.dart';
 import 'package:homerun/Common/StaticLogger.dart';
+import 'package:homerun/Common/model/Result.dart';
 import 'FileDataService.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,6 +13,8 @@ class FirebaseStorageCacheService{
   static final storageRef = FirebaseStorage.instance.ref();
 
   static final Map<String, Uint8List> _assetCache = {};
+  static final Map<String, DateTime> _assetCacheData = {};
+
   static int _maxAssetCacheSize = 100 * 1024 * 1024; // 최대 100MB
   static int _currentAssetCacheSize = 0;
   static Duration _cacheLifeTime = const Duration(days: 30);
@@ -221,20 +224,76 @@ class FirebaseStorageCacheService{
     }
   }
 
+  //#. 메모리 캐쉬 추가 또는 업데이트 하기
   static void _addAssetMemoryCache(String key, Uint8List cache){
     final int imageSize = cache.lengthInBytes;
 
+    //#. 캐시가 새로 들어오는 경우에 용량 추가
     if(!_assetCache.containsKey(key)){
-      _assetCache[key] = cache;
       _currentAssetCacheSize += imageSize;
-
-      while (_currentAssetCacheSize > _maxAssetCacheSize) {
-        final String oldestKey = _assetCache.keys.first;
-        final Uint8List? oldestImage = _assetCache.remove(oldestKey);
-        StaticLogger.logger.i("[FirebaseStorageCacheService._addAssetMemoryCache()] remove $oldestKey, now $_currentAssetCacheSize/$_maxAssetCacheSize");
-        _currentAssetCacheSize -= oldestImage?.lengthInBytes ?? 0;
-      }
     }
+
+    _assetCache[key] = cache;
+    _assetCacheData[key] = DateTime.now(); //#. 메모리 캐쉬 추가 시간 추적
+
+    //#. 크기를 넘었으면 삭제
+    while (_currentAssetCacheSize > _maxAssetCacheSize) {
+      final String oldestKey = _assetCache.keys.first;
+      final Uint8List? oldestImage = _assetCache.remove(oldestKey);
+      _assetCacheData.remove(oldestKey);
+
+      StaticLogger.logger.i("[FirebaseStorageCacheService._addAssetMemoryCache()] remove $oldestKey, now $_currentAssetCacheSize/$_maxAssetCacheSize");
+      _currentAssetCacheSize -= oldestImage?.lengthInBytes ?? 0;
+    }
+  }
+
+  /// 특정 메모리 캐시를 업데이트 하는 함수
+  /// 만약 캐시에 있는 데이터가 최신이 아니라면 업데이트 합니다.
+  /// 참고 : 이 함수가 실행되더라도 local에 저장되는 캐시는 업데이트 되지 않습니다.
+  static Future<void> updateMemoryCache(String path) async {
+    String cachePath = "firebase_storage/$path";
+    final spaceRef = storageRef.child(path);
+
+    Result<bool?> isUpToDate = await _isMemoryCacheUpToDate(cachePath , spaceRef);
+    
+    if(!isUpToDate.isSuccess){ //#. 메타데이터 가져오기에 실패한 경우
+      StaticLogger.logger.e("[FirebaseStorageCacheService.checkMemoryCacheIsResent()] ${isUpToDate.exception}\n${isUpToDate.stackTrace}");
+      return;
+    }
+    else if(isUpToDate.content == null){ //#. 캐쉬 자체가 없는 경우
+      StaticLogger.logger.e("[FirebaseStorageCacheService.checkMemoryCacheIsResent()] $path is not exist");
+      return;
+    }
+    else if(isUpToDate.content!){ //#. 최신인 경우
+      return;
+    }
+
+    final fileData = await _downloadAsset(spaceRef);
+
+    if(fileData == null){
+      StaticLogger.logger.e("[FirebaseStorageCacheService.checkMemoryCacheIsResent()] $path download asset is not exist");
+      return;
+    }
+
+    StaticLogger.logger.i("[FirebaseStorageCacheService.checkMemoryCacheIsResent()] 메모리 캐시 업데이트 : $path");
+
+     _addAssetMemoryCache(cachePath , fileData);
+  }
+
+  /// 메모리 캐시가 최신인지 확인하는 함수
+  /// [returns] 캐시가 존재하지 않는다면 Result.content = null을 반환합니다.
+  static Future<Result<bool?>> _isMemoryCacheUpToDate(String cachePath, Reference spaceRef) async {
+    return Result.handleFuture(action: ()async{
+
+      if(!_assetCache.containsKey(cachePath) || !_assetCacheData.containsKey(cachePath)){
+        return null;
+      }
+
+      //#.2 메타데이터 가져오기
+      FullMetadata metadata = await spaceRef.getMetadata();
+
+      return metadata.updated!.isBefore(_assetCacheData[cachePath]!);
+    });
   }
 
   static void _removeAllCache(){
