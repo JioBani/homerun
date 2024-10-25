@@ -54,6 +54,13 @@ class NotFoundError extends HttpError {
   }) : super(status: 404, code: code, message: message);
 }
 
+class ConflictError extends HttpError {
+  ConflictError({
+    int code = 40900,
+    String message = 'Conflict',
+  }) : super(status: 409, code: code, message: message);
+}
+
 class InternalServerError extends HttpError {
   InternalServerError({
     int code = 50000,
