@@ -41,7 +41,12 @@ class _SiteReviewPageState extends State<SiteReviewPage> {
     return Scaffold(
       appBar : AppBar(
         surfaceTintColor: Colors.white,
-        leading: const Icon(Icons.arrow_back),
+        leading: InkWell(
+          onTap: (){
+            Get.back();
+          },
+          child: const Icon(Icons.arrow_back)
+        ),
         backgroundColor: Theme.of(context).colorScheme.background,
         shadowColor: Colors.black.withOpacity(0.5),
         shape: const ContinuousRectangleBorder(
