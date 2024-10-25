@@ -1,14 +1,18 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:homerun/Common/FirebaseStorageImage.dart';
 import 'package:homerun/Common/LoadingState.dart';
+import 'package:homerun/Common/TimeFormatter.dart';
 import 'package:homerun/Common/model/Result.dart';
 import 'package:homerun/Page/SiteReviewPage/Model/SiteReview.dart';
 import 'package:homerun/Page/SiteReviewPage/View/SiteReview/SiteReviewPage.dart';
 import 'package:homerun/Service/Auth/UserDto.dart';
 import 'package:homerun/Service/FirebaseFirestoreService.dart';
 import 'package:homerun/Style/Images.dart';
+import 'package:homerun/Style/Palette.dart';
 import 'package:homerun/Style/TestImages.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -68,128 +72,185 @@ class _SiteReviewListItemWidgetState extends State<SiteReviewListItemWidget> {
           }
         }
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 145.w,
-            height: 180.w,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5.r),
-                child: Stack(
-                  alignment: AlignmentDirectional.center,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5.r),
-                        color: Colors.black12
-                      ),
-                    ),
-                    FireStorageImage(
-                      path: widget.siteReview.thumbnailRefPath,
-                      fit: BoxFit.fitHeight,
-                      width: 145.w,
-                      height: 180.w,
-                      onlySaveMemory: true,
-                    ),
-                  ],
-                )
-            ),
-          ),
-          SizedBox(height: 11.w,),
-          Builder(
-              builder: (context){
-                if(loadingState == LoadingState.success){
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
+      child: SizedBox(
+        width: 145.w,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 145.w,
+              height: 180.w,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5.r),
+                  child: Stack(
+                    alignment: AlignmentDirectional.center,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(30.w),
-                        child: Image.asset(
-                          TestImages.ashe_43,
-                          width: 30.w,
-                          height: 30.w,
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.r),
+                          color: Colors.black12
                         ),
                       ),
-                      SizedBox(width: 7.w,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            userDto?.displayName ?? '알 수 없음',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 11.sp
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Image.asset(
-                                  NoticePageImages.star
-                              ),
-                              SizedBox(width: 3.w,),
-                              Text(
-                                "조회수 ${widget.siteReview.view}",
-                                style: TextStyle(
-                                    fontSize: 8.sp,
-                                    color: Color(0xff767676)
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      )
+                      FireStorageImage(
+                        path: widget.siteReview.thumbnailRefPath,
+                        fit: BoxFit.fitHeight,
+                        width: 145.w,
+                        height: 180.w,
+                        onlySaveMemory: true,
+                      ),
                     ],
-                  );
-                }
-                else{
-                  return Shimmer.fromColors(
-                    baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.w),
-                            color: Colors.grey,
-                          ),
-                          width: 30.w,
-                          height: 30.w,
-                        ),
-                        SizedBox(width: 7.w,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(1.r),
-                                color: Colors.grey,
-                              ),
-                              width: 50.w,
-                              height: 11.sp,
-                            ),
-                            SizedBox(height: 3.w,),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(1.r),
-                                color: Colors.grey,
-                              ),
-                              width: 70.w,
-                              height: 8.sp,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                }
-              }
-          ),
-        ],
+                  )
+              ),
+            ),
+            Gap(3.w),
+            ReviewInfoWidget(siteReview: widget.siteReview,),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+
+class ReviewInfoWidget extends StatefulWidget {
+  const ReviewInfoWidget({super.key, required this.siteReview});
+  final SiteReview siteReview;
+
+  @override
+  State<ReviewInfoWidget> createState() => _ReviewInfoWidgetState();
+}
+
+class _ReviewInfoWidgetState extends State<ReviewInfoWidget> {
+  UserDto? userDto;
+  LoadingState loadingState = LoadingState.before;
+
+  Future<void> getUser()async {
+    loadingState = LoadingState.loading;
+    setState(() {});
+    Result<UserDto> result = await FirebaseFirestoreService.instance.getUser(widget.siteReview.writer);
+    if(result.isSuccess){
+      userDto = result.content;
+      loadingState = LoadingState.success;
+    }
+    else{
+      loadingState = LoadingState.fail;
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getUser();
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(ReviewInfoWidget oldWidget) {
+    if (oldWidget.siteReview != widget.siteReview) {
+      userDto = null;
+      getUser();
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return  Builder(
+        builder: (context){
+          if(loadingState == LoadingState.success){
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.siteReview.title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Palette.brightMode.darkText,
+                    fontSize: 12.sp,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                AutoSizeText(
+                  "${userDto?.displayName ?? "알 수 없음"} | ${TimeFormatter.formatTimeDifference(widget.siteReview.date.toDate())}",
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Palette.brightMode.semiMediumText,
+                  ),
+                ),
+                Text(
+                  "조회수 ${widget.siteReview.view}",
+                  style: TextStyle(
+                      fontSize: 9.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Palette.brightMode.semiMediumText,
+                  ),
+                ),
+              ],
+            );
+          }
+          else{
+            //#. 쉬머의 높이를 컨텐츠와 맞추기 위해 텍스트 사용
+            return Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2.r),
+                      color: Colors.grey,
+                    ),
+                    width: 130.w,
+                    child: Text(
+                      " ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ),
+                  Gap(1.sp),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2.r),
+                      color: Colors.grey,
+                    ),
+                    width: 50.w,
+                    child: Text(
+                      " ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 9.sp,
+                      ),
+                    ),
+                  ),
+                  Gap(1.sp),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2.r),
+                      color: Colors.grey,
+                    ),
+                    width: 90.w,
+                    child: Text(
+                      " ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 9.sp,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
     );
   }
 }
